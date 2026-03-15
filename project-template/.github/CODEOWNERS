@@ -1,0 +1,20 @@
+# CODEOWNERS — [專案名稱]
+# Gate 3 D16-D20 驗收要求此檔案存在
+# 格式：<path-pattern> <@github-username or @team>
+# 文件：https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ── 全域預設 Owner（至少一人）────────────────────────────────
+*                   @project-owner
+
+# ── 合規文件需雙人 Review ─────────────────────────────────────
+/04_Compliance/     @project-owner @security-reviewer
+
+# ── 資料庫 Schema 需 DBA 參與 ─────────────────────────────────
+/contracts/         @dba-owner
+/03_System_Design/  @architect-owner
+
+# ── 技術標準（10_Standards）需架構師審核 ─────────────────────
+/10_Standards/      @architect-owner
+
+# ── CI/CD 配置需 DevOps 參與 ──────────────────────────────────
+/.github/           @devops-owner

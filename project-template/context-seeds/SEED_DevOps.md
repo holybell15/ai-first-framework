@@ -105,7 +105,7 @@
 
 ## 輸出位置
 `08_Operations/deploy/18_Deploy_F##_[功能名稱]_v0.1.0.md`
-> AICC-X 對應：`03_System_Design/18_Deploy_F##_[功能名稱]_v0.1.0.md`
+> [專案名稱] 對應：`03_System_Design/18_Deploy_F##_[功能名稱]_v0.1.0.md`
 
 ---
 

@@ -9,6 +9,12 @@ session_snapshot:
   phase: "[Px 階段名稱]"           # 例：P02 技術設計
   agent_last: "[最後執行的 Agent]"  # 例：Architect Agent
 
+team:
+  active_member: "[名字]"          # 目前持有工作權的人
+  current_role: "[Agent 角色]"     # 例：Backend Agent
+  handoff_to: "[下一位名字]"       # 完成後交給誰（null = 尚未決定）
+  handoff_notified: false          # 是否已通知下一位（true/false）
+
 current_focus:
   module: "[F## 功能名稱]"          # 例：F01 用戶登入
   doing: "[進行中的工作描述]"        # 例：撰寫 F01-SW-ARCH.md

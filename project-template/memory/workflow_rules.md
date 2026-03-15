@@ -435,7 +435,7 @@ Backend + Frontend + QA 完成
 | 24 | `MRR` | 模組回顧報告 | — | `00_Governance/Retro/Module/` |
 | 26 | `PIP` | 流程改善提案 | — | `00_Governance/PIP/` |
 
-> **💡 專案適配**：AICC-X 使用自訂資料夾結構（`02_Specifications/`、`03_System_Design/`等），適配對照見 `memory/last_task.md`。
+> **💡 專案適配**：各專案可使用自訂資料夾結構，適配對照見 `memory/last_task.md`。
 
 ### doc_id 系統（DOC-C §6.2，GAP-A）
 
@@ -449,7 +449,7 @@ Backend + Frontend + QA 完成
   API.F01.AUTH  ← Auth API Spec
 ```
 
-**AICC-X 專案精簡格式（交接摘要適用）：**
+**精簡格式（交接摘要適用）：**
 ```
 [F##]-[類型縮寫]-v[版本]
 
@@ -1350,7 +1350,7 @@ signature:
 | **RB-03** | 四格提案完成後，AI 產出的新規則必須同步更新 `workflow_rules.md` + 對應 SEED 檔案 |
 | **RB-04** | 新規則落地後，將「痛點」紀錄至 `memory/knowledge_base/` 適合的 KB 分類（KB-BP 最佳實踐 或 KB-AH 幻覺案例）|
 
-### 實際範例（取自 AICC-X 方法論演進史）
+### 實際範例
 
 ```
 【痛點】AI 改完 Code 引入新 bug，沒有偵測機制
@@ -1407,7 +1407,7 @@ signature:
 
 ## 二十六、方法論使用 Anti-Pattern 清單（Rebuild Template §Tip4，GAP-C）
 
-> **核心目的：** 明確「什麼不該做」比「什麼要做」更有效防止錯誤。以下清單來自 AICC-X 方法論演進的實際失敗案例。
+> **核心目的：** 明確「什麼不該做」比「什麼要做」更有效防止錯誤。以下清單來自實際失敗案例。
 
 ### AI 使用 Anti-Pattern
 
@@ -1540,7 +1540,7 @@ signature:
 *v1.8 更新（Data_Contract_and_AI_Code_Governance_v1.5）：GA-COMP 升級為加權公式 + A/B/C/D/F 分級（GAP-C）；CCP-01~05 Session Handoff 連續性協議（GAP-A）；DSV-01~05 AI 修改範圍驗證（GAP-B）；DDG-01~05 設計決策圖譜（GAP-D）；GAP-01~05 Gate 自動化差異確認（GAP-E）*
 *v1.9 更新（File_Naming_and_Folder_Convention_v1.3）：doc_id 雙向轉換規則（GAP-A）；Sign-off 檔案命名規範 + R-SIGNOFF-01~05（GAP-B）；MASTER_INDEX 格式 + CI 維護規則（GAP-C）；CIA/MTG/INT/TPL 特殊檔案命名（GAP-D）；GA Phase→GA 映射表 + 密度門檻 + 追溯矩陣（GAP-E）；成熟度逾期歸檔時間規則（GAP-F）；_config/ 可變參數管理 R-CFG-01~04（GAP-G）*
 *v2.0 更新（Methodology_Rebuild_Prompt_Template_v1.1）：痛點驅動四格框架 RB-01~04（GAP-A）；批次產出策略 + 迭代審查收斂循環 RB-05~07（GAP-B）；AI/文件/協作三類 Anti-Pattern 清單（GAP-C）*
-*v2.1 更新（AICC-X 實踐痛點）：USL-01~05 UI 風格鎖定規則（問題1：UX 迭代樣式漂移）；PTC-01~05 Prototype 追溯鏈（問題2：開發不照 Prototype）；CIC-01~05 跨 Pipeline Context 繼承（問題3：開發規劃未讀需求）*
+*v2.1 更新（實踐痛點）：USL-01~05 UI 風格鎖定規則（問題1：UX 迭代樣式漂移）；PTC-01~05 Prototype 追溯鏈（問題2：開發不照 Prototype）；CIC-01~05 跨 Pipeline Context 繼承（問題3：開發規劃未讀需求）*
 *適配版本：[專案名稱] Agent 工作流程 | [日期]*
 
 ---

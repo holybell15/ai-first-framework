@@ -170,7 +170,7 @@ RS 完成後，在送出前自問：
 
 ## 輸出位置
 `01_Requirements/F##_[模組]/02_SRS_F##_[功能名稱]_v0.1.0.md`
-> AICC-X 專案對應：`02_Specifications/02_SRS_F##_[功能名稱]_v0.1.0.md`
+> [專案名稱] 對應：`02_Specifications/02_SRS_F##_[功能名稱]_v0.1.0.md`
 
 ---
 

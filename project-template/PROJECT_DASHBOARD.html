@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AICC-X ▸ 專案流程儀表板</title>
+<title>[產品名稱] ▸ 專案流程儀表板</title>
 <!--
-  AICC-X PROJECT DASHBOARD
-  版本：v2.1  |  2026-03-12
+  [產品名稱] PROJECT DASHBOARD
+  版本：v2.3  |  2026-03-15
   用途：新人、新 Agent 快速掌握整體工作流
   四個視角：Pipeline / Agent / Gate / 回顧
+  v2.3：新增 Pipeline: Hotfix + 舊專案接入；§42 Brownfield 改動流程；GSD §32-§42 完整整合；模板污染清零
+  v2.2：workflow_rules.md v2.3：GSD §38-§41（STATE.md/Wave/Model Profiles/map-codebase）
   v2.1：新增 Cowork↔Claude Code 工具切換路徑、Gate Review 獨立 session 指引、Pipeline footer 更新 review 提示
   v2.0：新增 G4-ENG 工程中間門、DSV 內嵌循環、更新 Gate checklist（G1-BL/DDG/DSV）、修正 doc_id 格式
 -->
@@ -51,6 +53,10 @@
   --pipe-deploy:     #D97706;  /* P06 部署上線 — 橘 */
   --pipe-deploy-bg:  #FFFBEB;
   --pipe-eng:        #EA580C;  /* G4-ENG 工程中間門 — 深橘 */
+  --pipe-hotfix:     #B91C1C;  /* Hotfix — 深紅 */
+  --pipe-hotfix-bg:  #FEF2F2;
+  --pipe-legacy:     #0D9488;  /* 舊專案接入 — 藍綠 */
+  --pipe-legacy-bg:  #F0FDFA;
   --pipe-eng-bg:     #FFF7F0;
   /* Gate 顏色 */
   --gate1:          #7C3AED;
@@ -287,12 +293,14 @@ body {
 .skill-cat-dev { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
 .skill-cat-pro { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
 
-.gsd-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.gsd-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border: 1.5px solid #DDD6FE; border-radius: 8px; background: #FAFAFF; }
-.gsd-item:hover { border-color: #7C3AED; background: #F5F3FF; }
-.gsd-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; background: #EDE9FE; border-radius: 6px; flex-shrink: 0; }
-.gsd-badge { font-size: 9px; padding: 1px 6px; border-radius: 3px; font-weight: 600; background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE; }
-.gsd-rule { font-size: 9px; color: #8B5CF6; font-weight: 500; margin-top: 2px; }
+.gsd-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.gsd-category { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; }
+.gsd-cat-header { padding: 10px 14px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; }
+.gsd-cat-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.gsd-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; border: 1px solid; border-radius: 6px; }
+.gsd-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.gsd-badge { font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
+.gsd-rule { font-size: 9px; font-weight: 500; }
 
 .gate-grid { display: flex; flex-direction: column; gap: 24px; }
 .gate-card { border-radius: 10px; overflow: hidden; border: 1.5px solid var(--border); }
@@ -794,13 +802,34 @@ body {
 .faq-q { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .faq-a { font-size: 12px; color: var(--muted); line-height: 1.6; }
 .faq-a code { background: var(--primary-light); color: var(--primary); padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 10px; }
+/* ── Changelog Tab ── */
+.rn-list { display:flex; flex-direction:column; gap:20px; }
+.rn-entry { border:1.5px solid var(--border); border-radius:10px; overflow:hidden; }
+.rn-header { display:flex; align-items:center; gap:10px; padding:12px 16px; background:#F8FAFC; border-bottom:1px solid var(--border); }
+.rn-version { font-size:13px; font-weight:800; color:#7C3AED; background:#F5F3FF; border:1.5px solid #DDD6FE; padding:2px 10px; border-radius:20px; font-family:'Courier New',monospace; }
+.rn-date { font-size:11px; color:var(--muted); }
+.rn-latest-badge { font-size:9px; font-weight:800; background:#7C3AED; color:#fff; padding:2px 7px; border-radius:10px; text-transform:uppercase; letter-spacing:.5px; }
+.rn-body { padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+.rn-section { display:flex; flex-direction:column; gap:5px; }
+.rn-section-label { display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; padding:2px 8px; border-radius:4px; width:fit-content; }
+.rn-section-label.added   { background:#DCFCE7; color:#166534; }
+.rn-section-label.changed { background:#DBEAFE; color:#1E40AF; }
+.rn-section-label.fixed   { background:#FEF3C7; color:#92400E; }
+.rn-section-label.removed { background:#FEE2E2; color:#991B1B; }
+.rn-items { list-style:none; margin:0; padding:0 0 0 4px; display:flex; flex-direction:column; gap:3px; }
+.rn-item { font-size:12px; color:var(--text); line-height:1.5; padding-left:12px; position:relative; }
+.rn-item::before { content:'·'; position:absolute; left:2px; color:var(--muted); }
+.rn-item code { background:var(--primary-light); color:var(--primary); padding:1px 4px; border-radius:3px; font-size:10px; font-family:'Courier New',monospace; }
+.rn-how-to { background:#FFFBEB; border:1.5px solid #FEF08A; border-radius:8px; padding:12px 14px; font-size:11px; color:#92400E; line-height:1.7; margin-bottom:16px; }
+.rn-how-to strong { color:#78350F; }
+.rn-how-to code { background:#FEF9C3; color:#713F12; padding:1px 5px; border-radius:3px; font-size:10px; font-family:'Courier New',monospace; }
 </style>
 </head>
 <body>
 
 <!-- ══ PAGE HEADER ══ -->
 <div class="page-header">
-  <div class="ph-logo"><div class="ph-dot"></div>AICC-X</div>
+  <div class="ph-logo"><div class="ph-dot"></div>[產品名稱]</div>
   <div class="ph-sep"></div>
   <button class="export-btn" onclick="exportReport()" title="匯出 Markdown 狀態報告">
     📋 匯出報告
@@ -840,6 +869,10 @@ body {
     <div class="tab-btn-dot" style="background:#D97706"></div>
     使用指南
   </button>
+  <button class="tab-btn" onclick="switchTab('changelog', this)">
+    <div class="tab-btn-dot" style="background:#7C3AED"></div>
+    更新日誌
+  </button>
 </div>
 
 <!-- ══ TAB AREA ══ -->
@@ -847,11 +880,37 @@ body {
 
 <!-- ─── TAB 1: PIPELINE ─── -->
 <div class="tab-panel active" id="tab-pipeline">
-  <div class="sec-title">
-    <div class="sec-title-dot" style="background:var(--pipe-req)"></div>
-    Pipeline 執行流程
-    <span class="sec-sub">觸發指令 → 說「執行 Pipeline: [名稱]」，Claude 自動依序執行所有 Agent。每個節點右下角的標籤為應產出的文件。</span>
+
+  <!-- Sub-nav -->
+  <div style="display:flex;gap:8px;margin-bottom:18px;border-bottom:2px solid var(--border);padding-bottom:12px;flex-wrap:wrap">
+    <button class="pipe-section-btn" data-section="new" onclick="showPipeSection('new',this)"
+      style="display:flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;border:2px solid #7C3AED;background:#F5F3FF;color:#5B21B6;font-size:12px;font-weight:700;cursor:pointer">
+      🆕 新專案
+    </button>
+    <button class="pipe-section-btn" data-section="brownfield" onclick="showPipeSection('brownfield',this)"
+      style="display:flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;border:2px solid var(--border);background:#fff;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer">
+      🏗️ 舊專案引入
+    </button>
+    <button class="pipe-section-btn" data-section="hotfix" onclick="showPipeSection('hotfix',this)"
+      style="display:flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;border:2px solid var(--border);background:#fff;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer">
+      🚨 Hotfix
+    </button>
+    <div style="margin-left:auto;font-size:11px;color:var(--muted);align-self:center">觸發：說「執行 Pipeline: [名稱]」，Claude 自動串接 Agent</div>
   </div>
+
+  <!-- ════ SECTION A: 新專案 ════ -->
+  <div id="pipe-section-new">
+
+  <!-- Task-Master 入場層 -->
+  <div style="margin-bottom:14px;padding:12px 18px;background:#F5F3FF;border:2px solid #7C3AED;border-radius:10px;display:flex;align-items:center;gap:14px">
+    <div style="font-size:26px;flex-shrink:0">🗂️</div>
+    <div style="flex:1">
+      <div style="font-size:12px;font-weight:700;color:#4C1D95;margin-bottom:3px">每個 Session 的入場點：Task-Master</div>
+      <div style="font-size:11px;color:#6D28D9;line-height:1.6">每次開工前說：<code style="background:#EDE9FE;padding:1px 6px;border-radius:4px;font-weight:600">執行 Task-Master</code>　→　讀 STATE.md + TASKS.md → 輸出派遣報告 → 決定啟動哪個 Pipeline</div>
+    </div>
+    <div style="font-size:10px;color:#7C3AED;background:#EDE9FE;border:1px solid #C4B5FD;border-radius:6px;padding:6px 10px;text-align:center;flex-shrink:0;line-height:1.7">🔴 P0 Hotfix<br>🟠 P1 進行中<br>🟡 P2 Backlog</div>
+  </div>
+
   <div class="pipeline-grid">
 
     <!-- ── P01: 需求訪談 ── -->
@@ -1225,71 +1284,268 @@ body {
   </div><!-- /pipeline-grid -->
 
   <!-- 工具切換執行路徑 -->
-  <div style="margin-top:20px;padding:18px;background:linear-gradient(135deg,#F5F3FF 0%,#EEF4FF 50%,#ECFEFF 100%);border:2px solid #DDD6FE;border-radius:10px">
-    <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px">
-      🔀 完整執行路徑（Cowork ↔ Claude Code）
-    </div>
+  <div style="margin-top:14px;padding:18px;background:linear-gradient(135deg,#F5F3FF 0%,#EEF4FF 50%,#ECFEFF 100%);border:2px solid #DDD6FE;border-radius:10px">
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">🔀 完整執行路徑（Cowork ↔ Claude Code）</div>
     <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch">
-      <!-- 左：Cowork -->
-      <div style="background:#fff;border:2px solid var(--pipe-req);border-radius:8px;padding:14px">
-        <div style="font-size:12px;font-weight:700;color:var(--pipe-req);margin-bottom:10px;display:flex;align-items:center;gap:6px">
-          💬 Cowork（需求階段）
-        </div>
-        <div style="font-size:11px;color:var(--text);line-height:2">
-          P01 需求訪談（Interviewer → PM → UX）<br>
-          ↓ Pipeline 完成<br>
-          🔍 開新 Cowork task → <strong>Gate 1 Review</strong>（獨立 session）<br>
-          ↓ Pass
-        </div>
+      <div style="background:#fff;border:2px solid var(--pipe-req);border-radius:8px;padding:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--pipe-req);margin-bottom:8px">💬 Cowork（需求階段）</div>
+        <div style="font-size:11px;color:var(--text);line-height:2">P01 需求訪談（Interviewer → PM → UX）<br>↓ Pipeline 完成<br>🔍 開新 Cowork task → <strong>Gate 1 Review</strong>（獨立 session）<br>↓ Pass</div>
       </div>
-      <!-- 中：切換箭頭 -->
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
         <div style="font-size:20px">🔀</div>
         <div style="writing-mode:vertical-lr;font-size:10px;font-weight:700;color:var(--pipe-req);letter-spacing:1px">切換</div>
       </div>
-      <!-- 右：Claude Code -->
-      <div style="background:#fff;border:2px solid var(--primary);border-radius:8px;padding:14px">
-        <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:10px;display:flex;align-items:center;gap:6px">
-          ⌨️ Claude Code（技術階段）
-        </div>
-        <div style="font-size:11px;color:var(--text);line-height:2">
-          P02 技術設計 → 🔍 Gate 2（獨立 session）<br>
-          P03 開發準備 → 🔍 G4-ENG（獨立 session）<br>
-          P04 實作開發 → 🔍 Gate 3（獨立 session）<br>
-          P05 合規審查 → P06 部署上線
-        </div>
+      <div style="background:#fff;border:2px solid var(--primary);border-radius:8px;padding:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--primary);margin-bottom:8px">⌨️ Claude Code（技術階段）</div>
+        <div style="font-size:11px;color:var(--text);line-height:2">P02 技術設計 → 🔍 Gate 2（獨立 session）<br>P03 開發準備 → 🔍 G4-ENG（獨立 session）<br>P04 實作開發 → 🔍 Gate 3（獨立 session）<br>P05 合規審查 → P06 部署上線</div>
       </div>
     </div>
-    <div style="margin-top:10px;font-size:11px;color:var(--muted);line-height:1.6;display:flex;gap:16px">
-      <span>🔍 = 必須開新 session 做 Review（避免自己審自己）</span>
-      <span>🔀 = Gate 1 是唯一的 Cowork → Claude Code 切換點</span>
-    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted)">🔍 = 必須開新 session 做 Review &nbsp;|&nbsp; 🔀 = Gate 1 是唯一切換點</div>
   </div>
 
   <!-- 執行規則 + 文件命名 -->
-  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
-    <div style="padding:14px 18px;background:#F8FAFC;border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.8">
-      <strong style="color:var(--text)">Pipeline 執行規則：</strong>
-      每個 Agent 完成後自動更新 TASKS.md 交接摘要。
-      Claude 顯示「✅ [Agent] 完成，繼續執行下一步嗎？」
-      你只需回覆「<strong style="color:var(--primary)">繼續</strong>」或「<strong style="color:var(--danger)">停</strong>」。
-      每輪結束前 Claude 報告「目前理解的是…」（防幻覺機制）。
+  <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="padding:12px 16px;background:#F8FAFC;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.8">
+      <strong style="color:var(--text)">執行規則：</strong>每個 Agent 完成後更新 TASKS.md 交接摘要。Claude 顯示「✅ [Agent] 完成，繼續？」。你只需回覆「<strong style="color:var(--primary)">繼續</strong>」或「<strong style="color:var(--danger)">停</strong>」。
     </div>
-    <div style="padding:14px 18px;background:#F8FAFC;border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.8">
-      <strong style="color:var(--text)">文件命名規範（doc_id）：</strong>
-      doc_id 格式：<code style="background:#EEF4FF;color:var(--primary);padding:1px 5px;border-radius:3px">{DocType}.{F碼}.{描述3~6字母}</code>
-      ↔ 檔名：<code style="background:#EEF4FF;color:var(--primary);padding:1px 5px;border-radius:3px">{F碼}-{DocType}-{描述}-v{M.m.p}.md</code><br>
-      DocType 縮寫：SRS=需求規格、SA=系統架構、SD-API=API規格、SD-DB=資料庫、TC=測試案例、TR=測試報告、SEC=安全稽核
+    <div style="padding:12px 16px;background:#F8FAFC;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.8">
+      <strong style="color:var(--text)">文件命名：</strong><code style="background:#EEF4FF;color:var(--primary);padding:1px 4px;border-radius:3px">{F碼}-{DocType}-{描述}-v{M.m.p}.md</code><br>DocType：SRS / SA / SD-API / SD-DB / TC / TR / SEC
     </div>
   </div>
+
+  </div><!-- /pipe-section-new -->
+
+  <!-- ════ SECTION B: 舊專案引入 ════ -->
+  <div id="pipe-section-brownfield" style="display:none">
+
+  <!-- 核心原則 -->
+  <div style="margin-bottom:14px;padding:12px 16px;background:#F0FDF9;border:2px solid #14B8A6;border-radius:10px;font-size:12px;color:#0F766E;line-height:1.7">
+    <strong style="font-size:13px">🏗️ 舊專案引入（Brownfield Onboarding）— 一次性，約 1~2 天</strong><br>
+    適用於已有 codebase 的專案首次導入框架。<strong>核心原則：不強迫補全舊 code 的所有文件</strong>，建立 baseline 快照後，新工作才走完整 Pipeline。
+  </div>
+
+  <!-- 前置步驟 -->
+  <div style="margin-bottom:14px;padding:12px 16px;background:#F8FAFC;border:1.5px solid var(--border);border-radius:8px;font-size:11px;color:var(--text);line-height:1.8">
+    <strong style="color:var(--text)">前置步驟（先做完再觸發 Pipeline）</strong><br>
+    1. 複製 <code style="background:#EEF4FF;color:var(--primary);padding:1px 4px;border-radius:3px">project-template/</code> 框架檔案至現有專案（不覆蓋 src/）<br>
+    2. 執行 <code style="background:#EEF4FF;color:var(--primary);padding:1px 4px;border-radius:3px">/info-init</code> 填入專案資訊 + <code style="background:#EEF4FF;color:var(--primary);padding:1px 4px;border-radius:3px">/info-setup-team</code> 分配成員角色
+  </div>
+
+  <!-- Brownfield Pipeline Card -->
+  <div class="pipe-card" style="border-color:var(--pipe-legacy)">
+    <div class="pipe-header" style="background:var(--pipe-legacy-bg)">
+      <div class="pipe-icon" style="background:var(--pipe-legacy);color:#fff">🔄</div>
+      <div>
+        <div class="pipe-num" style="color:var(--pipe-legacy)">PIPELINE — 一次性</div>
+        <div class="pipe-name" style="color:var(--pipe-legacy)">舊專案接入（Brownfield Onboarding）</div>
+      </div>
+      <span class="badge" style="margin-left:auto;background:var(--pipe-legacy-bg);color:var(--pipe-legacy);border:1px solid #99F6E4">約 1~2 天</span>
+    </div>
+    <div class="pipe-trigger"><span class="pipe-trigger-label">觸發：</span><span>執行 Pipeline: <span>舊專案接入</span></span></div>
+    <div class="pipe-flow" style="flex-wrap:wrap;gap:6px">
+      <div class="pf-agent" style="border-color:var(--pipe-legacy)">
+        <div class="pf-agent-icon">🗺️</div>
+        <div class="pf-agent-name">4-Agent 並行</div>
+        <div class="pf-agent-role">技術全景掃描<br>§41 map-codebase</div>
+        <div class="pf-doc" style="color:var(--pipe-legacy);border-color:var(--pipe-legacy);background:var(--pipe-legacy-bg)">codebase_snapshot.md</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-legacy)">
+        <div class="pf-agent-icon">📋</div>
+        <div class="pf-agent-name">PM + Architect</div>
+        <div class="pf-agent-role">Feature 盤點<br>F-code 分配</div>
+        <div class="pf-doc" style="color:var(--pipe-legacy);border-color:var(--pipe-legacy);background:var(--pipe-legacy-bg)">MASTER_INDEX.md</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-legacy)">
+        <div class="pf-agent-icon">📐</div>
+        <div class="pf-agent-name">Architect</div>
+        <div class="pf-agent-role">技術決策<br>補記 ADR</div>
+        <div class="pf-doc" style="color:var(--pipe-legacy);border-color:var(--pipe-legacy);background:var(--pipe-legacy-bg)">decisions.md</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-legacy)">
+        <div class="pf-agent-icon">⚠️</div>
+        <div class="pf-agent-name">Architect</div>
+        <div class="pf-agent-role">技術債<br>顯性登記</div>
+        <div class="pf-doc" style="color:var(--pipe-legacy);border-color:var(--pipe-legacy);background:var(--pipe-legacy-bg)">TECH_DEBT.md</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-legacy)">
+        <div class="pf-agent-icon">📊</div>
+        <div class="pf-agent-name">Review</div>
+        <div class="pf-agent-role">GAP 評估<br>vs 10_Standards</div>
+        <div class="pf-doc" style="color:var(--pipe-legacy);border-color:var(--pipe-legacy);background:var(--pipe-legacy-bg)">GAP Report</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-legacy)">
+        <div class="pf-agent-icon">⚙️</div>
+        <div class="pf-agent-name">DevOps</div>
+        <div class="pf-agent-role">環境 + CI<br>整合</div>
+        <div class="pf-doc" style="color:var(--pipe-legacy);border-color:var(--pipe-legacy);background:var(--pipe-legacy-bg)">.env / CI</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-legacy)">
+        <div class="pf-agent-icon">✅</div>
+        <div class="pf-agent-name">接入宣告</div>
+        <div class="pf-agent-role">commit + 啟動<br>正常 Pipeline</div>
+        <div class="pf-doc" style="color:var(--pipe-legacy);border-color:var(--pipe-legacy);background:var(--pipe-legacy-bg)">feat: adopt FW</div>
+      </div>
+    </div>
+    <div style="padding:8px 18px 12px;font-size:11px;color:var(--pipe-legacy);background:var(--pipe-legacy-bg);border-top:1px solid #99F6E4;line-height:1.8">
+      ⚠️ 接入時不需回頭跑舊 Gate Review，也不需為舊功能補齊完整 RS — 只需 baseline 快照
+    </div>
+  </div>
+
+  <!-- 接入後工作方式 -->
+  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+    <div style="padding:12px 14px;background:#F0FDF9;border:1.5px solid #99F6E4;border-radius:8px;font-size:11px;color:#0F766E;line-height:1.7">
+      <strong>🆕 新功能</strong><br>正常走 P01 需求訪談 → P02 → ... → P06
+    </div>
+    <div style="padding:12px 14px;background:#EFF6FF;border:1.5px solid #93C5FD;border-radius:8px;font-size:11px;color:#1E40AF;line-height:1.7">
+      <strong>✏️ 修改舊功能</strong><br>§42 Brownfield 四步法<br>Ground → 補 RS → 補測試 → Execute
+    </div>
+    <div style="padding:12px 14px;background:#FFF1F2;border:1.5px solid #FECACA;border-radius:8px;font-size:11px;color:#BE123C;line-height:1.7">
+      <strong>🚨 緊急問題</strong><br>切換到 Hotfix 區塊<br>走緊急修復最短路徑
+    </div>
+  </div>
+
+  </div><!-- /pipe-section-brownfield -->
+
+  <!-- ════ SECTION C: Hotfix ════ -->
+  <div id="pipe-section-hotfix" style="display:none">
+
+  <!-- 嚴重度判定 -->
+  <div style="margin-bottom:14px;padding:12px 16px;background:#FFF1F2;border:2px solid #F43F5E;border-radius:10px">
+    <div style="font-size:13px;font-weight:700;color:#BE123C;margin-bottom:10px">🚨 Hotfix — 第一步：嚴重度判定（必做）</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px">
+      <tr style="background:#FEE2E2">
+        <th style="padding:6px 10px;text-align:left;border:1px solid #FECACA;color:#991B1B;width:12%">嚴重度</th>
+        <th style="padding:6px 10px;text-align:left;border:1px solid #FECACA;color:#991B1B;width:40%">判定條件</th>
+        <th style="padding:6px 10px;text-align:left;border:1px solid #FECACA;color:#991B1B">路徑</th>
+      </tr>
+      <tr style="background:#FFF1F2">
+        <td style="padding:6px 10px;border:1px solid #FECACA;font-weight:700;color:#BE123C">🔴 Critical</td>
+        <td style="padding:6px 10px;border:1px solid #FECACA;color:#9F1239">服務中斷 / 資料外洩 / P0 合規違規</td>
+        <td style="padding:6px 10px;border:1px solid #FECACA;font-weight:700;color:#BE123C">→ Hotfix Pipeline（見下方）</td>
+      </tr>
+      <tr style="background:#FFF1F2">
+        <td style="padding:6px 10px;border:1px solid #FECACA;font-weight:700;color:#C2410C">🟠 High</td>
+        <td style="padding:6px 10px;border:1px solid #FECACA;color:#9A3412">核心功能完全失效 / 資料錯誤但未外洩</td>
+        <td style="padding:6px 10px;border:1px solid #FECACA;font-weight:700;color:#C2410C">→ Hotfix Pipeline（見下方）</td>
+      </tr>
+      <tr style="background:#FFFBEB">
+        <td style="padding:6px 10px;border:1px solid #FEF08A;font-weight:700;color:#B45309">🟡 Medium</td>
+        <td style="padding:6px 10px;border:1px solid #FEF08A;color:#92400E">功能部分異常，有替代方案</td>
+        <td style="padding:6px 10px;border:1px solid #FEF08A">→ 正常 Sprint，優先排入（<strong>不走 Hotfix</strong>）</td>
+      </tr>
+      <tr style="background:#F0FDF4">
+        <td style="padding:6px 10px;border:1px solid #86EFAC;font-weight:700;color:#15803D">🟢 Low</td>
+        <td style="padding:6px 10px;border:1px solid #86EFAC;color:#166534">體驗問題 / 文字錯誤</td>
+        <td style="padding:6px 10px;border:1px solid #86EFAC">→ 正常 Sprint（<strong>不走 Hotfix</strong>）</td>
+      </tr>
+    </table>
+    <div style="margin-top:8px;font-size:11px;color:#BE123C;font-weight:600">⚠️ 緊急感 ≠ 嚴重度。Medium / Low 不走 Hotfix。</div>
+  </div>
+
+  <!-- Hotfix Pipeline Card -->
+  <div class="pipe-card" style="border-color:var(--pipe-hotfix)">
+    <div class="pipe-header" style="background:var(--pipe-hotfix-bg)">
+      <div class="pipe-icon" style="background:var(--pipe-hotfix);color:#fff">🚨</div>
+      <div>
+        <div class="pipe-num" style="color:var(--pipe-hotfix)">PIPELINE — 緊急</div>
+        <div class="pipe-name" style="color:var(--pipe-hotfix)">Hotfix（Critical / High 專用）</div>
+      </div>
+      <span class="badge" style="margin-left:auto;background:var(--pipe-hotfix-bg);color:var(--pipe-hotfix);border:1px solid #FECACA">總目標 &lt;4hr 上線</span>
+    </div>
+    <div class="pipe-trigger"><span class="pipe-trigger-label">觸發：</span><span>執行 Hotfix: <span>[問題描述]</span>　或　<code style="background:#FEF2F2;padding:1px 5px;border-radius:3px">/info-hotfix</code></span></div>
+    <div class="pipe-flow" style="flex-wrap:wrap;gap:6px">
+      <div class="pf-agent" style="border-color:var(--pipe-hotfix)">
+        <div class="pf-agent-icon">👁️</div>
+        <div class="pf-agent-name">Review</div>
+        <div class="pf-agent-role">嚴重度判定<br>開案</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">&lt;15min</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">hotfix_log.md</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-hotfix)">
+        <div class="pf-agent-icon">🔍</div>
+        <div class="pf-agent-name">Backend/FE</div>
+        <div class="pf-agent-role">根因分析<br>systematic-debugging</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">&lt;1hr</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">root cause 確認</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-hotfix)">
+        <div class="pf-agent-icon">🔧</div>
+        <div class="pf-agent-name">Backend/FE</div>
+        <div class="pf-agent-role">最小化修復<br>≤2 架構層</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">&lt;2hr</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">smoke test</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-hotfix)">
+        <div class="pf-agent-icon">🔄</div>
+        <div class="pf-agent-name">DevOps</div>
+        <div class="pf-agent-role">Rollback 準備<br>部署前必做</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">rollback 腳本</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">Feature Flag</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-hotfix)">
+        <div class="pf-agent-icon">👁️</div>
+        <div class="pf-agent-name">Review</div>
+        <div class="pf-agent-role">快速審查<br>HF-01~06</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">&lt;30min</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">🔴 Critical +Security</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-hotfix)">
+        <div class="pf-agent-icon">🚀</div>
+        <div class="pf-agent-name">DevOps</div>
+        <div class="pf-agent-role">Staging → Prod<br>冒煙測試通過</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">hotfix_log.md ✅</div>
+      </div>
+      <div class="pf-arrow">→</div>
+      <div class="pf-agent" style="border-color:var(--pipe-hotfix)">
+        <div class="pf-agent-icon">📝</div>
+        <div class="pf-agent-name">補件</div>
+        <div class="pf-agent-role">RS 更新<br>Gate 文件補齊</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">48hr 內</div>
+        <div class="pf-doc" style="color:var(--pipe-hotfix);border-color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg)">GRN 文件</div>
+      </div>
+    </div>
+    <div style="padding:8px 18px 12px;font-size:11px;color:var(--pipe-hotfix);background:var(--pipe-hotfix-bg);border-top:1px solid #FECACA;line-height:1.8">
+      🔑 Branch: <code>hotfix/HF-YYYY-NNN</code> &nbsp;|&nbsp; Commit: <code>hotfix(F##): [描述]</code> &nbsp;|&nbsp; Log ID: <code>HF-YYYY-NNN</code>
+    </div>
+  </div>
+
+  <!-- Hotfix 鐵則 -->
+  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div style="padding:12px 14px;background:#FFF1F2;border:1.5px solid #FECACA;border-radius:8px;font-size:11px;color:#9F1239;line-height:1.8">
+      <strong style="color:#BE123C">🚫 禁止事項</strong><br>
+      ❌ 禁止順帶重構（只修這個 bug）<br>
+      ❌ 根因未確認前禁止動 code<br>
+      ❌ 沒有 Rollback 方案不得上線
+    </div>
+    <div style="padding:12px 14px;background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:8px;font-size:11px;color:#15803D;line-height:1.8">
+      <strong style="color:#166534">✅ 必做事項</strong><br>
+      ✅ Rollback 腳本可執行後才部署<br>
+      ✅ 48hr 內補齊 RS + Gate 文件<br>
+      ✅ hotfix_log.md 全程更新
+    </div>
+  </div>
+
+  </div><!-- /pipe-section-hotfix -->
+
 </div><!-- /tab-pipeline -->
 
 <!-- ─── TAB 2: AGENT ─── -->
 <div class="tab-panel" id="tab-agent">
   <div class="sec-title">
     <div class="sec-title-dot" style="background:var(--primary)"></div>
-    11 個專業 Agent
-    <span class="sec-sub">點擊展開詳細資訊。使用 SEED 種子檔啟動對應 Agent</span>
+    12 個 Agent（11 執行 + 1 協調）
+    <span class="sec-sub">點擊展開詳細資訊。🗂️ Task-Master 是每個 session 的入場點</span>
   </div>
   <div class="agent-summary-bar" id="agent-summary-bar"></div>
   <div class="agent-grid" id="agent-grid">
@@ -1306,12 +1562,12 @@ body {
     <div id="skill-catalog"></div>
   </div>
 
-  <!-- GSD 工作流程增強機制 -->
+  <!-- 流程規則速查 -->
   <div style="margin-top:28px">
     <div class="sec-title">
       <div class="sec-title-dot" style="background:#7C3AED"></div>
-      ⚡ GSD 工作流程增強機制
-      <span class="sec-sub">整合自 Get Shit Done 框架，詳見 memory/workflow_rules.md §32-§37</span>
+      📋 流程規則速查
+      <span class="sec-sub">按情境查找 — 詳細規則見 memory/workflow_rules.md §32-§42</span>
     </div>
     <div id="gsd-mechanisms"></div>
   </div>
@@ -1730,55 +1986,59 @@ body {
 
   <!-- 建立新專案 -->
   <div class="guide-section">
-    <div class="guide-section-title">⚡ 建立新專案（3 步驟）</div>
+    <div class="guide-section-title">⚡ 建立新專案（5 步驟）</div>
     <div class="guide-section-body">
       <div class="guide-steps">
         <div class="guide-step">
           <div class="guide-step-num">1</div>
           <div class="guide-step-body">
-            <div class="guide-step-title">安裝 Skill，一鍵初始化（自動）</div>
-            <div class="guide-step-desc">
-              找到 <code>project-init.skill</code> 檔案，雙擊安裝。打開 Claude，輸入：
-            </div>
-            <div class="guide-cmd-block">
-              初始化新專案
-              <span class="guide-cmd-copy" onclick="copyCmd('初始化新專案', this)">複製</span>
-            </div>
-            <div class="guide-step-desc">Claude 會問你 4 個問題，回答後整個專案資料夾自動建立完成。</div>
+            <div class="guide-step-title">執行初始化腳本（自動建立專案資料夾）</div>
+            <div class="guide-step-desc">在 terminal 執行：</div>
+            <div class="guide-cmd-block">bash scripts/new-project.sh [ProjectName] /path/to/projects [ErrorPrefix]<span class="guide-cmd-copy" onclick="copyCmd('bash scripts/new-project.sh MyProject /path/to/projects MYAPP', this)">複製</span></div>
+            <div class="guide-step-desc">腳本自動複製 template、替換所有 <code>[佔位符]</code>（含 CLAUDE.md、錯誤碼前綴）、建立 memory/ 初始檔案。</div>
             <table class="guide-table" style="margin-top:8px">
-              <tr><th>問題</th><th>範例</th></tr>
-              <tr><td>專案名稱</td><td><code>FinCore-X</code></td></tr>
-              <tr><td>產品類型</td><td><code>SaaS B2B — 多租戶核心銀行平台</code></td></tr>
-              <tr><td>技術棧</td><td><code>Vue 3 / Spring Boot / MySQL / GCP</code></td></tr>
-              <tr><td>存放位置</td><td><code>/Users/yourname/Documents/Projects/</code></td></tr>
+              <tr><th>參數</th><th>範例</th></tr>
+              <tr><td>ProjectName</td><td><code>FinCore-X</code></td></tr>
+              <tr><td>ProjectPath</td><td><code>/Users/yourname/Projects/</code></td></tr>
+              <tr><td>ErrorPrefix</td><td><code>FCX</code>（API 錯誤碼前綴，大寫）</td></tr>
             </table>
           </div>
         </div>
         <div class="guide-step">
           <div class="guide-step-num">2</div>
           <div class="guide-step-body">
-            <div class="guide-step-title">填寫產品基本資料（5 分鐘，手動）</div>
+            <div class="guide-step-title">填寫產品基本資料（5 分鐘）</div>
             <div class="guide-step-desc">
-              打開 <code>memory/product.md</code>，填入產品名稱、目標客群、核心功能清單（至少 5 個）、技術決策理由。這是 AI Agent 最重要的參考資料，填越詳細，訪談品質越好。
+              打開 <code>memory/product.md</code>，填入產品名稱、目標客群、核心功能清單（至少 5 個）、技術棧與決策理由。這是所有 AI Agent 最重要的參考資料，填越詳細，訪談品質越好。
             </div>
           </div>
         </div>
         <div class="guide-step">
           <div class="guide-step-num">3</div>
           <div class="guide-step-body">
-            <div class="guide-step-title">上傳至 Claude Project（3 分鐘，手動）</div>
-            <div class="guide-step-desc">前往 claude.ai → 建立新 Project → 上傳以下 4 個檔案作為知識庫，並在 System Prompt 貼上 <code>CLAUDE.md</code> 全文：</div>
-            <table class="guide-table">
-              <tr><th>檔案</th><th>用途</th></tr>
-              <tr><td><code>memory/product.md</code></td><td>產品基本資料（Agent 最常參考）</td></tr>
-              <tr><td><code>memory/decisions.md</code></td><td>技術決策記錄</td></tr>
-              <tr><td><code>memory/last_task.md</code></td><td>上次執行摘要</td></tr>
-              <tr><td><code>memory/workflow_rules.md</code></td><td>Agent 交接規範（必傳）</td></tr>
-            </table>
+            <div class="guide-step-title">進入專案，設定團隊成員</div>
+            <div class="guide-step-desc">開啟 Claude Code（<code>cd [專案路徑] → claude</code>），執行：</div>
+            <div class="guide-cmd-block">/info-setup-team<span class="guide-cmd-copy" onclick="copyCmd('/info-setup-team', this)">複製</span></div>
+            <div class="guide-step-desc">互動式問答，將每個 Agent 角色（PM / UX / Backend / Frontend…）分配給對應的團隊成員，自動寫入 <code>TEAM.md</code>。單人開發可全填自己。</div>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-num">4</div>
+          <div class="guide-step-body">
+            <div class="guide-step-title">執行 Task-Master 取得第一份派遣報告</div>
+            <div class="guide-cmd-block">執行 Task-Master<span class="guide-cmd-copy" onclick="copyCmd('執行 Task-Master', this)">複製</span></div>
+            <div class="guide-step-desc">Task-Master 讀取 STATE.md + TASKS.md，確認目前狀態並告訴你「現在最優先要做什麼、派給哪個 Agent」。</div>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-num">5</div>
+          <div class="guide-step-body">
+            <div class="guide-step-title">開始第一個 Pipeline</div>
+            <div class="guide-cmd-block">執行 Pipeline: 需求訪談<span class="guide-cmd-copy" onclick="copyCmd('執行 Pipeline: 需求訪談', this)">複製</span></div>
+            <div class="guide-step-desc">Claude 自動串接 Interviewer → PM → UX，產出第一批需求文件（IR、US、Prototype）。</div>
           </div>
         </div>
       </div>
-      <div class="guide-note">✅ 設定完成後說「<strong>執行 Pipeline: 需求訪談</strong>」，Claude 自動串接 Interviewer → PM → UX，產出第一批需求文件。</div>
     </div>
   </div>
 
@@ -1886,17 +2146,20 @@ body {
 
   <!-- 不知道要用哪個 Agent -->
   <div class="guide-section">
-    <div class="guide-section-title">🤖 不知道要用哪個 Agent？</div>
+    <div class="guide-section-title">🤖 不知道怎麼開始？Command 速查</div>
     <div class="guide-section-body">
+      <div class="guide-step-desc" style="margin-bottom:10px">優先使用 slash command（Claude Code 中 <code>/</code> 可 Tab 補全）。自然語言觸發詞仍然有效。</div>
       <table class="guide-table">
-        <tr><th>情況</th><th>說這句話</th></tr>
-        <tr><td>要討論新需求</td><td><code>執行 Pipeline: 需求訪談</code></td></tr>
-        <tr><td>要設計系統架構</td><td><code>執行 Pipeline: 技術設計</code></td></tr>
-        <tr><td>要準備開發</td><td><code>執行 Pipeline: 開發準備</code></td></tr>
-        <tr><td>要實作功能</td><td><code>執行 Pipeline: 實作開發</code></td></tr>
-        <tr><td>要做資安合規</td><td><code>執行 Pipeline: 合規審查</code></td></tr>
-        <tr><td>要部署上線</td><td><code>執行 Pipeline: 部署上線</code></td></tr>
-        <tr><td>單獨叫特定 Agent</td><td>切換到「Agent 視角」Tab → 點開 Agent 卡片 → 複製 SEED 檔路徑</td></tr>
+        <tr><th>情況</th><th>Slash Command</th><th>等效自然語言</th></tr>
+        <tr><td><strong>不知道從哪裡開始 / 優先級不確定</strong></td><td><code>/info-task-master</code></td><td>執行 Task-Master</td></tr>
+        <tr><td>有功能被 block / 有新功能要加入</td><td><code>/info-task-master</code></td><td>執行 Task-Master</td></tr>
+        <tr><td>啟動某個 Pipeline</td><td><code>/info-pipeline</code>（選單）</td><td>執行 Pipeline: [名稱]</td></tr>
+        <tr><td>單獨叫某個 Agent</td><td><code>/info-agent</code>（選單）</td><td>請讀取 context-seeds/SEED_[角色].md</td></tr>
+        <tr><td>直接叫特定 Agent + F-code 接地</td><td><code>/info-agent backend F03</code></td><td>—</td></tr>
+        <tr><td>緊急線上問題</td><td><code>/info-hotfix</code></td><td>執行 Hotfix: [問題描述]</td></tr>
+        <tr><td>現有專案首次導入框架</td><td><code>/info-pipeline</code> → 選 7</td><td>執行 Pipeline: 舊專案接入</td></tr>
+        <tr><td>Pipeline 完成，準備 Gate Review</td><td><code>/info-gate</code></td><td>—</td></tr>
+        <tr><td>暫停 / 恢復工作</td><td><code>/info-pause</code> / <code>/info-resume</code></td><td>—</td></tr>
       </table>
     </div>
   </div>
@@ -1906,8 +2169,16 @@ body {
     <div class="guide-section-title">🗂️ 資料夾速查</div>
     <div class="guide-section-body">
       <table class="guide-table">
-        <tr><th>資料夾</th><th>放什麼</th><th>典型檔名</th></tr>
-        <tr><td><code>01_Product_Prototype/</code></td><td>HTML Prototype</td><td><code>主控台_v0.1.html</code></td></tr>
+        <tr><th>資料夾 / 檔案</th><th>放什麼</th><th>典型檔名</th></tr>
+        <tr><td><code>CLAUDE.md</code></td><td>專案導航總表（Agent 每次必讀）</td><td>—</td></tr>
+        <tr><td><code>TASKS.md</code></td><td>任務清單與進度（F-code 狀態）</td><td>—</td></tr>
+        <tr><td><code>MASTER_INDEX.md</code></td><td>所有產出文件登記 + F-code 分配表</td><td>—</td></tr>
+        <tr><td><code>TEAM.md</code></td><td>團隊成員角色分配（/info-setup-team 產出）</td><td>—</td></tr>
+        <tr><td><code>memory/</code></td><td>跨 session 記憶庫</td><td><code>STATE.md</code>, <code>product.md</code>, <code>decisions.md</code></td></tr>
+        <tr><td><code>contracts/</code></td><td>資料契約文件（Field / ENUM Registry）</td><td><code>contract-*.md</code></td></tr>
+        <tr><td><code>context-seeds/</code></td><td>11 個 Agent 種子提示詞</td><td><code>SEED_PM.md</code>, <code>SEED_Backend.md</code>…</td></tr>
+        <tr><td><code>10_Standards/</code></td><td>三域技術標準 SSOT（API / DB / UI）</td><td><code>STD_API_Design.md</code>, <code>enum_registry.yaml</code></td></tr>
+        <tr><td><code>01_Product_Prototype/</code></td><td>HTML Prototype（UX 產出）</td><td><code>主控台_v0.1.html</code></td></tr>
         <tr><td><code>02_Specifications/</code></td><td>規格 / User Story / API Spec / 測試案例</td><td><code>F##-US.md</code>, <code>F##-API.md</code>, <code>F##-TC.md</code></td></tr>
         <tr><td><code>03_System_Design/</code></td><td>架構設計 / DB Schema / 部署計畫</td><td><code>F##-SW-ARCH.md</code>, <code>F##-DB.md</code></td></tr>
         <tr><td><code>04_Compliance/</code></td><td>資安 / 合規文件</td><td><code>F##-SEC.md</code></td></tr>
@@ -1916,7 +2187,7 @@ body {
         <tr><td><code>08_Test_Reports/</code></td><td>測試執行結果</td><td><code>F##-TR.md</code></td></tr>
         <tr><td><code>09_Release_Records/</code></td><td>上線交付簽核</td><td><code>F##-DEPLOY-RVW.md</code></td></tr>
       </table>
-      <div class="guide-note">分類原則：計畫/規格 → 02/03；執行結果 → 08；上線簽核 → 09；合規 → 04</div>
+      <div class="guide-note">分類原則：計畫/規格 → 02/03；執行結果 → 08；上線簽核 → 09；合規 → 04；三域標準 SSOT → 10_Standards/</div>
     </div>
   </div>
 
@@ -1930,40 +2201,45 @@ body {
         <div class="monitor-card">
           <div class="monitor-card-title">📋 每個 Sprint 檢查清單</div>
           <div class="guide-checklist">
+            <div class="guide-check-item"><div class="guide-check-dot">✓</div><span>說「<strong>執行 Task-Master</strong>」取得優先順序快照</span></div>
             <div class="guide-check-item"><div class="guide-check-dot">✓</div><span>Tab 1：Pipeline 完成狀態（幾個綠色？）</span></div>
+            <div class="guide-check-item"><div class="guide-check-dot">✓</div><span>Tab 5：進行中任務的 <code>owner</code> 是否對得上？</span></div>
             <div class="guide-check-item"><div class="guide-check-dot">✓</div><span>Tab 6：文件覆蓋矩陣（有無明顯空白格？）</span></div>
             <div class="guide-check-item"><div class="guide-check-dot">✓</div><span>Tab 6：健康分數低於 60 → 主動問原因</span></div>
-            <div class="guide-check-item"><div class="guide-check-dot">✓</div><span>Tab 5：inProgress 負責人（<code>owner</code>）是否對得上？</span></div>
+          </div>
+        </div>
+        <div class="monitor-card">
+          <div class="monitor-card-title">🎯 Task-Master 狀態確認</div>
+          <div class="monitor-card-body">
+            每次工作開始前說「執行 Task-Master」，它會讀取 <code>STATE.md</code> + <code>TASKS.md</code>，輸出：<br><br>
+            📍 目前階段（正在哪個 Pipeline）<br>
+            🎯 現在最優先的任務是什麼<br>
+            ⏭️ 接下來的任務序列<br>
+            ⚠️ 有哪些任務被 Block 住<br><br>
+            <strong>不需要手動翻 TASKS.md，Task-Master 幫你整理。</strong>
           </div>
         </div>
         <div class="monitor-card">
           <div class="monitor-card-title">🚧 Gate 硬性關卡</div>
           <div class="monitor-card-body">
-            Pipeline 完成後，<strong>必須由 Team Lead + 你點頭</strong>才能進入下一個 Pipeline：<br><br>
-            Gate 1 → 確認需求文件完整後，才啟動 P02 技術設計<br>
-            Gate 2 → 確認架構可行後，才啟動 P03 開發準備<br>
-            Gate 3 → 確認測試通過後，才啟動 P05 合規審查
+            Pipeline 完成後必須通過 Gate 才能進入下一個 Pipeline：<br><br>
+            Gate 1 → 需求文件完整 → 才啟動 P02 技術設計<br>
+            Gate 2 → 架構可行 → 才啟動 P03 開發準備<br>
+            G4-ENG → 工程設計驗收 → 才啟動 P04 實作開發<br>
+            Gate 3 → 測試通過 → 才啟動 P05 合規審查<br><br>
+            <strong>Gate Review 必須開新 session 執行。</strong>
           </div>
         </div>
         <div class="monitor-card">
           <div class="monitor-card-title">📂 輸出驗收對照表</div>
           <div class="monitor-card-body">
-            <code>P01</code> → <code>06_Interview_Records/IR-*.md</code> + <code>02_Specifications/RS_001*.md</code><br>
+            <code>P01</code> → <code>06_Interview_Records/IR-*.md</code> + <code>02_Specifications/F##-US.md</code><br>
             <code>P02</code> → <code>03_System_Design/F##-SW-ARCH.md</code> + <code>F##-DB.md</code><br>
             <code>P03</code> → <code>02_Specifications/F##-API.md</code> + <code>F##-TC.md</code><br>
             <code>P04</code> → <code>src/</code> + <code>08_Test_Reports/F##-TR.md</code><br>
             <code>P05</code> → <code>04_Compliance/F##-SEC.md</code><br>
-            <code>P06</code> → <code>09_Release_Records/F##-DEPLOY-RVW.md</code>
-          </div>
-        </div>
-        <div class="monitor-card">
-          <div class="monitor-card-title">📊 整體負責人（你）的視角</div>
-          <div class="monitor-card-body">
-            每個 Sprint 結束，各 Team Lead 截圖 <code>PROJECT_DASHBOARD.html</code> 給你。你只需要看：<br><br>
-            1. <strong>Pipeline 完成狀態</strong>（Tab 1）<br>
-            2. <strong>文件覆蓋矩陣</strong>（Tab 6）<br>
-            3. <strong>健康分數</strong>（Tab 6）<br><br>
-            3 個數字 + 1 張截圖 = 完整專案狀態。
+            <code>P06</code> → <code>09_Release_Records/F##-DEPLOY-RVW.md</code><br>
+            <code>Hotfix</code> → <code>memory/hotfix_log.md</code>（HF-YYYY-NNN）
           </div>
         </div>
       </div>
@@ -2007,6 +2283,199 @@ body {
     </div>
   </div>
 
+  <!-- Slash Commands 速查 -->
+  <div class="guide-section">
+    <div class="guide-section-title">⌨️ Slash Command 速查表</div>
+    <div class="guide-section-body">
+      <div class="guide-step-desc" style="margin-bottom:10px">在 Claude Code 終端機輸入以下指令觸發對應流程。所有 command 檔案位於 <code>.claude/commands/</code>。</div>
+      <table class="guide-table">
+        <tr><th>指令</th><th>用途</th><th>適用時機</th></tr>
+        <tr><td><code>/info-task-master</code></td><td>讀取 STATE.md + TASKS.md，輸出優先任務派遣報告</td><td>每次 session 開始、不知道下一步時</td></tr>
+        <tr><td><code>/info-pipeline</code></td><td>選擇並啟動 Pipeline（P01–P06 + 舊專案接入）</td><td>每次開始新階段前</td></tr>
+        <tr><td><code>/info-agent</code></td><td>選單選擇單一 Agent（11 個），載入 SEED 後啟動</td><td>task-master 指派後、需要單獨呼叫特定 Agent</td></tr>
+        <tr><td><code>/info-agent [名稱] [F##]</code></td><td>直接啟動指定 Agent 並接地（例：<code>/info-agent backend F03</code>）</td><td>已知要哪個 Agent 時，跳過選單</td></tr>
+        <tr><td><code>/info-gate</code></td><td>Gate 驗收前置確認 + 準備新 session</td><td>Pipeline 完成後、準備 Gate Review 時</td></tr>
+        <tr><td><code>/info-hotfix</code></td><td>緊急修復流程（Critical/High 專用）</td><td>線上問題需立即修復</td></tr>
+        <tr><td><code>/info-init</code></td><td>首次初始化新專案（替換佔位符 + 建 F01）</td><td>new-project.sh 執行後，第一次進入專案</td></tr>
+        <tr><td><code>/info-setup-team</code></td><td>互動式填寫團隊成員角色</td><td>初始化後、adopt-project.sh 後、成員變動時</td></tr>
+        <tr><td><code>/info-quick</code></td><td>快速模式（≤3 檔案、無新功能）</td><td>小幅修正、文字更新</td></tr>
+        <tr><td><code>/info-progress</code></td><td>顯示目前狀態快照</td><td>不確定做到哪時，快速確認</td></tr>
+        <tr><td><code>/info-health</code></td><td>專案結構完整性檢查</td><td>定期健康掃描 or 懷疑有缺漏</td></tr>
+        <tr><td><code>/info-health --repair</code></td><td>健康檢查 + 自動修復缺失資料夾</td><td>新機器或新人第一次設定</td></tr>
+        <tr><td><code>/info-pause</code></td><td>暫停工作，寫入 STATE.md 恢復點</td><td>今天先到這、等待確認</td></tr>
+        <tr><td><code>/info-resume</code></td><td>恢復上次工作進度</td><td>新 session 開始時（全域可用）</td></tr>
+        <tr><td><code>/info-handoff</code></td><td>Agent 完成交接，更新 TASKS.md + STATE.md</td><td>每個 Agent 完成工作後</td></tr>
+        <tr><td><code>/info-complete-milestone</code></td><td>Gate 通過後歸檔 + 更新狀態</td><td>Gate PASS 後</td></tr>
+      </table>
+      <div class="guide-tip" style="margin-top:10px">
+        <strong>找不到指令？</strong> 確認 <code>.claude/commands/</code> 目錄存在。全域指令（如 <code>/info-resume</code>）在 <code>~/.claude/commands/</code>。
+      </div>
+    </div>
+  </div>
+
+  <!-- 舊專案接入流程 -->
+  <div class="guide-section">
+    <div class="guide-section-title">🏗️ 舊專案接入流程（Brownfield Onboarding）</div>
+    <div class="guide-section-body">
+      <div class="guide-step-desc" style="margin-bottom:10px">
+        <strong>核心原則：不強迫補全舊 code 的所有文件。</strong>建立 baseline 快照，接入後的新工作才走完整 Pipeline。
+      </div>
+      <div class="guide-steps">
+        <div class="guide-step">
+          <div class="guide-step-num">1</div>
+          <div class="guide-step-body">
+            <div class="guide-step-title">執行接入腳本（只複製缺少的框架檔案）</div>
+            <div class="guide-step-desc">在 terminal 執行：</div>
+            <div class="guide-cmd-block">bash scripts/adopt-project.sh /path/to/existing-project<span class="guide-cmd-copy" onclick="copyCmd('bash scripts/adopt-project.sh /path/to/existing-project', this)">複製</span></div>
+            <div class="guide-step-desc">腳本<strong>只複製缺少的檔案</strong>（CLAUDE.md、TASKS.md、memory/、context-seeds/ 等），<strong>不覆蓋</strong>現有 src/ 和已存在的檔案。</div>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-num">2</div>
+          <div class="guide-step-body">
+            <div class="guide-step-title">設定團隊成員</div>
+            <div class="guide-step-desc">開啟 Claude Code（<code>cd [專案路徑] → claude</code>），執行：</div>
+            <div class="guide-cmd-block">/info-setup-team<span class="guide-cmd-copy" onclick="copyCmd('/info-setup-team', this)">複製</span></div>
+            <div class="guide-step-desc">分配現有成員對應的 Agent 角色，自動寫入 <code>TEAM.md</code>。</div>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-num">3</div>
+          <div class="guide-step-body">
+            <div class="guide-step-title">執行 Brownfield Onboarding Pipeline</div>
+            <div class="guide-cmd-block">執行 Pipeline: 舊專案接入<span class="guide-cmd-copy" onclick="copyCmd('執行 Pipeline: 舊專案接入', this)">複製</span></div>
+            <table class="guide-table" style="margin-top:8px">
+              <tr><th>Stage</th><th>產出</th></tr>
+              <tr><td>技術全景掃描（4 Agent 並行）</td><td><code>memory/codebase_snapshot.md</code></td></tr>
+              <tr><td>Feature 盤點 + F-code 分配</td><td><code>MASTER_INDEX.md</code>（maturity: Baselined）</td></tr>
+              <tr><td>技術決策補記</td><td><code>memory/decisions.md</code>（ADR 顯性化）</td></tr>
+              <tr><td>技術債登記</td><td><code>memory/TECH_DEBT.md</code></td></tr>
+              <tr><td>標準差距評估</td><td>GAP 分析報告（🔴 高風險優先）</td></tr>
+              <tr><td>環境 + CI 整合</td><td><code>.github/CODEOWNERS</code>、CI workflow</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-num">4</div>
+          <div class="guide-step-body">
+            <div class="guide-step-title">執行 Task-Master 取得接入後第一份派遣報告</div>
+            <div class="guide-cmd-block">執行 Task-Master<span class="guide-cmd-copy" onclick="copyCmd('執行 Task-Master', this)">複製</span></div>
+            <div class="guide-step-desc">Task-Master 確認接入完成狀態，推薦下一個要推進的 Feature 或 Pipeline。</div>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-num">5</div>
+          <div class="guide-step-body">
+            <div class="guide-step-title">接入後的工作方式</div>
+            <table class="guide-table">
+              <tr><th>情境</th><th>做法</th></tr>
+              <tr><td>新功能</td><td>正常走 P01 → P02 → ... → P06</td></tr>
+              <tr><td>修改舊功能</td><td>§42 Brownfield 四步法（Ground → 補 RS → 補測試 → Execute）</td></tr>
+              <tr><td>緊急線上問題</td><td><code>執行 Hotfix: [問題描述]</code></td></tr>
+              <tr><td>大規模重構</td><td>讀 codebase_snapshot.md + TECH_DEBT.md → 走 Pipeline: 技術設計</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="guide-note">❌ 不需要為舊功能補齊完整 RS ❌ 不需要回頭跑舊 Gate Review ✅ 只有新工作才走完整 Pipeline</div>
+    </div>
+  </div>
+
+  <!-- Setup-Team 說明 -->
+  <div class="guide-section">
+    <div class="guide-section-title">👥 /info-setup-team — 互動式團隊設定</div>
+    <div class="guide-section-body">
+      <div class="guide-step-desc" style="margin-bottom:10px">
+        多人協作時，每個成員對應一個 Agent 角色。<code>/info-setup-team</code> 會互動式問你每個角色由誰負責，自動寫入 <code>TEAM.md</code>。
+      </div>
+      <div class="guide-cmd-block">/info-setup-team<span class="guide-cmd-copy" onclick="copyCmd('/info-setup-team', this)">複製</span></div>
+      <table class="guide-table" style="margin-top:10px">
+        <tr><th>Agent 角色</th><th>主要職責</th><th>SEED 檔案</th></tr>
+        <tr><td>Interviewer</td><td>需求訪談、釐清模糊需求</td><td><code>SEED_Interviewer.md</code></td></tr>
+        <tr><td>PM</td><td>User Story、AC 撰寫</td><td><code>SEED_PM.md</code></td></tr>
+        <tr><td>UX</td><td>用戶流程、Prototype 設計</td><td><code>SEED_UX.md</code></td></tr>
+        <tr><td>Architect</td><td>系統架構、ADR 決策</td><td><code>SEED_Architect.md</code></td></tr>
+        <tr><td>DBA</td><td>DB Schema、Migration</td><td><code>SEED_DBA.md</code></td></tr>
+        <tr><td>Backend</td><td>API Spec、後端實作</td><td><code>SEED_Backend.md</code></td></tr>
+        <tr><td>Frontend</td><td>UI 元件、前端實作</td><td><code>SEED_Frontend.md</code></td></tr>
+        <tr><td>QA</td><td>測試案例、E2E 執行</td><td><code>SEED_QA.md</code></td></tr>
+        <tr><td>Security</td><td>資安審查、合規</td><td><code>SEED_Security.md</code></td></tr>
+        <tr><td>DevOps</td><td>CI/CD、部署、Rollback</td><td><code>SEED_DevOps.md</code></td></tr>
+        <tr><td>Review（Gate）</td><td>Gate 驗收、Code Review</td><td><code>SEED_Review.md</code>（新 session！）</td></tr>
+      </table>
+      <div class="guide-tip" style="margin-top:10px">
+        <strong>一人多角色？</strong> 可以。一個人同時擔任 PM + UX 或 Backend + DBA 都沒問題，只是同一時間點只能用一個 SEED 啟動 Claude。<br>
+        <strong>交接時要做什麼？</strong> 執行 <code>/info-handoff</code>，填寫完成摘要，更新 TASKS.md 的 @負責人欄位。
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent Teams -->
+  <div class="guide-section">
+    <div class="guide-section-title">🤖 Agent Teams — 多 AI 並行協作（實驗性）</div>
+    <div class="guide-section-body">
+      <div class="guide-step-desc" style="margin-bottom:10px">
+        Agent Teams 讓多個 Claude Code AI 實例同時工作、直接溝通，無需手動切換。<code>task-master</code> 作為 team lead 自動派遣工作。
+      </div>
+
+      <div class="guide-grid">
+        <div class="monitor-card" style="border-color:#DDD6FE">
+          <div class="monitor-card-title" style="color:#7C3AED">⚡ 啟用方式（一次性設定）</div>
+          <div class="monitor-card-body">
+            編輯 <code>~/.claude/settings.json</code>，加入：<br><br>
+            <code style="display:block;background:#F5F3FF;padding:8px;border-radius:4px;font-size:10px;line-height:1.6">"env": {<br>&nbsp;&nbsp;"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"<br>}</code><br>
+            <strong>需要 Claude Code v2.1.32+</strong>（目前版本已符合）<br>
+            設定完成後<strong>重啟 Claude Code</strong> 生效。
+          </div>
+        </div>
+        <div class="monitor-card" style="border-color:#93C5FD">
+          <div class="monitor-card-title" style="color:var(--primary)">🆚 Subagent vs Agent Teams</div>
+          <div class="monitor-card-body">
+            <strong>Subagent（現有）：</strong>在同一 context 內，agent 完成後回報，主流程繼續。<br><br>
+            <strong>Agent Teams（啟用後）：</strong>多個獨立 context 同時跑，agent 之間可以直接溝通，不用過主流程。<br><br>
+            適合：並行 Wave（Architect + DBA 同時跑）、多模組同時開發。
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-steps" style="margin-top:14px">
+        <div class="guide-step">
+          <div class="guide-step-num">1</div>
+          <div class="guide-step-body">
+            <div class="guide-step-title">讓 task-master 當 team lead</div>
+            <div class="guide-step-desc">遇到多 Feature 並行或不知從哪開始時，直接說：</div>
+            <div class="guide-cmd-block">我來了，要做什麼？<span class="guide-cmd-copy" onclick="copyCmd('我來了，要做什麼？', this)">複製</span></div>
+            <div class="guide-step-desc"><code>task-master</code> 會讀 TASKS.md + STATE.md，判斷優先任務，派給正確的 Agent 或 @成員。</div>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-num">2</div>
+          <div class="guide-step-body">
+            <div class="guide-step-title">並行 Wave 範例（P02 技術設計）</div>
+            <div class="guide-step-desc">啟用 Agent Teams 後，Wave 1 不用手動切換：</div>
+            <table class="guide-table">
+              <tr><th>手動切換（啟用前）</th><th>Agent Teams（啟用後）</th></tr>
+              <tr><td>你切到 Architect → 等完成 → 你切到 DBA</td><td>task-master 同時派出 Architect + DBA，兩個同時跑</td></tr>
+              <tr><td>需要人工介入每次切換</td><td>Wave 1 完成後自動觸發 Wave 2</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-num">3</div>
+          <div class="guide-step-body">
+            <div class="guide-step-title">注意事項</div>
+            <div class="guide-checklist">
+              <div class="guide-check-item"><div class="guide-check-dot">!</div><span>Agent Teams 消耗 token 較多（每個 teammate 有獨立 context window）</span></div>
+              <div class="guide-check-item"><div class="guide-check-dot">!</div><span>同時寫入共享文件前，各 agent 必須先讀取最新版（防覆蓋）</span></div>
+              <div class="guide-check-item"><div class="guide-check-dot">!</div><span>Gate Review 仍需開新獨立 session（不在 Agent Teams 範圍內）</span></div>
+              <div class="guide-check-item"><div class="guide-check-dot">✓</div><span>目前 17 個 agents（11 專案角色 + 6 框架工具）已全部就緒</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 常見問題 -->
   <div class="guide-section">
     <div class="guide-section-title">❓ 常見問題</div>
@@ -2037,6 +2506,19 @@ body {
   </div>
 
 </div><!-- /tab-guide -->
+
+<!-- ─── TAB 8: CHANGELOG ─── -->
+<div class="tab-panel" id="tab-changelog">
+  <div class="rn-how-to">
+    <strong>★ HOW TO UPDATE（每次框架有異動時更新此區塊）</strong><br>
+    1. 在 <code>RELEASE_NOTES</code> 陣列的<strong>最前面</strong>新增一個物件（最新版本放最上面）<br>
+    2. 同步更新 <code>VERSION</code> 檔案和 <code>CHANGELOG.md</code><br>
+    3. <code>type</code> 值：<code>'added'</code>（新增）｜<code>'changed'</code>（修改）｜<code>'fixed'</code>（修復）｜<code>'removed'</code>（移除）<br>
+    4. 存檔後重新整理瀏覽器即可看到最新版本
+  </div>
+  <div class="rn-list" id="rn-list-container"><!-- JS render --></div>
+</div><!-- /tab-changelog -->
+
 </div><!-- /tab-area -->
 
 <!-- ══ PAGE FOOTER ══ -->
@@ -2089,7 +2571,22 @@ var SKILL_INFO = {
   'requesting-code-review':         '結構化 Code Review 請求模板與審查清單',
   'pipeline-orchestrator':          '多 Agent Pipeline 自動化協調與狀態追蹤',
   'verification-before-completion': 'Agent 完成前強制驗證清單',
-  'subagent-driven-development':    '多 Agent 並行執行，最大化效率'
+  'subagent-driven-development':    '多 Agent 並行執行，最大化效率',
+  'planning-with-files':            '跨 session 任務追蹤，建立 task_plan.md / findings.md',
+  'update-dashboard':               '任何 Pipeline / Agent 完成後更新 PROJECT_DASHBOARD.html',
+  'project-init':                   '從 template 一鍵初始化新專案，自動替換所有佔位符',
+  'doc-coauthoring':                '結構化文件共同撰寫流程（RS / SSD / ADR 等）',
+  'docx':                           'Word 文件建立、讀取、編輯、轉換',
+  'pdf':                            'PDF 建立、合併、分割、OCR、表格萃取',
+  'pptx':                           'PowerPoint 投影片建立、編輯、格式轉換',
+  'xlsx':                           'Excel 試算表操作、資料分析、格式處理',
+  'schedule':                       '建立排程任務，可定時重複執行',
+  'skill-creator':                  '建立新 Skill、優化現有 Skill、執行效能評估',
+  'theme-factory':                  '為 Artifact/HTML/投影片套用視覺主題（10 種預設）',
+  'algorithmic-art':                '用 p5.js 建立生成藝術（UX 視覺探索用）',
+  'internal-comms':                 '內部溝通文件撰寫（狀態報告、事件通報、FAQ）',
+  'mcp-builder':                    '建立 MCP Server，整合外部 API 供 LLM 使用',
+  'web-artifacts-builder':          '多元件複雜 HTML Artifact（React + Tailwind + shadcn/ui）'
 };
 
 var SKILL_CATALOG = [
@@ -2104,9 +2601,24 @@ var SKILL_CATALOG = [
   { id:'webapp-testing',                 icon:'🎭', name:'Webapp Testing (Playwright)',   cat:'pro',  trigger:'QA Agent / Prototype 驗證',          agents:['QA'] },
   { id:'quality-gates',                  icon:'🚦', name:'Quality Gates',                 cat:'pro',  trigger:'Gate 1/2/G4-ENG/3 驗收',             agents:['Review'] },
   { id:'requesting-code-review',         icon:'👁️', name:'Requesting Code Review',        cat:'dev',  trigger:'Gate 2 / G4-ENG / Gate 3',           agents:['Review'] },
-  { id:'pipeline-orchestrator',          icon:'🔄', name:'Pipeline Orchestrator',         cat:'pro',  trigger:'「執行 Pipeline:」觸發',             agents:['全部'] },
-  { id:'verification-before-completion', icon:'✅', name:'Verification Before Completion',cat:'dev',  trigger:'每個 Agent 寫交接摘要前',            agents:['全部'] },
-  { id:'subagent-driven-development',    icon:'⚡', name:'Subagent-Driven Development',  cat:'dev',  trigger:'UX 確認後並行啟動多 Agent',          agents:['Architect','DBA','Backend'] }
+  { id:'pipeline-orchestrator',          icon:'🔄', name:'Pipeline Orchestrator',         cat:'pro',  trigger:'「執行 Pipeline:」觸發',              agents:['全部'] },
+  { id:'verification-before-completion', icon:'✅', name:'Verification Before Completion',cat:'dev',  trigger:'每個 Agent 寫交接摘要前',             agents:['全部'] },
+  { id:'subagent-driven-development',    icon:'⚡', name:'Subagent-Driven Development',  cat:'dev',  trigger:'UX 確認後並行啟動多 Agent',           agents:['Architect','DBA','Backend'] },
+  { id:'planning-with-files',            icon:'📂', name:'Planning with Files',           cat:'dev',  trigger:'多步驟 Pipeline / Context > 80%',     agents:['Interviewer','Review','PM'] },
+  { id:'update-dashboard',               icon:'📊', name:'Update Dashboard',              cat:'pro',  trigger:'任何 Pipeline / Agent 任務完成後',    agents:['全部'] },
+  { id:'project-init',                   icon:'🚀', name:'Project Init',                  cat:'pro',  trigger:'「初始化新專案」「建新專案」觸發',     agents:['DevOps'] },
+  { id:'doc-coauthoring',                icon:'📝', name:'Doc Co-authoring',              cat:'pro',  trigger:'撰寫 RS / SSD / ADR 等結構化文件',    agents:['PM','Architect'] },
+  { id:'docx',                           icon:'📄', name:'DOCX',                          cat:'pro',  trigger:'建立或操作 Word 文件',                agents:['PM','Review'] },
+  { id:'pdf',                            icon:'📑', name:'PDF',                           cat:'pro',  trigger:'建立、合併、OCR PDF',                 agents:['Review','DevOps'] },
+  { id:'pptx',                           icon:'📊', name:'PPTX',                          cat:'pro',  trigger:'建立或編輯 PowerPoint 投影片',        agents:['PM','Review'] },
+  { id:'xlsx',                           icon:'📈', name:'XLSX',                          cat:'pro',  trigger:'Excel 試算表操作',                    agents:['PM','QA'] },
+  { id:'schedule',                       icon:'⏰', name:'Schedule',                      cat:'pro',  trigger:'設定排程 / 定時重複執行',             agents:['DevOps'] },
+  { id:'skill-creator',                  icon:'🛠️', name:'Skill Creator',                 cat:'pro',  trigger:'建立或優化 Skill',                    agents:['全部'] },
+  { id:'theme-factory',                  icon:'🎨', name:'Theme Factory',                 cat:'pro',  trigger:'Prototype / 投影片套用視覺主題',       agents:['UX','Frontend'] },
+  { id:'algorithmic-art',                icon:'🎭', name:'Algorithmic Art',               cat:'pro',  trigger:'UX 視覺探索 / 生成藝術',              agents:['UX'] },
+  { id:'internal-comms',                 icon:'📢', name:'Internal Comms',                cat:'pro',  trigger:'狀態報告 / 事件通報 / FAQ 撰寫',      agents:['PM'] },
+  { id:'mcp-builder',                    icon:'🔌', name:'MCP Builder',                   cat:'pro',  trigger:'整合外部 API 給 LLM 使用',            agents:['Backend','DevOps'] },
+  { id:'web-artifacts-builder',          icon:'🌐', name:'Web Artifacts Builder',         cat:'pro',  trigger:'複雜多元件 HTML（React + Tailwind）', agents:['UX','Frontend'] }
 ];
 
 /* ══════════════════════════════════════════════════════════
@@ -2211,6 +2723,15 @@ var AGENTS = [
     seed: 'context-seeds/SEED_Review.md',
     keywords: ['Code Review', 'PR 審查', 'Gate Review', '四眼原則', 'ADR 驗證', 'G4-ENG 工程驗收', 'GA 密度審查', 'SignoffLog', 'PTC 追溯抽查'],
     skills: ['quality-gates', 'requesting-code-review']
+  },
+  {
+    id: 'taskmaster', icon: '🗂️', name: 'Task-Master', tag: '任務協調 / 派遣',
+    role: '讀取 STATE.md + TASKS.md → 分析優先順序 → 輸出派遣報告。不寫 code、不做設計，只決定現在該做什麼、誰來做。每個 session 的入場點。',
+    inputs: ['memory/STATE.md', 'TASKS.md', 'CLAUDE.md（按需）', 'TEAM.md（多人協作時）'],
+    outputs: ['📋 派遣報告（最優先任務 + 啟動方式）', 'F-code 分配（新功能）', '阻塞分析 + 替代路徑', 'TASKS.md 更新'],
+    seed: '~/.claude/agents/task-master.md（Claude Code 全局 Agent）',
+    keywords: ['執行 Task-Master', '任務派遣', '優先排序', 'F-code 分配', '阻塞處理', '多人協調', 'session 入場'],
+    skills: []
   }
 ];
 
@@ -2429,52 +2950,91 @@ function renderSkillCatalog() {
 function renderGSDMechanisms() {
   var el = document.getElementById('gsd-mechanisms');
   if (!el) return;
-  var mechanisms = [
-    { icon: '⚡', name: 'Quick Mode', rule: '§37', badge: 'QM-01~06',
-      desc: '修改 ≤ 3 檔案、無新功能、5分鐘可驗證 → 跳過完整 Pipeline 走快速通道',
-      trigger: 'P04 小修改前自動判斷', when: '每次修改前' },
-    { icon: '🩺', name: 'Context Health Check', rule: '§32', badge: 'CHC-01~03',
-      desc: '每個 Agent 交接前檢查需求對齊 / 決策一致 / 術語漂移，防止 Context Rot',
-      trigger: '每個 Agent 完成交接前自動執行', when: '每次交接' },
-    { icon: '📋', name: 'Discuss Phase', rule: '§33', badge: 'DISC-01~03',
-      desc: 'P01→P02 確認技術偏好；P03→P04 確認實作偏好，結果寫入 decisions.md',
-      trigger: 'Pipeline Orchestrator 在銜接點插入', when: 'P01/P03 完成後' },
-    { icon: '✅', name: 'Plan Check（LPC）', rule: '§34', badge: 'LPC-01~05',
-      desc: '5 維度產出自檢：完整性 / 可行性 / 一致性 / 可驗證性 / 範圍控制，最多 3 輪',
-      trigger: 'verification-before-completion 之前自動執行', when: '每個 Agent 產出後' },
-    { icon: '🎯', name: 'Nyquist 驗證層', rule: '§35', badge: 'NYQ-01~05',
-      desc: 'PM 在每條 AC 附驗證提示；QA 從 AC 驗證提示開始設計 TC，確保 1:1 覆蓋',
-      trigger: 'PM 產出 US 時 / QA 設計 TC 時', when: 'P01 PM + P03 QA' },
-    { icon: '🔄', name: '自動修復迴圈（AFL）', rule: '§36', badge: 'AFL-01~05',
-      desc: 'Step 4 Verify 失敗 → 觸發 debug → fix plan → re-verify，最多 3 輪後回退',
-      trigger: '四步法 Step 4 失敗時自動觸發', when: 'P04 執行驗證失敗時' },
-    { icon: '💾', name: 'STATE.md 記憶體', rule: '§38', badge: 'ST-01~05',
-      desc: 'Agent 交接後自動寫入跨 Session YAML 狀態；新 session 讀取後立即恢復上下文，無需重複解釋',
-      trigger: '每次 Agent 交接後 / 暫停時 / Context > 60%', when: '自動維護' },
-    { icon: '🌊', name: 'Wave-Based 並行', rule: '§39', badge: 'WV-01~05',
-      desc: '2+ Agent 並行前先分析依賴關係，分組為「依賴波」；同波並行，波間串行，輸出 Mermaid 圖 + 時間節省估算',
-      trigger: '任何 2+ Agent 並行前自動觸發', when: '並行執行前' },
-    { icon: '🎚️', name: 'Model Profiles', rule: '§40', badge: 'MP-01~06',
-      desc: 'quality(Opus×2) / balanced(Opus+Sonnet×2, 預設) / budget(Sonnet×2+Haiku)；指令「切換 Profile: quality」',
-      trigger: '切換指令 / Gate Review 自動升 quality', when: '按需切換' },
-    { icon: '🗺️', name: 'map-codebase', rule: '§41', badge: '4-Agent',
-      desc: '進入既有 codebase 時，Stack + Architecture + Conventions + Concerns 4 Agent 並行掃描，產出 memory/codebase_snapshot.md',
-      trigger: '首次進入 codebase / P02 啟動前 / 大規模重構前', when: '入場分析' }
+
+  var categories = [
+    {
+      label: '入場', icon: '🚪', note: '每個 Session 開始時',
+      bg: '#F5F3FF', border: '#DDD6FE', hdr: '#4C1D95', itemBg: '#FAFAFF', itemBorder: '#DDD6FE', badgeBg: '#EDE9FE', badgeColor: '#5B21B6', ruleColor: '#8B5CF6',
+      items: [
+        { icon: '🗂️', name: '執行 Task-Master', rule: '', badge: 'session 入場',
+          desc: '讀 STATE.md + TASKS.md → 派遣報告 → 決定啟動哪個 Pipeline / Agent' },
+        { icon: '💾', name: 'STATE.md 讀取', rule: '§38', badge: 'ST-01~05',
+          desc: '新 session 開始自動讀取，立即恢復上下文，無需重複說明' },
+        { icon: '🗺️', name: 'map-codebase', rule: '§41', badge: '4-Agent',
+          desc: '首次進入 codebase / 大規模重構前 → 4 Agent 並行掃描 → codebase_snapshot.md' }
+      ]
+    },
+    {
+      label: '執行中', icon: '⚙️', note: 'Pipeline 進行時',
+      bg: '#EFF6FF', border: '#BFDBFE', hdr: '#1E3A8A', itemBg: '#F8FAFF', itemBorder: '#BFDBFE', badgeBg: '#DBEAFE', badgeColor: '#1D4ED8', ruleColor: '#3B82F6',
+      items: [
+        { icon: '⚡', name: 'Quick Mode', rule: '§37', badge: 'QM-01~06',
+          desc: '改動小（不改介面、不影響其他模組）→ 跳過完整 Pipeline，走 §42 簡化四步法' },
+        { icon: '🩺', name: 'Context Health Check', rule: '§32', badge: 'CHC-01~03',
+          desc: '每個 Agent 交接前自動執行：需求對齊 / 決策一致 / 術語漂移三項檢查' },
+        { icon: '📋', name: 'Discuss Phase', rule: '§33', badge: 'DISC-01~03',
+          desc: 'P01→P02 確認技術偏好；P03→P04 確認實作偏好；結果寫入 decisions.md' },
+        { icon: '✅', name: 'Plan Check（LPC）', rule: '§34', badge: 'LPC-01~05',
+          desc: '每個 Agent 產出後：完整性 / 可行性 / 一致性 / 可驗證性 / 範圍控制，最多 3 輪' },
+        { icon: '🎯', name: 'Nyquist 驗證層', rule: '§35', badge: 'NYQ-01~05',
+          desc: 'PM 每條 AC 附驗證提示；QA 從 AC 提示開始設計 TC，確保 1:1 覆蓋' },
+        { icon: '🌊', name: 'Wave-Based 並行', rule: '§39', badge: 'WV-01~05',
+          desc: '2+ Agent 並行前分析依賴波：同波並行、波間串行，輸出 Mermaid + 時間估算' },
+        { icon: '🎚️', name: 'Model Profiles', rule: '§40', badge: 'MP-01~06',
+          desc: '「切換 Profile: quality/balanced/budget」；Gate Review 自動升 quality' }
+      ]
+    },
+    {
+      label: '交接', icon: '🤝', note: 'Agent 完成時',
+      bg: '#F0FDF4', border: '#86EFAC', hdr: '#14532D', itemBg: '#FAFFFE', itemBorder: '#86EFAC', badgeBg: '#DCFCE7', badgeColor: '#16A34A', ruleColor: '#22C55E',
+      items: [
+        { icon: '🔄', name: 'AFL 自動修復迴圈', rule: '§36', badge: 'AFL-01~05',
+          desc: 'Step 4 Verify 失敗 → debug → fix → re-verify，最多 3 輪，超過退回重規劃' },
+        { icon: '📋', name: 'Verification Before Completion', rule: '', badge: 'skill',
+          desc: '寫交接摘要前強制執行：LPC 自檢 + CHC 對齊 + 產出文件確認' },
+        { icon: '💾', name: 'STATE.md 更新', rule: '§38', badge: 'ST-01~05',
+          desc: '每次 Agent 完成後更新跨 session YAML 狀態；Context > 60% 時自動觸發' },
+        { icon: '📊', name: 'Update Dashboard', rule: '', badge: 'skill',
+          desc: 'Pipeline / Gate 完成後更新 PROJECT_DASHBOARD.html 狀態資料' }
+      ]
+    },
+    {
+      label: '特殊情境', icon: '🚨', note: '緊急 / 舊專案 / Context 管理',
+      bg: '#FFF7ED', border: '#FED7AA', hdr: '#7C2D12', itemBg: '#FFFBF5', itemBorder: '#FED7AA', badgeBg: '#FFEDD5', badgeColor: '#C2410C', ruleColor: '#F97316',
+      items: [
+        { icon: '🚨', name: 'Hotfix Pipeline', rule: '', badge: 'Critical/High',
+          desc: '「執行 Hotfix: [問題]」→ 嚴重度判定 → 根因分析 → 最小修復 → Rollback → 快速審查 → 部署 → 48hr 補件' },
+        { icon: '🏗️', name: 'Brownfield 改動流程', rule: '§42', badge: '小/中/大',
+          desc: '修改舊 code：Grounding → 補最小 RS → 補完整測試（動 code 前）→ Execute + 輕量 Gate Review' },
+        { icon: '📂', name: 'Planning with Files', rule: '', badge: 'skill',
+          desc: 'Context > 80% 時 / 多步驟跨 session 任務 → 建立 task_plan.md 追蹤進度' }
+      ]
+    }
   ];
+
   var html = '<div class="gsd-grid">';
-  mechanisms.forEach(function(m) {
-    html += '<div class="gsd-item">' +
-      '<div class="gsd-icon">' + m.icon + '</div>' +
-      '<div style="flex:1;min-width:0">' +
-        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">' +
-          '<span style="font-size:12px;font-weight:600;color:#4C1D95">' + m.name + '</span>' +
-          '<span class="gsd-badge">' + m.badge + '</span>' +
-          '<span class="gsd-rule">workflow_rules.md ' + m.rule + '</span>' +
-        '</div>' +
-        '<div style="font-size:11px;color:#374151;line-height:1.5;margin-bottom:4px">' + m.desc + '</div>' +
-        '<div style="font-size:10px;color:#6B7280">觸發：<span style="color:#7C3AED">' + m.when + '</span></div>' +
+  categories.forEach(function(cat) {
+    html += '<div class="gsd-category" style="border-color:' + cat.border + '">' +
+      '<div class="gsd-cat-header" style="background:' + cat.bg + ';color:' + cat.hdr + '">' +
+        '<span style="font-size:16px">' + cat.icon + '</span>' +
+        '<span>' + cat.label + '</span>' +
+        '<span style="font-size:10px;font-weight:500;color:' + cat.ruleColor + ';margin-left:2px">— ' + cat.note + '</span>' +
       '</div>' +
-    '</div>';
+      '<div class="gsd-cat-body">';
+    cat.items.forEach(function(m) {
+      html += '<div class="gsd-item" style="background:' + cat.itemBg + ';border-color:' + cat.itemBorder + '">' +
+        '<div class="gsd-icon">' + m.icon + '</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:3px">' +
+            '<span style="font-size:11px;font-weight:600;color:' + cat.hdr + '">' + m.name + '</span>' +
+            '<span class="gsd-badge" style="background:' + cat.badgeBg + ';color:' + cat.badgeColor + ';border-color:' + cat.itemBorder + '">' + m.badge + '</span>' +
+            (m.rule ? '<span class="gsd-rule" style="color:' + cat.ruleColor + '">workflow_rules.md ' + m.rule + '</span>' : '') +
+          '</div>' +
+          '<div style="font-size:10.5px;color:#374151;line-height:1.5">' + m.desc + '</div>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div></div>';
   });
   html += '</div>';
   el.innerHTML = html;
@@ -2603,49 +3163,42 @@ function toggleGate(btn) {
 ══════════════════════════════════════════════════════════ */
 var PROJECT_STATUS = {
   overview: {
-    name: 'AICC-X',
-    type: 'SaaS 平台 / Web 應用（AI 互動聯絡中心）',
-    tech: 'Vue 3 / Java Spring Boot / MySQL + MSSQL / GCP',
+    name: '[產品名稱]',
+    type: '[專案類型]',
+    tech: '[技術棧]',
     stage: '概念期',
-    stageNote: 'UI Prototype v0.9 完成；workflow_rules.md v2.3（GSD §32-§41 全整合）',
-    updated: '2026-03-15'
+    stageNote: '使用前請填入：目前里程碑 / 最新進度摘要',
+    updated: '——'
   },
   pipelineLog: [
-    { id:'P001', agent:'Interviewer Agent', owner:'-', status:'done', date:'2026-03-06', note:'完成多輪需求訪談，確認多租戶 B2B CallCenter SaaS 定位，8 項核心功能識別，訪談紀錄存 06_Interview_Records/' },
-    { id:'P002', agent:'PM Agent',          owner:'-', status:'done', date:'2026-03-06', note:'產出 RS_001 核心功能需求規格書（8 功能），存 02_Specifications/' },
-    { id:'P003', agent:'PM Agent（第二輪）', owner:'-', status:'done', date:'2026-03-08', note:'F01/F02/F03/F04 User Story 完成（共 24 US / 114 AC）；RS_001 補 F11 系統通知' },
-    { id:'P004', agent:'Review Agent',      owner:'-', status:'done', date:'2026-03-08', note:'GAP Analysis v0.1 完成；Prototype vs 需求文件缺口清零；US_F02/F03 補充完畢' }    ,
-    { id:'P005', agent:'系統維護', owner:'-', status:'done', date:'2026-03-11', note:'PROJECT_DASHBOARD.html v2.0 Bug 修正：專案名稱動態渲染、todos null-guard、文件連結 baseUrl 動態化、gatesTotal 更新至 4；同步至 template + TimeX' }
-      ,
-    { id:'P006', agent:'系統維護（GSD Phase 1）', owner:'-', status:'done', date:'2026-03-13', note:'workflow_rules.md v2.2：整合 GSD §32-§37（CHC/Discuss Phase/LPC/NYQ/AFL/Quick Mode）；7 檔案 × 4 專案 md5 全一致' }
-    ,
-    { id:'P007', agent:'系統維護（GSD Phase 2）', owner:'-', status:'done', date:'2026-03-15', note:'workflow_rules.md v2.3：整合 GSD §38-§41（STATE.md 記憶體/Wave 並行/Model Profiles/map-codebase）；Dashboard GSD卡片 6→10；5 檔案 × 3 專案 md5 全一致' }
-    
+    /* 範例格式（複製並填入實際內容）：
+    { id:'P001', agent:'Interviewer Agent', owner:'負責人姓名', status:'done', date:'YYYY-MM-DD', note:'完成了什麼，產出了哪些文件' }
+    */
   ],
   inProgress: [
-    { id:'T003', task:'確認 AI 整合技術方案（F09/F10）', agent:'Architect', owner:'-', priority:'P0', note:'US 已全部完成，待啟動 Architect Agent 進行技術架構設計', nextCmd:'執行 Pipeline: 技術設計' }
+    /* 範例格式：
+    { id:'T001', task:'任務名稱', agent:'Agent 名稱', owner:'負責人', priority:'P0', note:'背景說明', nextCmd:'執行 Pipeline: 需求訪談' }
+    */
   ],
   backlog: [
-    { id:'T016', task:'F09/F10 UI-level User Story', agent:'PM Agent', priority:'P1', note:'待 T003 Architect 完成後啟動' },
-    { id:'T017', task:'F05 用戶面板/登出 User Story', agent:'PM Agent', priority:'P2', note:'' }
+    /* 範例格式：
+    { id:'B001', task:'任務名稱', agent:'PM Agent', priority:'P1', note:'' }
+    */
   ],
   todos: [
-    { priority:'P0', item:'啟動 Architect Agent — 技術架構設計（AI 整合 F09/F10）；Pipeline 技術設計 已整合 Wave分析 + map-codebase', seed:'context-seeds/SEED_Architect.md' },
-    { priority:'P1', item:'後台管理 Prototype 繼續迭代（v0.2 起）', seed:'context-seeds/SEED_UX.md' }
+    /* 範例格式：
+    { priority:'P0', item:'下一步行動描述', seed:'context-seeds/SEED_Architect.md' }
+    */
   ],
   documents: [
-    { docId:'RS-001', file:'RS_001_核心功能需求規格.md',       folder:'02_Specifications/', status:'✅ 含 F11', agent:'PM',     date:'2026-03-06', path:'02_Specifications/RS_001_核心功能需求規格.md' },
-    { docId:'US-F01', file:'US_F01_進線彈屏主流程_v0.1.md',   folder:'02_Specifications/', status:'✅ 6US/24AC', agent:'PM',   date:'2026-03-08', path:'02_Specifications/US_F01_進線彈屏主流程_v0.1.md' },
-    { docId:'US-F02', file:'US_F02_客戶資料與服務歷程_v0.1.md',folder:'02_Specifications/', status:'✅ 6US/30AC', agent:'PM',   date:'2026-03-08', path:'02_Specifications/US_F02_客戶資料與服務歷程_v0.1.md' },
-    { docId:'US-F03', file:'US_F03_案件建立與追蹤_v0.1.md',   folder:'02_Specifications/', status:'✅ 6US/35AC', agent:'PM',   date:'2026-03-08', path:'02_Specifications/US_F03_案件建立與追蹤_v0.1.md' },
-    { docId:'US-F04', file:'US_F04_客服頻道狀態管理_v0.1.md', folder:'02_Specifications/', status:'✅ 6US/25AC', agent:'PM',   date:'2026-03-08', path:'02_Specifications/US_F04_客服頻道狀態管理_v0.1.md' },
-    { docId:'GAP-001',file:'GAP_ANALYSIS_v0.1.md',            folder:'02_Specifications/', status:'✅ v0.1',    agent:'Review',date:'2026-03-08', path:'02_Specifications/GAP_ANALYSIS_v0.1.md' }
-    ,
-    { docId:'WF-001', file:'workflow_rules.md v2.3',          folder:'memory/',             status:'✅ §32-§41 GSD', agent:'系統維護', date:'2026-03-15', path:'memory/workflow_rules.md' }
-    ,
-    { docId:'ST-001', file:'STATE.md（跨 Session 記憶體模板）', folder:'memory/',             status:'✅ 新建',         agent:'系統維護', date:'2026-03-15', path:'memory/STATE.md' }
+    /* 範例格式：
+    { docId:'F01-US-v0.1', file:'US_F01_功能名稱_v0.1.md', folder:'02_Specifications/', status:'✅ 草稿', agent:'PM', date:'YYYY-MM-DD', path:'02_Specifications/US_F01_功能名稱_v0.1.md' }
+    */
   ],
   routes: [
+    { trigger:'不知道從哪開始 / 我來了',    agent:'Task-Master',  seed:'~/.claude/agents/task-master.md' },
+    { trigger:'有新功能要做 / F-code 分配', agent:'Task-Master',  seed:'~/.claude/agents/task-master.md' },
+    { trigger:'任務被 Block / 優先序衝突',  agent:'Task-Master',  seed:'~/.claude/agents/task-master.md' },
     { trigger:'新想法討論 / 需求訪談',     agent:'Interviewer', seed:'SEED_Interviewer.md' },
     { trigger:'整理 User Story / 規格文件', agent:'PM',          seed:'SEED_PM.md' },
     { trigger:'系統架構 / 技術選型',        agent:'Architect',   seed:'SEED_Architect.md' },
@@ -2659,40 +3212,184 @@ var PROJECT_STATUS = {
     { trigger:'Code Review / PR 審查',      agent:'Review',      seed:'SEED_Review.md' }
   ],
   featureNames: {
-    'F01': '進線彈屏主流程',
-    'F02': '客戶資料與服務歷程',
-    'F03': '案件建立與追蹤',
-    'F04': '客服頻道狀態管理',
-    'F05': '用戶面板/登出',
-    'F06': '[待定義]',
-    'F07': '[待定義]',
-    'F08': '[待定義]',
-    'F09': 'AI 智能助手',
-    'F10': 'AI 質檢分析',
-    'F11': '系統通知'
+    /* 接入後由 PM Agent 在 MASTER_INDEX.md 分配 F-code，再同步至此 */
+    /* 'F01': '功能名稱' */
   },
   pipelineCompletion: {
-    'P01': 'done',    /* ✅ 需求訪談 + User Story 完成 */
-    'P02': 'pending', /* ⏳ 技術設計（Architect 待啟動）*/
+    'P01': 'pending', /* ⏳ 需求訪談 */
+    'P02': 'pending', /* ⏳ 技術設計 */
     'P03': 'pending', /* ⏳ 開發準備 */
     'P04': 'pending', /* ⏳ 實作開發 */
     'P05': 'pending', /* ⏳ 合規審查 */
     'P06': 'pending'  /* ⏳ 部署上線 */
   },
   gateStatus: {
-    gate1: 'pending',   /* ⏳ Gate 1 需求完整性驗收待執行 */
-    gate2: 'pending',   /* ⏳ Gate 2 技術設計驗收待執行 */
-    gate4eng: 'pending', /* ⏳ G4-ENG 工程設計驗收待執行 */
-    gate3: 'pending'    /* ⏳ Gate 3 交付前審查待執行 */
+    gate1: 'pending',    /* ⏳ Gate 1 需求完整性驗收 */
+    gate2: 'pending',    /* ⏳ Gate 2 技術設計驗收 */
+    gate4eng: 'pending', /* ⏳ G4-ENG 工程設計驗收 */
+    gate3: 'pending'     /* ⏳ Gate 3 交付前審查 */
   },
   protoFiles: [
-    { name: '主控台 v0.9（最新）',    file: '01_Product_Prototype/AICC-X_主控台_v0.9.html',    note: '完整版：CRM + AI + 案件系統 + Demo Bar' },
-    { name: '後台管理 v0.1',          file: '01_Product_Prototype/AICC-X_後台_v0.1.html',      note: '即時監控 / 座席管理 / 歷史報表 / 系統設定' },
+    { name: '[產品名稱] 主控台 v[版本]（最新）',    file: '01_Product_Prototype/[產品名稱]_主控台_v[版本].html',    note: '完整版：CRM + AI + 案件系統 + Demo Bar' },
+    { name: '[產品名稱] 後台管理 v[版本]',          file: '01_Product_Prototype/[產品名稱]_後台_v[版本].html',      note: '即時監控 / 座席管理 / 歷史報表 / 系統設定' },
     { name: 'Design System v2',       file: '01_Product_Prototype/components/comp_design_system_v2.html', note: '設計規範（最新）' },
     { name: 'Top Bar',                file: '01_Product_Prototype/components/comp_topbar.html', note: '' },
     { name: 'Incoming Call v2',       file: '01_Product_Prototype/components/comp_incoming_call_v2.html', note: '' }
   ]
 };
+
+/* ══════════════════════════════════════════════════════════
+   TAB 8 — 更新日誌 DATA
+   ──────────────────────────────────────────────────────
+   ★ HOW TO UPDATE
+   在陣列最前面插入新物件（最新版永遠在最上面）。
+   格式：
+   {
+     version: '2.x.x',
+     date: 'YYYY-MM-DD',
+     sections: [
+       { type: 'added',   items: ['說明文字，可用 `code` 格式'] },
+       { type: 'changed', items: ['...'] },
+       { type: 'fixed',   items: ['...'] },
+       { type: 'removed', items: ['...'] }
+     ]
+   }
+══════════════════════════════════════════════════════════ */
+var RELEASE_NOTES = [
+  {
+    version: '2.4.0',
+    date: '2026-03-15',
+    sections: [
+      { type: 'added', items: [
+        '`task-master` agent — 框架層任務指揮官，讀取 TASKS.md + STATE.md 後自動判斷優先任務、派遣 Agent、處理 block 重路由',
+        '`/info-init` command — 新專案首次初始化流程：框架完整性驗證 → 填寫基本資訊 → 替換佔位符 → setup-team → 建立 F01',
+        '`/info-quick` command — Quick Mode（GSD §37）：≤3 檔案小修正跳過 Pipeline，含 DSV 聲明與驗證',
+        '`/info-progress` command — 快速狀態快照，從 STATE.md + TASKS.md 直接輸出，無互動',
+        '`/info-health` command — 專案結構完整性檢查（含 `--repair` 自動修復），Step 0 整合 `tools/workflow-test/run_tests.py`',
+        '`/info-pause` command — 暫停工作，寫入 STATE.md 恢復點與 resume_command',
+        '`/info-complete-milestone` command — Gate 通過後歸檔 TASKS.md + 更新 STATE.md + 可選 git tag',
+        '`/info-setup-team` command — 互動式填寫 TEAM.md，11 個 Agent 角色逐一詢問負責人',
+        '`/info-handoff` command — Agent 完成交接，更新 TASKS.md @負責人 + STATE.md handoff_to',
+        '`TEAM.md` — 多人協作成員配置表（11 角色 × 姓名 + @handle），含交接協議與 Git 分支規範',
+        '`tools/workflow-test/` — 框架健康測試工具複製至專案目錄，`PROJECT_DIR` 環境變數可覆寫專案路徑',
+        'PROJECT_DASHBOARD 更新日誌 Tab（Tab 8）— 版本歷史視覺化，結構化資料物件 `RELEASE_NOTES`',
+        'PROJECT_DASHBOARD 使用指南新增 5 個區塊：Slash Command 速查表、新專案流程、舊專案接入流程、/info-setup-team 說明、Agent Teams 說明',
+        'Agent Teams 支援 — `settings.json` 加入 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS: "1"`，`task-master` 可作為 team lead',
+        'STATE.md `team` 區塊 — 追蹤 active_member、current_role、handoff_to、handoff_notified'
+      ]},
+      { type: 'changed', items: [
+        '`/info-health` command 新增 Step 0：執行 `run_tests.py` 框架測試並在報告頂部顯示摘要',
+        '`scripts/new-project.sh` 新增 Step 7：填寫 TEAM.md 成員配置',
+        'TASKS.md 新增 `@負責人` 欄位，支援多人協作任務分配'
+      ]}
+    ]
+  },
+  {
+    version: '2.3.0',
+    date: '2026-03-15',
+    sections: [
+      { type: 'added', items: [
+        'GSD §38 STATE.md Cross-Session Memory — Agent 交接前寫入 YAML 狀態快照，新 session 自動讀取恢復',
+        'GSD §39 Wave-Based Parallel Execution — 依賴波分析後並行執行，W1/W2/W3 波次 + Mermaid 依賴圖',
+        'GSD §40 Model Profiles — 三段模型切換：quality（Opus）/ balanced（Sonnet，預設）/ budget（Haiku）',
+        'GSD §41 map-codebase — 舊 codebase 接入時 4 Agent 並行掃描，產出 `memory/codebase_snapshot.md`',
+        'Pipeline 卡片 GSD Chips — 各 Pipeline 卡片顯示對應 §機制的視覺標籤',
+        '27 個 Skills 全面升級，強化 GSD 鉤子、豐富執行內容'
+      ]},
+      { type: 'changed', items: [
+        '`workflow_rules.md` 升至 v2.3（新增 §38–§41）',
+        '`pipeline-orchestrator` SKILL.md 新增 STATE.md 自動更新 + Wave 分析章節',
+        'CLAUDE.md GSD 速查表擴展至 §41'
+      ]}
+    ]
+  },
+  {
+    version: '2.2.0',
+    date: '2026-03-13',
+    sections: [
+      { type: 'added', items: [
+        'GSD §32 Context Health Check (CHC) — 每次 Agent 交接前自動執行，防止 context rot',
+        'GSD §33 Discuss Phase — P01→P02 和 P03→P04 銜接時詢問技術/實作偏好',
+        'GSD §34 Lightweight Plan Check (LPC) — 5 維度自檢，最多 3 輪，不過標記 UNRESOLVED',
+        'GSD §35 Nyquist Validation Layer — 每條 AC 附可測試性提示，QA 從此開始設計 TC',
+        'GSD §36 Auto-Fix Loop (AFL) — Verify 失敗 → debug → fix → re-verify，最多 3 輪',
+        'GSD §37 Quick Mode — ≤3 檔案、無新功能、5 分鐘可驗證時跳過完整 Pipeline'
+      ]}
+    ]
+  },
+  {
+    version: '2.1.0',
+    date: '2026-02-01',
+    sections: [
+      { type: 'added', items: [
+        'G4-ENG（工程設計驗收）作為 P04 的強制解鎖條件',
+        'GA 密度審查、DDG 依賴圖完整性、跨層一致性、PTC Prototype 追溯抽查',
+        'SignoffLog 三方簽核（Architect / DBA / Review）'
+      ]}
+    ]
+  },
+  {
+    version: '2.0.0',
+    date: '2026-01-15',
+    sections: [
+      { type: 'added', items: [
+        '11 個 Agent SEED 檔案（Interviewer / PM / UX / Architect / DBA / Backend / Frontend / QA / Security / DevOps / Review）',
+        '6 個 Pipeline（P01 需求訪談 → P06 部署上線）',
+        '4 個 Quality Gates（Gate 1 / 2 / G4-ENG / 3）',
+        '27 個 Skills（開發流程 + 專業領域）',
+        'PROJECT_DASHBOARD.html — 7 個 Tab 視覺化儀表板',
+        '`10_Standards/` 三域技術規範 SSOT（API / DB / UI）',
+        'Brownfield Onboarding Pipeline — 舊專案接入 7 Stage 流程',
+        'Hotfix Pipeline — Critical/High 緊急修復最短路徑'
+      ]}
+    ]
+  }
+];
+
+function showPipeSection(section, btn) {
+  ['new','brownfield','hotfix'].forEach(function(s) {
+    var el = document.getElementById('pipe-section-' + s);
+    if (el) el.style.display = s === section ? 'block' : 'none';
+  });
+  document.querySelectorAll('.pipe-section-btn').forEach(function(b) {
+    b.style.background = '#fff';
+    b.style.color = 'var(--muted)';
+    b.style.borderColor = 'var(--border)';
+  });
+  if (btn) {
+    btn.style.background = '#F5F3FF';
+    btn.style.color = '#5B21B6';
+    btn.style.borderColor = '#7C3AED';
+  }
+}
+
+function renderChangelog() {
+  var container = document.getElementById('rn-list-container');
+  if (!container) return;
+  var labelMap = { added:'Added', changed:'Changed', fixed:'Fixed', removed:'Removed' };
+  var html = '';
+  RELEASE_NOTES.forEach(function(rel, idx) {
+    html += '<div class="rn-entry">';
+    html += '<div class="rn-header">';
+    html += '<span class="rn-version">v' + rel.version + '</span>';
+    if (idx === 0) html += '<span class="rn-latest-badge">Latest</span>';
+    html += '<span class="rn-date">' + rel.date + '</span>';
+    html += '</div>';
+    html += '<div class="rn-body">';
+    (rel.sections || []).forEach(function(sec) {
+      html += '<div class="rn-section">';
+      html += '<span class="rn-section-label ' + sec.type + '">' + (labelMap[sec.type] || sec.type) + '</span>';
+      html += '<ul class="rn-items">';
+      (sec.items || []).forEach(function(item) {
+        var text = item.replace(/`([^`]+)`/g, '<code>$1</code>');
+        html += '<li class="rn-item">' + text + '</li>';
+      });
+      html += '</ul></div>';
+    });
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+}
 
 /* Pipeline Tab 1 狀態徽章 */
 function renderPipelineStatus() {
@@ -3223,6 +3920,7 @@ window.addEventListener('load', function() {
   renderStatus();
   renderPipelineStatus();
   renderHealth();
+  renderChangelog();
 });
 </script>
 </body>

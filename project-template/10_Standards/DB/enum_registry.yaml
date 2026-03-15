@@ -1,0 +1,174 @@
+# [專案名稱] ENUM Registry
+# SSOT: 所有 ENUM 值唯一定義處
+# 禁止在 DB / Backend / Frontend 任何一端 hardcode ENUM 字串
+# 三端（DB CHECK Constraint / Java Enum / TypeScript Union）均從此檔產出
+#
+# 格式：
+#   {enum_name}:
+#     description: 說明
+#     feature: F## (關聯功能，cross-feature 用 shared)
+#     values:
+#       - value: 英文小寫（DB 儲存值）
+#         label_zh: 繁體中文顯示
+#         label_en: English label
+#         deprecated: false  # 棄用時改為 true（不可直接刪除）
+#     db_constraint: CHECK 語句（自動產出）
+
+# ── 通用狀態 ────────────────────────────────────────────────────────
+
+active_status:
+  description: 啟用/停用狀態（通用）
+  feature: shared
+  values:
+    - value: active
+      label_zh: 啟用
+      label_en: Active
+    - value: inactive
+      label_zh: 停用
+      label_en: Inactive
+  db_constraint: "CHECK (status IN ('active', 'inactive'))"
+
+# ── F01 來電管理 ─────────────────────────────────────────────────────
+
+call_direction:
+  description: 通話方向
+  feature: F01
+  values:
+    - value: inbound
+      label_zh: 進線
+      label_en: Inbound
+    - value: outbound
+      label_zh: 外撥
+      label_en: Outbound
+  db_constraint: "CHECK (direction IN ('inbound', 'outbound'))"
+
+call_status:
+  description: 通話狀態
+  feature: F01
+  values:
+    - value: ringing
+      label_zh: 響鈴中
+      label_en: Ringing
+    - value: connected
+      label_zh: 通話中
+      label_en: Connected
+    - value: on_hold
+      label_zh: 保留中
+      label_en: On Hold
+    - value: ended
+      label_zh: 已結束
+      label_en: Ended
+    - value: missed
+      label_zh: 未接
+      label_en: Missed
+  db_constraint: "CHECK (status IN ('ringing', 'connected', 'on_hold', 'ended', 'missed'))"
+
+# ── F03 案件管理 ─────────────────────────────────────────────────────
+
+ticket_status:
+  description: 案件狀態
+  feature: F03
+  values:
+    - value: open
+      label_zh: 待處理
+      label_en: Open
+    - value: in_progress
+      label_zh: 處理中
+      label_en: In Progress
+    - value: pending_customer
+      label_zh: 等待客戶
+      label_en: Pending Customer
+    - value: resolved
+      label_zh: 已解決
+      label_en: Resolved
+    - value: closed
+      label_zh: 已結案
+      label_en: Closed
+  db_constraint: "CHECK (status IN ('open', 'in_progress', 'pending_customer', 'resolved', 'closed'))"
+
+ticket_priority:
+  description: 案件優先級
+  feature: F03
+  values:
+    - value: low
+      label_zh: 低
+      label_en: Low
+    - value: medium
+      label_zh: 中
+      label_en: Medium
+    - value: high
+      label_zh: 高
+      label_en: High
+    - value: urgent
+      label_zh: 緊急
+      label_en: Urgent
+  db_constraint: "CHECK (priority IN ('low', 'medium', 'high', 'urgent'))"
+
+# ── F04 客服人員狀態 ──────────────────────────────────────────────────
+
+agent_status:
+  description: 客服人員工作狀態
+  feature: F04
+  values:
+    - value: online
+      label_zh: 上線
+      label_en: Online
+    - value: busy
+      label_zh: 忙碌
+      label_en: Busy
+    - value: after_call_work
+      label_zh: 話後處理
+      label_en: After Call Work
+    - value: break
+      label_zh: 休息中
+      label_en: On Break
+    - value: offline
+      label_zh: 下線
+      label_en: Offline
+  db_constraint: "CHECK (status IN ('online', 'busy', 'after_call_work', 'break', 'offline'))"
+
+# ── 角色/權限 ────────────────────────────────────────────────────────
+
+user_role:
+  description: 系統角色
+  feature: shared
+  values:
+    - value: super_admin
+      label_zh: 超級管理員
+      label_en: Super Admin
+    - value: tenant_admin
+      label_zh: 租戶管理員
+      label_en: Tenant Admin
+    - value: supervisor
+      label_zh: 主管
+      label_en: Supervisor
+    - value: agent
+      label_zh: 客服人員
+      label_en: Agent
+    - value: readonly
+      label_zh: 唯讀
+      label_en: Read Only
+  db_constraint: "CHECK (role IN ('super_admin', 'tenant_admin', 'supervisor', 'agent', 'readonly'))"
+
+# ── 渠道類型 ─────────────────────────────────────────────────────────
+
+channel_type:
+  description: 服務渠道類型
+  feature: shared
+  values:
+    - value: voice
+      label_zh: 語音
+      label_en: Voice
+    - value: chat
+      label_zh: 文字對話
+      label_en: Chat
+    - value: email
+      label_zh: 電子郵件
+      label_en: Email
+    - value: sms
+      label_zh: 簡訊
+      label_en: SMS
+    - value: line
+      label_zh: LINE
+      label_en: LINE
+  db_constraint: "CHECK (channel IN ('voice', 'chat', 'email', 'sms', 'line'))"

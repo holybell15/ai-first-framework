@@ -19,6 +19,7 @@
 
 | Skill | 路徑 |
 |-------|------|
+| planning-with-files | `context-skills/planning-with-files/SKILL.md` |
 | requesting-code-review | `context-skills/requesting-code-review/SKILL.md` |
 | quality-gates | `context-skills/quality-gates/SKILL.md` |
 | verification-before-completion | `context-skills/verification-before-completion/SKILL.md` |
@@ -258,6 +259,33 @@ AI 修改治理（AC，DOC-D §13，對應 G7）：
 - Review Gate 2：Architect + DBA 完成後
 - Review Gate 3：Backend + Frontend + QA 完成後
 - 臨時 Code Review（直接提交 PR/程式碼片段時使用）
+
+---
+
+## 🚨 Hotfix 快速審查（緊急修復流程）
+
+> 跳過正常 Pipeline，走簡化路徑。先評估嚴重度，再決定路徑。
+
+### 嚴重度評估（收到問題回報時必做）
+
+| 嚴重度 | 條件 | 路徑 |
+|--------|------|------|
+| 🔴 Critical | 服務中斷 / 資料外洩 / P0 合規違規 | 立即 P04 實作 → Security Agent → P06，48hr 補件 |
+| 🟠 High | 功能完全失效 / 資料錯誤但未外洩 | 同 Critical 路徑 |
+| 🟡 Medium/Low | 部分功能異常 / 體驗問題 | 排入下個 Sprint 正常 P03→P06 |
+
+### Hotfix 快速審查清單（Critical/High 修復後執行）
+
+```
+HF-01 🔴 根本原因已確認（非猜測）
+HF-02 🔴 修復範圍最小化（只動必要的 code，不順帶重構）
+HF-03 🔴 回歸測試已執行（受影響功能的冒煙測試通過）
+HF-04 🔴 `memory/hotfix_log.md` 已建立條目（含 HF-YYYY-NNN 編號）
+HF-05 🟡 48hr 補件計畫已列出（RS更新 / Gate文件 / 安全審查）
+HF-06 🟡 Security Agent 快速審查已排程（若修復涉及安全相關程式碼）
+```
+
+**通過條件**：HF-01~04 全 🟢 才可部署；HF-05~06 為 48hr 後補件項目。
 
 ---
 

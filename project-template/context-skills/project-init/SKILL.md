@@ -79,8 +79,8 @@ description: >
 **問**：「新專案資料夾要建立在哪個目錄？輸入父目錄的完整路徑（會自動建立新資料夾）」
 
 **選項舉例**：
-- `/Users/holylin/Documents/TempDesktop/`（最常用）
-- `/Users/holylin/Downloads/`
+- `[父目錄路徑]/`（最常用）
+- `[下載資料夾路徑]/`
 - `其他完整路徑`
 
 *為什麼問這個？* 決定最後專案位置。凱子可能有不同的工作目錄。
@@ -92,8 +92,8 @@ description: >
 優先順序：
 
 1. **同級目錄**（最常見）
-   - 假設專案在 `/Users/holylin/Documents/TempDesktop/AICC-X/`
-   - 檢查 `/Users/holylin/Documents/TempDesktop/_PROJECT_TEMPLATE`
+   - 假設專案在 `[專案路徑]/`
+   - 檢查 `[父目錄路徑]/_PROJECT_TEMPLATE`
 
 2. **mnt 根目錄**
    - 檢查 `/sessions/dreamy-jolly-goldberg/mnt/_PROJECT_TEMPLATE`
@@ -124,7 +124,7 @@ python3 /sessions/dreamy-jolly-goldberg/mnt/.skills/skills/project-init/scripts/
   --project-name "FinCore-X" \
   --product-type "SaaS B2B — 多租戶企業管理平台" \
   --tech-stack "Vue 3 / Spring Boot / MySQL + MSSQL / GCP" \
-  --target "/Users/holylin/Documents/TempDesktop/FinCore-X" \
+  --target "[父目錄路徑]/FinCore-X" \
   --template "/sessions/dreamy-jolly-goldberg/mnt/_PROJECT_TEMPLATE"
 ```
 
@@ -145,7 +145,7 @@ python3 /sessions/dreamy-jolly-goldberg/mnt/.skills/skills/project-init/scripts/
 ### 快速檢查（確保沒遺漏檔案）
 
 ```bash
-ls -la /Users/holylin/Documents/TempDesktop/FinCore-X/
+ls -la [父目錄路徑]/FinCore-X/
 
 # 應該有：
 # CLAUDE.md ✓
@@ -159,7 +159,7 @@ ls -la /Users/holylin/Documents/TempDesktop/FinCore-X/
 # ... 所有 09 個資料夾 ✓
 
 # 驗證沒有 [佔位符]
-grep -r "\[專案名稱\]" /Users/holylin/Documents/TempDesktop/FinCore-X/
+grep -r "\[專案名稱\]" [父目錄路徑]/FinCore-X/
 # 應該無結果（全部替換完了）
 ```
 
@@ -167,13 +167,13 @@ grep -r "\[專案名稱\]" /Users/holylin/Documents/TempDesktop/FinCore-X/
 
 ```bash
 # 確認專案名稱已替換
-grep "FinCore-X" /Users/holylin/Documents/TempDesktop/FinCore-X/CLAUDE.md
+grep "FinCore-X" [父目錄路徑]/FinCore-X/CLAUDE.md
 
 # 確認技術棧已寫入
-grep "Vue 3" /Users/holylin/Documents/TempDesktop/FinCore-X/memory/product.md
+grep "Vue 3" [父目錄路徑]/FinCore-X/memory/product.md
 
 # 確認 TASKS.md 有初始化
-head -5 /Users/holylin/Documents/TempDesktop/FinCore-X/TASKS.md
+head -5 [父目錄路徑]/FinCore-X/TASKS.md
 ```
 
 ### 用 present_files 呈現 Dashboard
@@ -182,7 +182,7 @@ head -5 /Users/holylin/Documents/TempDesktop/FinCore-X/TASKS.md
 
 ```
 📁 新專案已建立！
-  Project Dashboard: /Users/holylin/Documents/TempDesktop/FinCore-X/PROJECT_DASHBOARD.html
+  Project Dashboard: [父目錄路徑]/FinCore-X/PROJECT_DASHBOARD.html
 ```
 
 ---
@@ -192,7 +192,7 @@ head -5 /Users/holylin/Documents/TempDesktop/FinCore-X/TASKS.md
 ```
 ✅ FinCore-X 專案初始化完成！
 
-📁 位置：/Users/holylin/Documents/TempDesktop/FinCore-X/
+📁 位置：[父目錄路徑]/FinCore-X/
 📝 自動更新了 50+ 個檔案
 
 ⏳ 還需要手動完成 2 件事（只要 5 分鐘）：
@@ -225,7 +225,7 @@ head -5 /Users/holylin/Documents/TempDesktop/FinCore-X/TASKS.md
 ### 目標資料夾已存在
 
 ```
-⚠️ /Users/holylin/Documents/TempDesktop/FinCore-X/ 已存在
+⚠️ [父目錄路徑]/FinCore-X/ 已存在
 
 選項：
 1. 改專案名稱（例如改成 FinCore-X-v2）
@@ -241,7 +241,7 @@ head -5 /Users/holylin/Documents/TempDesktop/FinCore-X/TASKS.md
 ⚠️ 找不到 _PROJECT_TEMPLATE
 
 我已檢查過：
-- /Users/holylin/Documents/TempDesktop/_PROJECT_TEMPLATE ✗
+- [父目錄路徑]/_PROJECT_TEMPLATE ✗
 - /sessions/dreamy-jolly-goldberg/mnt/_PROJECT_TEMPLATE ✗
 
 請告訴我 _PROJECT_TEMPLATE 的完整路徑（例如：/path/to/template/）
@@ -260,7 +260,7 @@ head -5 /Users/holylin/Documents/TempDesktop/FinCore-X/TASKS.md
 ✅ 專案結構已建立，但請手工檢查上述 2 個檔案
 
 操作：
-1. cd /Users/holylin/Documents/TempDesktop/FinCore-X/
+1. cd [父目錄路徑]/FinCore-X/
 2. 手動修復或從 _PROJECT_TEMPLATE 重新複製這些檔案
 ```
 

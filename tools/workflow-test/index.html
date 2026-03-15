@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AICC-X Workflow Test Dashboard</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a;
+    --border: #2e3250; --text: #e2e8f0; --muted: #8892b0;
+    --pass: #22c55e; --fail: #ef4444; --warn: #f59e0b;
+    --pass-bg: rgba(34,197,94,.1); --fail-bg: rgba(239,68,68,.1); --warn-bg: rgba(245,158,11,.1);
+    --accent: #6366f1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 10; }
+  header h1 { font-size: 18px; font-weight: 700; }
+  header .timestamp { font-size: 12px; color: var(--muted); margin-left: auto; }
+
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn:hover { opacity: .85; }
+
+  .main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+
+  /* Summary */
+  .summary { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+  .score-ring { position: relative; width: 100px; height: 100px; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .score-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .score-text .num { font-size: 24px; font-weight: 800; }
+  .score-text .label { font-size: 10px; color: var(--muted); }
+  .stat-grid { display: flex; gap: 20px; }
+  .stat { display: flex; flex-direction: column; gap: 4px; }
+  .stat .val { font-size: 28px; font-weight: 800; }
+  .stat .key { font-size: 12px; color: var(--muted); }
+  .pass-val { color: var(--pass); }
+  .fail-val { color: var(--fail); }
+  .warn-val { color: var(--warn); }
+
+  /* Filter */
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 13px; cursor: pointer; }
+  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(99,102,241,.1); }
+
+  /* Category */
+  .category { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+  .cat-header { padding: 14px 20px; display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); }
+  .cat-header:hover { background: var(--surface2); }
+  .cat-icon { font-size: 18px; }
+  .cat-name { font-weight: 600; font-size: 14px; flex: 1; }
+  .cat-badges { display: flex; gap: 6px; }
+  .badge { padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .badge-pass { background: var(--pass-bg); color: var(--pass); }
+  .badge-fail { background: var(--fail-bg); color: var(--fail); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn); }
+  .chevron { color: var(--muted); transition: transform .2s; font-size: 14px; }
+  .cat-body { display: none; }
+  .cat-body.open { display: block; }
+
+  /* Test item */
+  .test-item { padding: 10px 20px 10px 20px; display: grid; grid-template-columns: 16px 1fr auto; gap: 10px; align-items: start; border-bottom: 1px solid rgba(46,50,80,.5); }
+  .test-item:last-child { border-bottom: none; }
+  .test-item:hover { background: var(--surface2); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .dot-pass { background: var(--pass); }
+  .dot-fail { background: var(--fail); }
+  .dot-warn { background: var(--warn); }
+  .test-name { font-size: 13px; font-weight: 500; }
+  .test-detail { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .test-hint { font-size: 11px; color: var(--accent); margin-top: 2px; }
+  .status-chip { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  .chip-pass { background: var(--pass-bg); color: var(--pass); }
+  .chip-fail { background: var(--fail-bg); color: var(--fail); }
+  .chip-warn { background: var(--warn-bg); color: var(--warn); }
+
+  .empty { padding: 20px; text-align: center; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <span style="font-size:22px">⚙️</span>
+  <h1>AICC-X Workflow Test Dashboard</h1>
+  <span class="timestamp" id="ts"></span>
+  <button class="btn btn-primary" onclick="rerun()">▶ 重新執行</button>
+  <button class="btn btn-secondary" onclick="expandAll()">展開全部</button>
+  <button class="btn btn-secondary" onclick="collapseAll()">收合全部</button>
+</header>
+
+<div class="main">
+  <div class="summary">
+    <div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px">整體健康分數</div>
+      <div class="stat-grid" id="stats"></div>
+    </div>
+    <div class="score-ring">
+      <svg width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" stroke-width="10"/>
+        <circle id="ring" cx="50" cy="50" r="40" fill="none" stroke="var(--pass)" stroke-width="10"
+          stroke-dasharray="251" stroke-dashoffset="251" stroke-linecap="round"/>
+      </svg>
+      <div class="score-text">
+        <span class="num" id="score-num">-</span>
+        <span class="label">SCORE</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setFilter('all',this)">全部</button>
+    <button class="filter-btn" onclick="setFilter('fail',this)">❌ 失敗</button>
+    <button class="filter-btn" onclick="setFilter('warn',this)">⚠️ 警告</button>
+    <button class="filter-btn" onclick="setFilter('pass',this)">✅ 通過</button>
+  </div>
+
+  <div id="categories"></div>
+</div>
+
+<script>
+const DATA = {"timestamp": "2026-03-15T20:32:31.696679", "summary": {"pass": 142, "fail": 0, "warn": 0, "total": 142, "score": 100.0}, "categories": [{"name": "AICC Agents 存在性", "icon": "🤖", "tests": [{"name": "aicc-interviewer", "status": "pass", "detail": "purple | Read, Write, Bash, Glob, Grep", "hint": ""}, {"name": "aicc-pm", "status": "pass", "detail": "blue | Read, Write, Bash, Glob, Grep", "hint": ""}, {"name": "aicc-ux", "status": "pass", "detail": "pink | Read, Write, Bash, Glob, Grep", "hint": ""}, {"name": "aicc-architect", "status": "pass", "detail": "green | Read, Write, Bash, Glob, Grep, WebFetch, WebSearch", "hint": ""}, {"name": "aicc-dba", "status": "pass", "detail": "orange | Read, Write, Bash, Glob, Grep", "hint": ""}, {"name": "aicc-backend", "status": "pass", "detail": "green | Read, Write, Edit, Bash, Glob, Grep", "hint": ""}, {"name": "aicc-frontend", "status": "pass", "detail": "cyan | Read, Write, Edit, Bash, Glob, Grep", "hint": ""}, {"name": "aicc-qa", "status": "pass", "detail": "yellow | Read, Write, Bash, Glob, Grep", "hint": ""}, {"name": "aicc-security", "status": "pass", "detail": "red | Read, Write, Bash, Glob, Grep, WebSearch", "hint": ""}, {"name": "aicc-devops", "status": "pass", "detail": "red | Read, Write, Edit, Bash, Glob, Grep", "hint": ""}, {"name": "aicc-review", "status": "pass", "detail": "gray | Read, Bash, Glob, Grep", "hint": ""}]}, {"name": "Agent Description 品質", "icon": "📝", "tests": [{"name": "aicc-interviewer description", "status": "pass", "detail": "skill 和 next-agent 均有提及", "hint": ""}, {"name": "aicc-pm description", "status": "pass", "detail": "skill 和 next-agent 均有提及", "hint": ""}, {"name": "aicc-ux description", "status": "pass", "detail": "skill 和 next-agent 均有提及", "hint": ""}, {"name": "aicc-architect description", "status": "pass", "detail": "skill 和 next-agent 均有提及", "hint": ""}, {"name": "aicc-dba description", "status": "pass", "detail": "skill 和 next-agent 均有提及", "hint": ""}, {"name": "aicc-backend description", "status": "pass", "detail": "skill 和 next-agent 均有提及", "hint": ""}, {"name": "aicc-frontend description", "status": "pass", "detail": "skill 和 next-agent 均有提及", "hint": ""}, {"name": "aicc-qa description", "status": "pass", "detail": "skill 和 next-agent 均有提及", "hint": ""}, {"name": "aicc-security description", "status": "pass", "detail": "skill 和 next-agent 均有提及", "hint": ""}, {"name": "aicc-devops description", "status": "pass", "detail": "skill 和 next-agent 均有提及", "hint": ""}, {"name": "aicc-review description", "status": "pass", "detail": "skill 和 next-agent 均有提及", "hint": ""}]}, {"name": "Agent ↔ Skill 連結", "icon": "🔗", "tests": [{"name": "aicc-interviewer → brainstorming", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-interviewer → verification-before-completion", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-pm → brainstorming", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-pm → verification-before-completion", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-ux → frontend-design", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-ux → brainstorming", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-ux → verification-before-completion", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-architect → deep-research", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-architect → brainstorming", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-architect → verification-before-completion", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-dba → deep-research", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-dba → verification-before-completion", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-backend → test-driven-development", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-backend → using-git-worktrees", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-backend → finishing-a-development-branch", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-backend → systematic-debugging", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-backend → verification-before-completion", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-frontend → test-driven-development", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-frontend → using-git-worktrees", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-frontend → finishing-a-development-branch", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-frontend → frontend-design", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-frontend → systematic-debugging", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-frontend → verification-before-completion", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-qa → webapp-testing", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-qa → test-driven-development", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-qa → systematic-debugging", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-qa → verification-before-completion", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-security → deep-research", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-security → verification-before-completion", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-devops → deep-research", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-devops → verification-before-completion", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-review → requesting-code-review", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-review → quality-gates", "status": "pass", "detail": "", "hint": ""}, {"name": "aicc-review → verification-before-completion", "status": "pass", "detail": "", "hint": ""}]}, {"name": "支援型 Agents", "icon": "🛡️", "tests": [{"name": "code-grounder", "status": "pass", "detail": "trigger skill: ground", "hint": ""}, {"name": "data-contract-validator", "status": "pass", "detail": "trigger skill: validate-contract", "hint": ""}, {"name": "gate-reviewer", "status": "pass", "detail": "trigger skill: gate-check", "hint": ""}, {"name": "retrospective-facilitator", "status": "pass", "detail": "trigger skill: retro", "hint": ""}, {"name": "ssot-guardian", "status": "pass", "detail": "trigger skill: ssot-guardian", "hint": ""}, {"name": "doc-generator", "status": "pass", "detail": "trigger skill: new-doc", "hint": ""}, {"name": "task-master", "status": "pass", "detail": "無對應 skill", "hint": ""}]}, {"name": "Pipeline 完整性", "icon": "🔄", "tests": [{"name": "P01 需求訪談 agents", "status": "pass", "detail": "aicc-interviewer → aicc-pm → aicc-ux", "hint": ""}, {"name": "P01 需求訪談 skills", "status": "pass", "detail": "brainstorming, verification-before-completion", "hint": ""}, {"name": "P01 需求訪談 gate", "status": "pass", "detail": "gate-reviewer + quality-gates", "hint": ""}, {"name": "P02 技術設計 agents", "status": "pass", "detail": "aicc-architect → aicc-dba → aicc-review", "hint": ""}, {"name": "P02 技術設計 skills", "status": "pass", "detail": "deep-research, brainstorming, verification-before-completion", "hint": ""}, {"name": "P02 技術設計 gate", "status": "pass", "detail": "gate-reviewer + quality-gates", "hint": ""}, {"name": "P03 開發準備 agents", "status": "pass", "detail": "aicc-backend → aicc-frontend → aicc-qa", "hint": ""}, {"name": "P03 開發準備 skills", "status": "pass", "detail": "test-driven-development, using-git-worktrees, validate-contract", "hint": ""}, {"name": "P03 開發準備 gate", "status": "pass", "detail": "gate-reviewer + quality-gates", "hint": ""}, {"name": "P04 實作開發 agents", "status": "pass", "detail": "aicc-backend → aicc-frontend → aicc-qa", "hint": ""}, {"name": "P04 實作開發 skills", "status": "pass", "detail": "test-driven-development, finishing-a-development-branch, systematic-debugging", "hint": ""}, {"name": "P04 實作開發 gate", "status": "pass", "detail": "gate-reviewer + quality-gates", "hint": ""}, {"name": "P05 合規審查 agents", "status": "pass", "detail": "aicc-security → aicc-review", "hint": ""}, {"name": "P05 合規審查 skills", "status": "pass", "detail": "deep-research, quality-gates", "hint": ""}, {"name": "P06 部署上線 agents", "status": "pass", "detail": "aicc-devops → aicc-review", "hint": ""}, {"name": "P06 部署上線 skills", "status": "pass", "detail": "deep-research, verification-before-completion", "hint": ""}, {"name": "P06 部署上線 gate", "status": "pass", "detail": "retrospective-facilitator + retro", "hint": ""}]}, {"name": "Pipeline Orchestrator", "icon": "🎯", "tests": [{"name": "agent 名稱引用", "status": "pass", "detail": "所有 aicc-* agents 均有引用", "hint": ""}, {"name": "自動觸發規則", "status": "pass", "detail": "含 code-grounder 等自動觸發設定", "hint": ""}]}, {"name": "已知缺失項目", "icon": "⚠️", "tests": [{"name": "screenshot-to-code", "status": "pass", "detail": "已安裝", "hint": ""}]}, {"name": "專家審查補強項", "icon": "🔬", "tests": [{"name": "FIX-1: P02 Wave 並行格式", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-1: P03/P04 Wave 並行格式", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-2: quality-gates Performance Testing 標準", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-2: quality-gates Code Coverage >= 80%", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-3: aicc-devops 多環境升級路徑", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-3: aicc-devops Production Runbook", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-4: aicc-security Secrets Management 審查區塊", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-4: aicc-security Secret Rotation 策略", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-5: aicc-frontend Accessibility WCAG 2.1 AA", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-5: aicc-frontend axe-core 自動化掃描", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-6: aicc-ux Accessibility 設計原則", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-6: aicc-ux 動畫可關閉原則", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-7: aicc-backend Feature Flag 設計規則", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "FIX-7: aicc-backend Feature Flag 生命週期管理", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "planning-with-files skill 已安裝", "status": "pass", "detail": "已安裝", "hint": ""}, {"name": "planning-with-files 整合: aicc-pm", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "planning-with-files 整合: aicc-architect", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "planning-with-files 整合: aicc-qa", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "planning-with-files 整合: aicc-devops", "status": "pass", "detail": "已實作", "hint": ""}, {"name": "planning-with-files 整合: pipeline-orchestrator 自動觸發", "status": "pass", "detail": "已實作", "hint": ""}]}, {"name": "10_Standards 規範結構", "icon": "📐", "tests": [{"name": "10_Standards/API/STD_API_Design.md", "status": "pass", "detail": "存在（4043 bytes）", "hint": ""}, {"name": "10_Standards/API/Error_Code_Standard_v1.0.md", "status": "pass", "detail": "存在（2095 bytes）", "hint": ""}, {"name": "10_Standards/DB/STD_DB_Schema.md", "status": "pass", "detail": "存在（5209 bytes）", "hint": ""}, {"name": "10_Standards/DB/enum_registry.yaml", "status": "pass", "detail": "存在（5313 bytes）", "hint": ""}, {"name": "10_Standards/DB/field_registry_template.yaml", "status": "pass", "detail": "存在（3247 bytes）", "hint": ""}, {"name": "10_Standards/UI/STD_UI_Design.md", "status": "pass", "detail": "存在（4401 bytes）", "hint": ""}, {"name": "10_Standards/UI/Design_Token_Reference.md", "status": "pass", "detail": "存在（4374 bytes）", "hint": ""}, {"name": "contracts/README.md 指向 10_Standards/DB", "status": "pass", "detail": "已更新", "hint": ""}, {"name": "Error_Code_Standard 已從 04_Compliance 移除", "status": "pass", "detail": "舊路徑已清除", "hint": ""}]}, {"name": "Slash Commands 完整性", "icon": "⚡", "tests": [{"name": "/init", "status": "pass", "detail": "project-template/.claude/commands/init.md (2393 bytes)", "hint": ""}, {"name": "/health", "status": "pass", "detail": "project-template/.claude/commands/health.md (2207 bytes)", "hint": ""}, {"name": "/setup-team", "status": "pass", "detail": "project-template/.claude/commands/setup-team.md (1340 bytes)", "hint": ""}, {"name": "/pipeline", "status": "pass", "detail": "project-template/.claude/commands/pipeline.md (1963 bytes)", "hint": ""}, {"name": "/gate", "status": "pass", "detail": "project-template/.claude/commands/gate.md (1883 bytes)", "hint": ""}, {"name": "/hotfix", "status": "pass", "detail": "project-template/.claude/commands/hotfix.md (2154 bytes)", "hint": ""}, {"name": "/progress", "status": "pass", "detail": "project-template/.claude/commands/progress.md (701 bytes)", "hint": ""}, {"name": "/pause", "status": "pass", "detail": "project-template/.claude/commands/pause.md (1173 bytes)", "hint": ""}, {"name": "/handoff", "status": "pass", "detail": "project-template/.claude/commands/handoff.md (1574 bytes)", "hint": ""}, {"name": "/complete-milestone", "status": "pass", "detail": "project-template/.claude/commands/complete-milestone.md (1737 bytes)", "hint": ""}, {"name": "/quick", "status": "pass", "detail": "project-template/.claude/commands/quick.md (1374 bytes)", "hint": ""}, {"name": "/resume (global)", "status": "pass", "detail": "~/.claude/commands/resume.md (965 bytes)", "hint": ""}]}, {"name": "Pipeline 觸發詞一致性", "icon": "🎯", "tests": [{"name": "P01 需求訪談 觸發詞", "status": "pass", "detail": "orchestrator 有引用", "hint": ""}, {"name": "P02 技術設計 觸發詞", "status": "pass", "detail": "orchestrator 有引用", "hint": ""}, {"name": "P03 開發準備 觸發詞", "status": "pass", "detail": "orchestrator 有引用", "hint": ""}, {"name": "P04 實作開發 觸發詞", "status": "pass", "detail": "orchestrator 有引用", "hint": ""}, {"name": "P05 合規審查 觸發詞", "status": "pass", "detail": "orchestrator 有引用", "hint": ""}, {"name": "P06 部署上線 觸發詞", "status": "pass", "detail": "orchestrator 有引用", "hint": ""}, {"name": "Hotfix Pipeline 觸發詞", "status": "pass", "detail": "orchestrator 有引用", "hint": ""}, {"name": "Brownfield 觸發詞", "status": "pass", "detail": "orchestrator 有引用", "hint": ""}]}, {"name": "Framework Agents 完整性", "icon": "🏗️", "tests": [{"name": "Hotfix: aicc-review", "status": "pass", "detail": "agent 存在", "hint": ""}, {"name": "Hotfix: aicc-backend", "status": "pass", "detail": "agent 存在", "hint": ""}, {"name": "Hotfix: aicc-frontend", "status": "pass", "detail": "agent 存在", "hint": ""}, {"name": "Hotfix: aicc-devops", "status": "pass", "detail": "agent 存在", "hint": ""}, {"name": "Brownfield: aicc-architect", "status": "pass", "detail": "agent 存在", "hint": ""}, {"name": "Brownfield: aicc-dba", "status": "pass", "detail": "agent 存在", "hint": ""}, {"name": "Brownfield: aicc-pm", "status": "pass", "detail": "agent 存在", "hint": ""}, {"name": "Brownfield: aicc-review", "status": "pass", "detail": "agent 存在", "hint": ""}, {"name": "Brownfield: aicc-devops", "status": "pass", "detail": "agent 存在", "hint": ""}, {"name": "task-master description 品質", "status": "pass", "detail": "包含 TASKS.md / STATE.md / 優先排序 / block 等關鍵觸發詞", "hint": ""}]}]};
+let currentFilter = 'all';
+
+function init() {
+  document.getElementById('ts').textContent = '最後執行：' + new Date(DATA.timestamp).toLocaleString('zh-TW');
+
+  const s = DATA.summary;
+  const scoreColor = s.score >= 90 ? '#22c55e' : s.score >= 70 ? '#f59e0b' : '#ef4444';
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="val pass-val">${s.pass}</div><div class="key">通過</div></div>
+    <div class="stat"><div class="val fail-val">${s.fail}</div><div class="key">失敗</div></div>
+    <div class="stat"><div class="val warn-val">${s.warn}</div><div class="key">警告</div></div>
+    <div class="stat"><div class="val" style="color:var(--muted)">${s.total}</div><div class="key">總計</div></div>`;
+
+  const offset = 251 - (251 * s.score / 100);
+  const ring = document.getElementById('ring');
+  ring.style.strokeDashoffset = offset;
+  ring.style.stroke = scoreColor;
+  document.getElementById('score-num').textContent = s.score + '%';
+  document.getElementById('score-num').style.color = scoreColor;
+
+  renderCategories();
+}
+
+function renderCategories() {
+  const container = document.getElementById('categories');
+  container.innerHTML = '';
+  DATA.categories.forEach((cat, ci) => {
+    const filtered = currentFilter === 'all' ? cat.tests : cat.tests.filter(t => t.status === currentFilter);
+    const counts = {pass:0,fail:0,warn:0};
+    cat.tests.forEach(t => counts[t.status]++);
+
+    const div = document.createElement('div');
+    div.className = 'category';
+    div.innerHTML = `
+      <div class="cat-header" onclick="toggle(${ci})">
+        <span class="cat-icon">${cat.icon}</span>
+        <span class="cat-name">${cat.name}</span>
+        <div class="cat-badges">
+          ${counts.fail ? `<span class="badge badge-fail">✗ ${counts.fail}</span>` : ''}
+          ${counts.warn ? `<span class="badge badge-warn">⚠ ${counts.warn}</span>` : ''}
+          ${counts.pass ? `<span class="badge badge-pass">✓ ${counts.pass}</span>` : ''}
+        </div>
+        <span class="chevron" id="ch${ci}">▶</span>
+      </div>
+      <div class="cat-body ${counts.fail > 0 || counts.warn > 0 ? 'open' : ''}" id="body${ci}">
+        ${filtered.length === 0 ? '<div class="empty">此分類無符合篩選條件的測試</div>' :
+          filtered.map(t => `
+          <div class="test-item">
+            <div class="dot dot-${t.status}"></div>
+            <div>
+              <div class="test-name">${t.name}</div>
+              ${t.detail ? `<div class="test-detail">${t.detail}</div>` : ''}
+              ${t.hint ? `<div class="test-hint">💡 ${t.hint}</div>` : ''}
+            </div>
+            <span class="status-chip chip-${t.status}">${{pass:'PASS',fail:'FAIL',warn:'WARN'}[t.status]}</span>
+          </div>`).join('')}
+      </div>`;
+    container.appendChild(div);
+    // update chevron
+    const body = document.getElementById(`body${ci}`);
+    if (body.classList.contains('open')) document.getElementById(`ch${ci}`).textContent = '▼';
+  });
+}
+
+function toggle(i) {
+  const body = document.getElementById('body'+i);
+  const ch = document.getElementById('ch'+i);
+  body.classList.toggle('open');
+  ch.textContent = body.classList.contains('open') ? '▼' : '▶';
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCategories();
+}
+
+function expandAll() {
+  document.querySelectorAll('.cat-body').forEach(b => b.classList.add('open'));
+  document.querySelectorAll('.chevron').forEach(c => c.textContent = '▼');
+}
+
+function collapseAll() {
+  document.querySelectorAll('.cat-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.chevron').forEach(c => c.textContent = '▶');
+}
+
+function rerun() {
+  const btn = document.querySelector('.btn-primary');
+  btn.textContent = '⏳ 執行中...';
+  btn.disabled = true;
+  // 提示用戶在 terminal 執行
+  alert('請在 Terminal 執行:\n\npython3 ~/.claude/workflow-test/run_tests.py --open\n\n執行完成後此頁面會自動刷新。');
+  btn.textContent = '▶ 重新執行';
+  btn.disabled = false;
+}
+
+init();
+</script>
+</body>
+</html>

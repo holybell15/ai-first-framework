@@ -161,4 +161,3 @@ var PROJECT_STATUS = {
 1. **⛔ 禁止另開新檔**：只能在現有檔案上 Edit，不得另存新版或重寫
 2. **每次修改後驗證** `<div>` 平衡：`python3 -c "import re; c=open('PROJECT_DASHBOARD.html').read(); print(len(re.findall(r'<div[\s>]',c)), len(re.findall(r'</div>',c)))"`
 3. **資料只改 `PROJECT_STATUS`**：不要動 render 函式來客製化顯示邏輯
-4. **同步 AICC-X**：若對 template 做結構性修改，同步更新 `AICC-X/PROJECT_DASHBOARD.html`

@@ -5,6 +5,41 @@
 
 ---
 
+## 🧑‍💻 團隊協作快速入口
+
+> 多人協作時，每次開工前：
+
+```bash
+git pull          # 1. 取最新狀態
+```
+
+```
+/info-task-master      # 2. 讓 Task-Master 判斷現在該做什麼（或說「執行 Task-Master」）
+```
+
+Task-Master 會自動讀取 `memory/STATE.md` + `TASKS.md`，輸出派遣報告告訴你下一步。
+不需要手動翻文件。
+
+**啟動你的角色：** 見 `TEAM.md` → 各角色啟動指令
+
+| 我是... | 讀取這個 Seed |
+|---------|-------------|
+| PM | `context-seeds/SEED_PM.md` |
+| UX | `context-seeds/SEED_UX.md` |
+| Architect | `context-seeds/SEED_Architect.md` |
+| DBA | `context-seeds/SEED_DBA.md` |
+| Backend | `context-seeds/SEED_Backend.md` |
+| Frontend | `context-seeds/SEED_Frontend.md` |
+| QA | `context-seeds/SEED_QA.md` |
+| Security | `context-seeds/SEED_Security.md` |
+| DevOps | `context-seeds/SEED_DevOps.md` |
+| Review（Gate）| `context-seeds/SEED_Review.md`（新 session！）|
+
+**完成後交接：** `git commit` → 通知下一位 → 更新 `memory/STATE.md` 的 `handoff_to`
+詳細協議見 `TEAM.md`
+
+---
+
 ## 🚀 新專案啟動流程（第一次使用必讀）
 
 > 拿到這個 template 後，依序完成以下 5 個步驟，之後就可以正常開始工作。
@@ -26,7 +61,13 @@
 **Step 4 — 建立術語表**
 - 打開 `memory/glossary.md`，填入本專案的核心術語
 
-**Step 5 — 開始第一個 Pipeline**
+**Step 5 — 初始化標準文件**
+- 開啟 `10_Standards/DB/enum_registry.yaml`，清除範例 ENUM，填入本專案的業務 ENUM 值
+- 開啟 `10_Standards/API/Error_Code_Standard_v1.0.md`，確認錯誤碼前綴已替換（`new-project.sh` 自動完成）
+- 複製 `.env.example` 為 `.env`（`cp .env.example .env`），填入真實密鑰，**禁止 commit .env**
+
+**Step 6 — 登記第一個 F-code，開始第一個 Pipeline**
+- 在 `MASTER_INDEX.md` 的「F-code 分配登記」表格新增第一個 Feature
 - 執行 `Pipeline: 需求訪談`，從 Interviewer Agent 開始
 
 ---
@@ -80,19 +121,15 @@ Read memory/dashboard.md
 
 ## Agent 路由表
 
-| 我的需求 | 使用這個種子檔 |
-|----------|---------------|
-| 我有個新想法想討論 | `context-seeds/SEED_Interviewer.md` |
-| 把需求整理成規格/User Story | `context-seeds/SEED_PM.md` |
-| 系統架構設計/技術選型 | `context-seeds/SEED_Architect.md` |
-| 設計用戶流程/畫面規劃/Prototype | `context-seeds/SEED_UX.md` |
-| 實作前端元件/頁面/Design Token | `context-seeds/SEED_Frontend.md` |
-| 實作後端 API / 整合 / Exception 處理 | `context-seeds/SEED_Backend.md` |
-| 設計資料庫 Schema / Migration | `context-seeds/SEED_DBA.md` |
-| 部署/CI-CD/雲端/Git 策略/事件管理/Rollback | `context-seeds/SEED_DevOps.md` |
-| 撰寫測試/驗收功能 | `context-seeds/SEED_QA.md` |
-| 資安審查/合規確認/多租戶安全審查 | `context-seeds/SEED_Security.md` |
-| Code Review/PR 審查/文件審查/Review Gate | `context-seeds/SEED_Review.md` |
+> **不知道從哪開始？** 先執行 `/info-task-master`
+
+| 我的需求 | 指令 |
+|----------|------|
+| **不知道從哪開始 / 任務衝突 / 有新功能要加入** | `/info-task-master` |
+| **有功能被 block / 多條線並行不知優先級** | `/info-task-master` |
+| **單獨啟動某個 Agent** | `/info-agent`（選單）或 `/info-agent [名稱] [F##]`（直接啟動） |
+| 啟動任何 Pipeline | `/info-pipeline`（選單） |
+| 緊急線上問題 | `/info-hotfix` |
 
 ---
 
@@ -123,6 +160,7 @@ Read memory/dashboard.md
 | 截圖→像素級還原 | `context-skills/screenshot-to-code/` | 收到設計稿/截圖時 UX 或 Frontend 觸發 |
 | Gate 1/2/G4-ENG/3 驗收 | `context-skills/quality-gates/` | Review Agent 執行 Gate |
 | Pipeline 自動化協調 | `context-skills/pipeline-orchestrator/` | 「執行 Pipeline:」觸發 |
+| 跨 session 任務追蹤 | `context-skills/planning-with-files/` | 多步驟 Pipeline / Context > 80% |
 | 初始化新專案 | `context-skills/project-init/` | 「初始化新專案」「new project」「建新專案」觸發 |
 
 ---
@@ -139,6 +177,129 @@ Read memory/dashboard.md
 5. **Gate Review 必須開新 session 執行**（見 §31.7）— Pipeline 最後一個 Agent 完成後，Orchestrator 會提示你開新 Cowork task 或 Claude Code session 來做 Gate 驗收
 
 ### 預設 Pipeline 清單
+
+#### Pipeline: 舊專案接入（Brownfield Onboarding）
+
+> 適用：已有 codebase 的專案，首次導入 AI-First Framework。
+> 觸發方式：說「**執行 Pipeline: 舊專案接入**」
+> 目標：建立當前狀態 baseline，之後的所有新工作走正常 Pipeline。
+
+```
+⚠️ 核心原則：不強迫補全舊 code 的所有文件。
+   建立 baseline 快照，接入後的新工作才走完整 Pipeline。
+   舊 code 的 Gate Review 不回頭跑，但技術債要顯性登記。
+
+【Stage 1 — 技術全景掃描】 § 41 map-codebase（4 Agent 並行）
+  Stack Agent     → 技術棧清單（語言/框架/版本/依賴）
+  Architect Agent → 模組邊界 + 資料流
+  Conventions Agent → 命名慣例 + 資料夾結構 + 已有設計模式
+  Concerns Agent  → 風險清單 + 技術債初步盤點
+  → 產出：memory/codebase_snapshot.md
+
+【Stage 2 — Feature 盤點 + F-code 分配】
+  PM Agent + Architect Agent
+  → 列出所有現有功能模組 → 分配 F-code（從 F01 開始）
+  → 登記至 MASTER_INDEX.md（maturity 全部標記 Baselined）
+  → 在 TASKS.md 建立每個 F-code 的 Backlog 條目
+
+【Stage 3 — 技術決策補記】
+  Architect Agent（讀 codebase_snapshot.md）
+  → 將已做的關鍵架構決策補寫為 ADR 記錄 memory/decisions.md
+  → 不是重新設計，是把已存在的決策「顯性化」
+  → 重點：技術棧選型 / DB 設計思路 / 外部系統整合理由
+
+【Stage 4 — 技術債顯性登記】
+  Architect Agent
+  → 盤點現有問題（安全漏洞 / 效能瓶頸 / 缺少測試 / 命名混亂等）
+  → 逐條寫入 memory/TECH_DEBT.md（含嚴重度 + 影響範圍 + 建議時機）
+  → 不要求立即修復，但必須讓 AI 知道這些坑在哪
+
+【Stage 5 — 標準差距評估（GAP Report）】
+  Review Agent（讀 10_Standards/ + codebase_snapshot.md）
+  → 對比三域標準（API / DB / UI）評估現有 code 合規程度
+  → 產出 GAP 分析報告（不阻塞，只是讓團隊知道差距）
+  → 高風險差距（安全/合規）標記 🔴，優先排入 TASKS.md Backlog
+
+【Stage 6 — 環境 + CI 整合】
+  DevOps Agent
+  → 確認 .env.example 存在（從現有 .env 抽格式）
+  → 確認 .github/CODEOWNERS 存在
+  → 整合或新建 CI workflow（保留現有 CI，補缺的 Stage）
+  → 確認 10_Standards/ 已有錯誤碼前綴（[PREFIX] 替換）
+
+【Stage 7 — 接入宣告】
+  → 建立接入 commit：feat: adopt AI-First Framework vX.X.X
+  → 更新 memory/last_task.md 記錄接入完成
+  → 在 TASKS.md 新增第一個 AI 輔助開發的 Feature 任務
+
+完成後的工作方式：
+  新功能    → 正常走 Pipeline: 需求訪談 → ... → Pipeline: 部署上線
+  修改舊功能 → §42 Brownfield 改動流程（見下方）
+  緊急線上問題 → 執行 Hotfix: [問題描述]
+  大規模重構 → 先讀 memory/codebase_snapshot.md + TECH_DEBT.md，再走 Pipeline: 技術設計
+```
+
+**接入後不需要做的事（常見誤區）：**
+- ❌ 不需要為每個舊功能補齊完整 RS 文件（按需補，動到才補）
+- ❌ 不需要回頭跑舊 code 的 Gate Review
+- ❌ 不需要把現有 code 改成符合 10_Standards 的格式（技術債慢慢還）
+- ✅ 只需要新工作遵循框架，舊 code 遇到才補文件
+
+---
+
+#### §42 — Brownfield 修改舊 Code 流程
+
+> 適用：舊專案接入後，修改任何已存在的功能或模組。
+> 不需要特定觸發詞 — Claude 在舊專案 context 下自動套用此流程。
+
+**規模判斷（依影響範圍，非檔案數）**
+
+| 規模 | 判斷條件 | 路徑 |
+|------|---------|------|
+| 小 | 單一功能點、不改 API 介面、不影響其他模組 | 走簡化四步法（見下） |
+| 中 | 改 API 介面 / DB Schema / 影響 1~2 個相關模組 | 走簡化四步法（RS 要求更嚴） |
+| 大 | 跨模組重構 / 資料結構變動 / 接近新功能 | 走完整 `Pipeline: 技術設計` → `Pipeline: 實作開發` |
+
+**簡化四步法（小 + 中 規模）**
+
+```
+Step 1 — Grounding（理解現況）
+  · 讀 memory/codebase_snapshot.md 相關段落
+  · 讀 memory/TECH_DEBT.md 確認此區域已知風險
+  · 讀現有 code，理解當前行為（不假設、不猜測）
+
+Step 2 — 補最小 RS（動 code 前必做）
+  必補條件（任一符合即觸發）：
+    · 改到 API 介面或 DB Schema
+    · 此區域在 TECH_DEBT.md 標記 🔴
+  其餘情況：
+    · 補一個最小 RS section，描述現有行為 + 本次改動範圍即可
+  → RS 不需完整，只需涵蓋此次改動
+
+Step 3 — 補完整測試（仍在動 code 前）
+  · 範圍：受影響的所有功能路徑（happy path + 主要 edge case）
+  · 方式 A（現有行為正確）：先寫測試讓它 PASS（紀錄現況）→ 改完後仍應 PASS
+  · 方式 B（現有行為有 bug）：測試反映預期正確行為（RED）→ 改完後 GREEN
+  · 禁止：改完 code 才補測試
+
+Step 4 — Execute + Verify
+  · 執行修改 → 確認所有測試 PASS
+  · 執行輕量 Gate Review（見下方清單）
+  · 更新 MASTER_INDEX.md 對應 F-code 的 maturity
+  · 若解決了 TECH_DEBT.md 的項目 → 標記已關閉並記錄日期
+```
+
+**輕量 Gate Review 清單（每次必做，不需開新 session）**
+
+| 項目 | 小 | 中 |
+|------|:--:|:--:|
+| RS 補充涵蓋此次改動範圍 | ✅ | ✅ |
+| 測試覆蓋受影響的所有功能路徑 | ✅ | ✅ |
+| API 介面 / DB Schema 無未記錄變動 | — | ✅ |
+| TECH_DEBT.md 更新（新增風險或關閉已解決項目） | ✅ | ✅ |
+| 改動範圍最小化（無順帶重構） | ✅ | ✅ |
+
+---
 
 #### Pipeline: 需求訪談
 ```
@@ -320,6 +481,81 @@ DevOps（CI-CD + GCP 部署 → F##-DEPLOY.md）→ Review（部署驗收 → F#
 
 ---
 
+## 🚨 Hotfix / 緊急修復流程
+
+> 線上問題專用通道，跳過正常 Pipeline，走最短路徑。
+> 觸發方式：說「**執行 Hotfix: [問題描述]**」
+
+### 嚴重度判定（第一步，必做）
+
+| 嚴重度 | 判定條件 | 路徑 |
+|--------|---------|------|
+| 🔴 Critical | 服務中斷 / 資料外洩 / P0 合規違規 | → Hotfix Pipeline |
+| 🟠 High | 核心功能完全失效 / 資料錯誤但未外洩 | → Hotfix Pipeline |
+| 🟡 Medium | 功能部分異常，有替代方案 | → 正常 Sprint，優先排入 |
+| 🟢 Low | 體驗問題 / 文字錯誤 | → 正常 Sprint |
+
+> Medium/Low 不走 Hotfix。緊急感≠嚴重度。
+
+---
+
+### Pipeline: Hotfix（Critical / High 專用）
+
+```
+Step 1 — 開案（立即，< 15 分鐘）
+  Review Agent 評估嚴重度 → 確認走 Hotfix Pipeline
+  → 在 memory/hotfix_log.md 建立 HF-YYYY-NNN 條目
+  → git checkout -b hotfix/HF-YYYY-NNN（從 main 切出）
+
+Step 2 — 根因分析（< 1 小時）
+  Backend/Frontend Agent 用 systematic-debugging skill
+  → 確認根本原因（禁止猜測，必須有 evidence）
+  → 在 hotfix_log.md 記錄根因
+
+Step 3 — 最小化修復（< 2 小時）
+  Backend/Frontend Agent 實作
+  → 原則：只動必要的 code，不順帶重構、不加新功能
+  → 修改範圍 ≤ 2 架構層（SC-01）
+  → 執行受影響功能的回歸測試（smoke + unit）
+
+Step 4 — Rollback 準備（部署前必做）
+  DevOps Agent 確認：
+  → Rollback 腳本可執行（git revert 或 DB rollback script）
+  → Feature Flag 可作為緊急關閉開關
+  → 若有 DB Migration：確認 down migration 已寫
+
+Step 5 — 快速審查（< 30 分鐘，新 session）
+  Review Agent 執行 HF-01~06 快速審查清單（見 SEED_Review.md）
+  🔴 Critical 還需 Security Agent 快速掃描
+
+Step 6 — 部署
+  DevOps Agent → 部署到 Staging → 冒煙測試通過 → 部署到 Production
+  → 在 hotfix_log.md 更新 resolved 狀態
+
+Step 7 — 補件（48hr 內，可事後補）
+  → 更新受影響 RS 的對應章節
+  → 補 Gate Review 文件（GRN 記錄）
+  → 將 hotfix branch merge 回 main 和 develop
+  → 在 hotfix_log.md 標記 ✅ 已結案
+```
+
+### 命名規範
+
+```
+Branch:   hotfix/HF-YYYY-NNN          (e.g. hotfix/HF-2026-001)
+Commit:   hotfix(F##): [一行描述]      (e.g. hotfix(F02): fix popup not showing on first call)
+Log ID:   HF-YYYY-NNN                 (e.g. HF-2026-001，寫入 hotfix_log.md)
+```
+
+### Hotfix 鐵則
+
+- 🚫 **禁止順帶重構**：範圍只限修這個 bug，其他問題另開 ticket
+- 🚫 **禁止猜根因就動手**：Step 2 根因未確認前不進入 Step 3
+- ✅ **Rollback 先於部署**：沒有確認 rollback 方案不得上線
+- ✅ **48hr 補件**：文件欠債必須還，hotfix_log.md 追蹤補件狀態
+
+---
+
 ## ⚡ GSD 快速參考（workflow_rules.md §32-§37）
 
 | 機制 | 觸發時機 | 規則章節 |
@@ -358,7 +594,11 @@ DevOps（CI-CD + GCP 部署 → F##-DEPLOY.md）→ Review（部署驗收 → F#
 | `memory/codebase_snapshot.md` | Codebase 技術棧/架構/慣例/風險快照（map-codebase 產出，§41） |
 | `memory/workflow_rules.md` | Agent 交接格式、文件規範、修改四步法、GSD §32-§41 ⬅️ **每次必讀** |
 | `memory/dashboard.md` | PROJECT_DASHBOARD.html 結構、函式、CSS、修改守則 ⬅️ **改 Dashboard 前必讀** |
+| `memory/hotfix_log.md` | Hotfix 緊急修復記錄 |
+| `memory/token_budget.md` | Context Token 預算追蹤 |
+| `memory/gate_baseline.yaml` | Gate Baseline Lock（G1-BL 通過後寫入，G2+ Diff Report 基準）|
 | `TASKS.md` | 任務清單與進度 |
+| `MASTER_INDEX.md` | 所有產出文件登記 + F-code 分配表 |
 
 ---
 
@@ -382,8 +622,21 @@ DevOps（CI-CD + GCP 部署 → F##-DEPLOY.md）→ Review（部署驗收 → F#
 ├── 06_Interview_Records/    ← 訪談紀錄（IR）
 ├── 07_Retrospectives/       ← 回顧與持續改善（Gate Review / Module Retro / PIP / 指標）
 ├── 08_Test_Reports/         ← 測試執行結果/品質證據（TR）
-└── 09_Release_Records/      ← 上線交付簽核（DEPLOY-RVW）
+├── 09_Release_Records/      ← 上線交付簽核（DEPLOY-RVW）
+└── 10_Standards/            ← 三域技術標準 SSOT（API / DB / UI）
+    ├── API/                 ← API 設計規範 + 錯誤碼標準
+    ├── DB/                  ← DB Schema 規範 + ENUM Registry + Field Registry 模板
+    └── UI/                  ← UI 設計規範 + Design Token 速查
 ```
+
+### 10_Standards/ 查詢路由
+
+| 任務 | 查詢位置 |
+|------|---------|
+| API / DB / UI 規範查詢 | `10_Standards/` | 三域技術標準 SSOT |
+| API 設計 / 錯誤碼 | `10_Standards/API/STD_API_Design.md` + `Error_Code_Standard_v1.0.md` |
+| DB Schema / ENUM / Field Registry 模板 | `10_Standards/DB/` |
+| UI Design Token / 元件規範 | `10_Standards/UI/` |
 
 ---
 

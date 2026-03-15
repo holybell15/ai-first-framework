@@ -1,0 +1,56 @@
+# Gate Automation Baseline — [專案名稱]
+# 由 Review Agent 在 Gate 1 通過後自動寫入（G1-BL，GAP-01）
+# 寫入後此檔案視為 Baseline，G2~G10 Review 前需執行 Diff Report（GAP-02）
+
+# ──────────────────────────────────────────────────────────────
+# G1 Baseline（在 Gate 1 通過後填寫）
+# ──────────────────────────────────────────────────────────────
+
+gate: G1
+locked_at: null            # YYYY-MM-DD HH:MM
+locked_by: review-agent
+feature: null              # F##
+
+seed_maturity:
+  total_score: null        # 0-100
+  scale: null              # S / M / L / XL
+  dimension_scores:
+    functional_boundary: null
+    data_definition: null
+    cross_module_impact: null
+    nfr_clarity: null
+    permission_compliance: null
+    user_context: null
+    view_matrix: null
+    capability_definition: null
+    cross_validation_rate: null
+  threshold_met: null      # true / false
+
+sdp_status:
+  scope_map_exists: null   # true / false
+  sdp_checklist_complete: null
+  blockers_cleared: null   # true / false（交接摘要 🔴 阻塞項為空）
+
+ux_deliverables:
+  prototypes: []           # 已交付的 Prototype 檔案清單
+  flow_diagrams: []        # 流程圖清單
+
+# ──────────────────────────────────────────────────────────────
+# G2 Baseline（在 Gate 2 通過後填寫）
+# ──────────────────────────────────────────────────────────────
+
+gate_2_baseline:
+  locked_at: null
+  adr_count: null          # memory/decisions.md 中已 accepted 的 ADR 數量
+  field_registries: []     # contracts/field_registry_F##.yaml 清單
+  migration_verified: null # true / false
+
+# ──────────────────────────────────────────────────────────────
+# Diff Report（每次 Gate Review 前由 Review Agent 產出）
+# GAP-02：對比當前狀態與上一個 Baseline 的差異
+# ──────────────────────────────────────────────────────────────
+
+last_diff_report:
+  gate: null
+  report_date: null
+  changes_since_baseline: []  # 簡述與 Baseline 的差異項目

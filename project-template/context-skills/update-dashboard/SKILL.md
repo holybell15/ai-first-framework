@@ -60,7 +60,7 @@ description: >
 **通常不需多問，直接推理：**
 
 從對話裡推斷：
-- **哪個專案**？（AICC-X / TimeX / 其他）
+- **哪個專案**？（讀取 CLAUDE.md 或詢問）
 - **完成了什麼**？（哪個 Agent / Pipeline / Gate）
 - **輸出了什麼檔案**？（檔名 + 資料夾）
 - **下一步是誰**？（下個 Agent 或 Gate Review）
@@ -70,10 +70,7 @@ description: >
 根據專案路徑找到 Dashboard：
 
 ```
-AICC-X         → /sessions/dreamy-jolly-goldberg/mnt/AICC-X/PROJECT_DASHBOARD.html
-Softphone_Demo → /sessions/dreamy-jolly-goldberg/mnt/Softphone_Demo/PROJECT_DASHBOARD.html
-TimeX          → /sessions/dreamy-jolly-goldberg/mnt/TimeProject/TimeX/PROJECT_DASHBOARD.html
-[其他]         → /sessions/dreamy-jolly-goldberg/mnt/[ProjectName]/PROJECT_DASHBOARD.html
+[專案名稱]  → [專案路徑]/PROJECT_DASHBOARD.html
 ```
 
 ### Step 3 — 修改 JavaScript 物件
@@ -157,7 +154,7 @@ print("✅ Dashboard 驗證通過")
 在對話裡用簡潔格式說明已改什麼：
 
 ```
-✅ AICC-X Dashboard 已更新：
+✅ [專案名稱] Dashboard 已更新：
   • pipelineLog  → 新增 Backend Agent（P042）
   • documents    → 新增 F07-API.md
   • P02 狀態     → done ✅

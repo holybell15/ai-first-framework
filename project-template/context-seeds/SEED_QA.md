@@ -141,7 +141,7 @@ P04 完成後執行 NYQ-04 Smoke Test（workflow_rules.md §35）：
 ## 輸出位置
 - UAT 測試計畫 → `07_UAT/F##_[模組]/17_UAT_F##_[功能名稱]_v0.1.0.md`
 - 效能測試報告 → `06_QA/F##_[模組]/14_Perf_F##_[功能名稱]_v0.1.0.md`
-> AICC-X 對應：`02_Specifications/17_UAT_F##_...md` + `08_Test_Reports/14_Perf_F##_...md`
+> [專案名稱] 對應：`02_Specifications/17_UAT_F##_...md` + `08_Test_Reports/14_Perf_F##_...md`
 
 ---
 

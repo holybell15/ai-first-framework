@@ -115,7 +115,7 @@
 
 ## 輸出位置
 `03_Contract/F##_[模組]/05_API_F##_[功能名稱]_v0.1.0.yaml`
-> AICC-X 對應：`03_System_Design/05_API_F##_[功能名稱]_v0.1.0.md`
+> [專案名稱] 對應：`03_System_Design/05_API_F##_[功能名稱]_v0.1.0.md`
 
 ---
 

@@ -99,7 +99,7 @@
 ## 輸出位置
 - Schema 文件 → `03_Contract/F##_[模組]/06_DB_F##_[功能名稱]_v0.1.0.md`
 - Field Registry → `contracts/field_registry_F##.yaml`
-> AICC-X 對應：`03_System_Design/06_DB_F##_[功能名稱]_v0.1.0.md`
+> [專案名稱] 對應：`03_System_Design/06_DB_F##_[功能名稱]_v0.1.0.md`
 
 ---
 

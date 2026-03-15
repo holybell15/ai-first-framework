@@ -138,7 +138,7 @@ Frontend 實作時必須遵守以下規則：
 ## 輸出位置
 - Prototype HTML → `04_UX/F##_[模組]/07_Proto_F##_[功能名稱]_v0.1.0.html`
 - 實作程式碼 → `05_Implementation/frontend/src/features/[模組]/`
-> AICC-X 對應：`01_Product_Prototype/[元件名稱].html`
+> [專案名稱] 對應：`01_Product_Prototype/[元件名稱].html`
 
 ---
 

@@ -102,7 +102,7 @@
 ## 輸出位置
 - 合規掃描報告 → `06_QA/F##_[模組]/15_Comply_F##_[功能名稱]_v0.1.0.md`
 - 滲透測試報告 → `06_QA/F##_[模組]/16_PenTest_F##_[功能名稱]_v0.1.0.md`
-> AICC-X 對應：`04_Compliance/15_Comply_F##_...md`
+> [專案名稱] 對應：`04_Compliance/15_Comply_F##_...md`
 
 ---
 

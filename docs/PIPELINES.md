@@ -25,9 +25,16 @@ The Pipeline Orchestrator (`context-skills/pipeline-orchestrator/SKILL.md`) take
 ## Pipeline Overview
 
 ```
+【新專案】
 P01 需求訪談  →  Gate 1  →  P02 技術設計  →  Gate 2
                                                     ↓
 P06 部署上線  ←  P05 合規審查  ←  Gate 3  ←  P04 實作開發
+
+【舊專案首次接入】
+Pipeline: 舊專案接入（一次性，約 1~2 天）
+  Stage 1 map-codebase → Stage 2 F-code 分配 → Stage 3 ADR 補記
+  → Stage 4 技術債登記 → Stage 5 GAP 評估 → Stage 6 CI 整合
+  → 接入完成，之後的新工作走正常 P01-P06
                                                     ↑
                               G4-ENG  ←  P03 開發準備
 ```
@@ -192,14 +199,81 @@ Examples:
 
 ---
 
+## Pipeline: Hotfix（Critical / High 線上問題專用）
+
+> 觸發方式：`執行 Hotfix: [問題描述]`
+> 不經過正常 P01-P03，從根因分析直達部署。
+
+```
+輸入：線上問題描述 + 初步現象
+
+Step 1 — 開案（< 15 min）
+  Review Agent：評估嚴重度 → 若 Critical/High 才進 Hotfix Pipeline
+  → 建立 memory/hotfix_log.md 條目（HF-YYYY-NNN）
+  → git checkout -b hotfix/HF-YYYY-NNN（從 main 切出）
+
+Step 2 — 根因分析（< 1 hr）
+  Backend / Frontend Agent：systematic-debugging skill
+  → 確認根本原因（有 evidence 才進 Step 3）
+  → 記錄根因到 hotfix_log.md
+
+Step 3 — 最小化修復（< 2 hr）
+  Backend / Frontend Agent
+  → 只動必要 code，≤ 2 架構層（SC-01）
+  → 執行回歸測試（smoke + unit）
+
+Step 4 — Rollback 準備
+  DevOps Agent
+  → 確認 rollback 腳本可執行
+  → 確認 DB down-migration 已寫（若有 Schema 變動）
+  → 確認 Feature Flag 可緊急關閉
+
+Step 5 — 快速審查（< 30 min）
+  ⚠️ 新 session 執行 Review Agent
+  → HF-01~06 快速審查清單（見 SEED_Review.md）
+  → 🔴 Critical：加跑 Security Agent 快速掃描
+
+Step 6 — 部署
+  DevOps Agent
+  → Staging 冒煙測試通過 → 部署 Production
+  → 更新 hotfix_log.md resolved 狀態
+
+Step 7 — 補件（48hr 內）
+  → 更新 RS 對應章節
+  → 補 Gate Review 文件（GRN）
+  → Merge hotfix branch → main + develop
+  → hotfix_log.md 標記 ✅ 已結案
+
+輸出：
+  memory/hotfix_log.md（HF-YYYY-NNN 條目）
+  修復 commit（hotfix/HF-YYYY-NNN branch）
+  [48hr 補件] RS 更新 + GRN 文件
+```
+
+**命名規範**
+```
+Branch:  hotfix/HF-YYYY-NNN
+Commit:  hotfix(F##): [一行描述根因和修復]
+Log ID:  HF-YYYY-NNN（寫入 memory/hotfix_log.md）
+```
+
+**鐵則**
+- 🚫 根因未確認前禁止動 code（Step 2 必須完成才進 Step 3）
+- 🚫 沒有 rollback 方案不得上線（Step 4 必須完成才進 Step 6）
+- 🚫 禁止順帶重構，範圍最小化
+- ✅ 48hr 內補件，hotfix_log.md 追蹤到結案
+
+---
+
 ## Pipeline Quick Reference
 
-| Trigger | Command |
-|---------|---------|
-| Start requirements | `執行 Pipeline: 需求訪談` |
-| Start tech design | `執行 Pipeline: 技術設計` |
-| Start dev prep | `執行 Pipeline: 開發準備` |
-| Start implementation | `執行 Pipeline: 實作開發` |
-| Start compliance | `執行 Pipeline: 合規審查` |
-| Start deployment | `執行 Pipeline: 部署上線` |
-| Any gate review | Open new session → `你是 Review Agent。執行 Gate [N] 驗收。` |
+| 觸發指令 | 路徑 |
+|---------|------|
+| `執行 Pipeline: 需求訪談` | Interviewer → PM → UX → Gate 1 |
+| `執行 Pipeline: 技術設計` | Architect + DBA → Gate 2 |
+| `執行 Pipeline: 開發準備` | Backend + Frontend + QA → G4-ENG |
+| `執行 Pipeline: 實作開發` | Backend + Frontend + QA → Gate 3 |
+| `執行 Pipeline: 合規審查` | Security → Review |
+| `執行 Pipeline: 部署上線` | DevOps → Review → L2 回顧 |
+| `執行 Hotfix: [問題]` | Review（嚴重度）→ Debug → Fix → Rollback → Deploy → 補件 |
+| Gate Review | 開新 session → `你是 Review Agent。執行 Gate [N] 驗收。` |

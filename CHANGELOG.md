@@ -5,6 +5,34 @@ Format: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [2.4.0] — 2026-03-15
+
+### Added — 多人協作 + 任務分派 + 框架維護機制
+
+- **`task-master` agent** — 框架層任務指揮官。讀取 TASKS.md + STATE.md 後自動判斷優先任務、派遣 Agent、處理 block 重路由、分配 F-code
+- **`/init` command** — 新專案首次初始化：框架完整性驗證 → 填寫資訊 → 替換佔位符 → setup-team → 建立 F01
+- **`/quick` command** — Quick Mode（GSD §37）：≤3 檔案小修正，含 DSV 聲明與驗證
+- **`/progress` command** — 快速狀態快照，從 STATE.md + TASKS.md 直接輸出
+- **`/health` command** — 專案結構完整性檢查，Step 0 整合 `tools/workflow-test/run_tests.py`
+- **`/pause` command** — 暫停工作，寫入 STATE.md resume_command
+- **`/complete-milestone` command** — Gate 通過後歸檔 + 更新狀態 + 可選 git tag
+- **`/setup-team` command** — 互動式填寫 TEAM.md（11 角色）
+- **`/handoff` command** — Agent 完成交接，更新 TASKS.md + STATE.md
+- **`TEAM.md`** — 多人協作成員配置表，含交接協議與 Git 分支規範
+- **`tools/workflow-test/`** — 框架健康測試工具（`PROJECT_DIR` 環境變數可覆寫專案路徑）
+- **PROJECT_DASHBOARD 更新日誌 Tab** — Tab 8，`RELEASE_NOTES` 資料物件結構化版本歷史
+- **Agent Teams 支援** — `settings.json` 啟用實驗性多 AI 並行，`task-master` 作為 team lead
+- STATE.md `team` 區塊：active_member / current_role / handoff_to / handoff_notified
+
+### Changed
+
+- `/health` command 新增 Step 0（框架測試）
+- `scripts/new-project.sh` 新增 Step 7（填寫 TEAM.md）
+- TASKS.md 新增 `@負責人` 欄位
+- PROJECT_DASHBOARD 使用指南新增 5 個區塊：Slash Command 速查、新專案流程、舊專案流程、setup-team 說明、Agent Teams 說明
+
+---
+
 ## [2.3.0] — 2026-03-15
 
 ### Added — GSD Phase 2 (§38–§41)

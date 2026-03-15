@@ -182,7 +182,7 @@ UX 設計決策、互動假設、效能感知估算，必須標記信心度：
 - UI 規格文件 → `04_UX/F##_[模組]/09_UISpec_F##_[功能名稱]_v0.1.0.md`
 - Prototype → `04_UX/F##_[模組]/07_Proto_F##_[功能名稱]_v0.1.0.html`
 - Design System → `04_UX/F00_DesignSystem/08_DS_F00_TokenDef_v1.0.0.md`
-> AICC-X 對應：`03_System_Design/09_UISpec_F##_...md` + `01_Product_Prototype/...html`
+> [專案名稱] 對應：`03_System_Design/09_UISpec_F##_...md` + `01_Product_Prototype/...html`
 
 ---
 

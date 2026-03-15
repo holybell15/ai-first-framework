@@ -1,0 +1,85 @@
+# Field Registry 模板 — F## [功能名稱]
+# SSOT: 此 Feature 所有欄位的唯一定義處
+# 複製此模板，重新命名為 field_registry_F##.yaml，填入實際欄位
+#
+# 六層一致性驗證（validate-contract skill）：
+#   L1 前端驗證 = L2 後端 DTO = L3 DB Schema = L4 API Spec = L5 ENUM Registry = L6 Field Registry
+
+feature: F00
+feature_name: "[功能名稱]"
+version: v0.1
+owner: DBA
+last_updated: YYYY-MM-DD
+
+fields:
+  # ── 範例：一般欄位 ──────────────────────────────────────────────
+  - name: ticket_id
+    type: UUID
+    db_column: ticket_id
+    nullable: false
+    pii: false
+    encrypted: false
+    audit: false
+    description: 案件唯一識別碼
+    api_exposed: true
+    api_field_name: ticketId     # camelCase in API response
+    validations:
+      - rule: NOT NULL
+      - rule: UUID format
+
+  # ── 範例：PII 欄位（個資）──────────────────────────────────────
+  - name: pii_customer_name
+    type: VARCHAR(100)
+    db_column: pii_customer_name
+    nullable: false
+    pii: true
+    encrypted: false             # 顯示時動態遮罩，不加密存儲
+    mask_rule: "前2後2顯示，中間用*（例：王**明）"
+    audit: true
+    description: 客戶姓名（PII）
+    api_exposed: true
+    api_field_name: customerName
+    api_mask: true               # API 回傳遮罩版本
+
+  # ── 範例：加密欄位（敏感金融）──────────────────────────────────
+  - name: enc_account_number
+    type: TEXT
+    db_column: enc_account_number
+    nullable: true
+    pii: false
+    encrypted: true              # AES-256-GCM 應用層加密
+    encryption_key: HSM_KEY_FINANCIAL
+    audit: true
+    description: 帳戶號碼（加密存儲）
+    api_exposed: false           # 不在 API 中直接暴露原始值
+
+  # ── 範例：ENUM 欄位 ────────────────────────────────────────────
+  - name: status
+    type: VARCHAR(30)
+    db_column: status
+    nullable: false
+    pii: false
+    encrypted: false
+    audit: true
+    enum_ref: ticket_status      # 引用 enum_registry.yaml
+    description: 案件狀態
+    api_exposed: true
+    api_field_name: status
+    validations:
+      - rule: IN enum_registry.ticket_status.values
+
+  # ── 範例：稽核欄位 ─────────────────────────────────────────────
+  - name: log_action
+    type: VARCHAR(50)
+    db_column: log_action
+    nullable: false
+    pii: false
+    encrypted: false
+    audit: true
+    immutable: true              # 只能 INSERT，禁止 UPDATE
+    description: 操作動作記錄（稽核）
+    api_exposed: false
+
+# ── 必要欄位（自動加入，不需在此列出）──────────────────────────────
+# id, tenant_id, created_at, updated_at, created_by, updated_by
+# 以上欄位由 STD_DB_Schema.md §2 強制要求

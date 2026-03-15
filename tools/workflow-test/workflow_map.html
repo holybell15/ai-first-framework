@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AICC-X Workflow Map</title>
+<style>
+:root {
+  --bg:#0f1117; --surface:#1a1d27; --surface2:#22263a; --border:#2e3250;
+  --text:#e2e8f0; --muted:#8892b0; --accent:#6366f1;
+  --pass:#22c55e; --fail:#ef4444; --warn:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+
+/* ── Header ── */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+header h1{font-size:17px;font-weight:700}
+.hdr-right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.pill{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(99,102,241,.15);color:#a5b4fc}
+.btn{padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn:hover{opacity:.8}
+
+/* ── Health bar ── */
+.health-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;gap:32px;font-size:12px}
+.hb{display:flex;align-items:center;gap:8px}
+.hb-label{color:var(--muted)}
+.hb-track{width:120px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.hb-fill{height:100%;border-radius:3px}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:2px;padding:16px 24px 0;border-bottom:1px solid var(--border);background:var(--surface)}
+.tab{padding:8px 18px;border-radius:8px 8px 0 0;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);border:1px solid transparent;border-bottom:none;margin-bottom:-1px}
+.tab.active{background:var(--bg);color:var(--text);border-color:var(--border)}
+.tab:hover:not(.active){color:var(--text)}
+
+/* ── Main ── */
+.main{padding:24px;max-width:1400px;margin:0 auto}
+.view{display:none}.view.active{display:block}
+
+/* ── Pipeline flow ── */
+.pipeline-flow{display:flex;flex-direction:column;gap:20px}
+.pipeline-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.pc-header{padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.pc-badge{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:.5px}
+.pc-name{font-weight:700;font-size:15px}
+.pc-unlock{margin-left:auto;font-size:11px;color:var(--muted)}
+.agents-row{display:flex;gap:12px;padding:16px 20px;align-items:flex-start;flex-wrap:wrap}
+.agent-box{background:var(--surface2);border-radius:10px;padding:12px;min-width:200px;flex:1;max-width:280px;border:1px solid var(--border);position:relative}
+.agent-box.missing{border-color:var(--fail);opacity:.7}
+.ab-arrow{display:flex;align-items:center;padding-top:20px;color:var(--muted);font-size:20px}
+.ab-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ab-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0}
+.ab-name{font-weight:700;font-size:13px}
+.ab-label{font-size:11px;color:var(--muted)}
+.ab-status{position:absolute;top:10px;right:10px;font-size:11px}
+.ab-output{font-size:11px;color:var(--muted);margin-bottom:8px;padding:5px 8px;background:rgba(0,0,0,.2);border-radius:5px}
+.skills-list{display:flex;flex-wrap:wrap;gap:4px}
+.skill-chip{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600}
+.skill-ok{background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.2)}
+.skill-miss{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+.pretrigger{font-size:10px;color:#f59e0b;padding:3px 7px;border-radius:4px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);margin-bottom:6px;display:inline-block}
+.gate-box{margin:0 20px 16px;padding:10px 16px;border-radius:8px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;gap:10px;font-size:12px}
+.gate-name{font-weight:700;color:#a5b4fc}
+.gate-label{color:var(--muted)}
+.gate-agent{margin-left:auto;font-size:11px;color:var(--muted)}
+
+/* ── Support agents ── */
+.support-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.support-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
+.sc-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sc-icon{width:36px;height:36px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px}
+.sc-name{font-weight:700;font-size:13px}
+.sc-id{font-size:11px;color:var(--muted)}
+.sc-body{font-size:12px;color:var(--muted)}
+.sc-row{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.trigger-chip{padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.2)}
+
+/* ── Skill map ── */
+.skill-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.sg-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
+.sg-title{font-weight:700;font-size:13px;margin-bottom:10px;color:var(--muted)}
+.sg-item{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(46,50,80,.4)}
+.sg-item:last-child{border:none}
+.sg-name{font-size:12px}
+.sg-agents{font-size:10px;color:var(--muted)}
+
+/* ── Matrix ── */
+.matrix-wrap{overflow-x:auto}
+table{border-collapse:collapse;font-size:11px;min-width:700px;width:100%}
+th{background:var(--surface);padding:8px 10px;text-align:left;border:1px solid var(--border);font-size:11px;font-weight:600;white-space:nowrap}
+td{padding:6px 10px;border:1px solid var(--border);text-align:center;white-space:nowrap}
+.m-agent{text-align:left;font-weight:600;color:var(--text)}
+.m-yes{color:var(--pass)}
+.m-no{color:var(--border)}
+
+/* ── Legend ── */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;font-size:12px}
+.leg-item{display:flex;align-items:center;gap:6px}
+.leg-dot{width:10px;height:10px;border-radius:50%}
+</style>
+</head>
+<body>
+
+<header>
+  <span style="font-size:22px">🗺️</span>
+  <h1>AICC-X Workflow Map</h1>
+  <div class="hdr-right">
+    <span class="pill">6 Pipelines</span>
+    <span class="pill">17 Agents</span>
+    <span class="pill">12 Core Skills</span>
+    <button class="btn" onclick="window.location='index.html'">🧪 Test Dashboard</button>
+  </div>
+</header>
+
+<div class="health-bar">
+  <div class="hb">
+    <span class="hb-label">Agents 健康</span>
+    <div class="hb-track"><div class="hb-fill" style="width:100%;background:var(--pass)"></div></div>
+    <span style="color:var(--pass)">100%</span>
+  </div>
+  <div class="hb">
+    <span class="hb-label">Skills 健康</span>
+    <div class="hb-track"><div class="hb-fill" style="width:100%;background:var(--pass)"></div></div>
+    <span style="color:var(--pass)">100%</span>
+  </div>
+  <div class="hb" style="margin-left:auto">
+    <span class="hb-label" style="font-size:11px">更新時間</span>
+    <span id="ts" style="color:var(--text)"></span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('flow',this)">🔄 Pipeline 流程</div>
+  <div class="tab" onclick="showTab('support',this)">🛡️ 支援型 Agents</div>
+  <div class="tab" onclick="showTab('skills',this)">⚡ Skill 地圖</div>
+  <div class="tab" onclick="showTab('matrix',this)">📊 Agent × Skill 矩陣</div>
+</div>
+
+<div class="main">
+
+<!-- ── Tab: Pipeline 流程 ── -->
+<div class="view active" id="view-flow">
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:var(--pass)"></div>Agent/Skill 已安裝</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--fail)"></div>缺失</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--warn)"></div>前置觸發 agent</div>
+</div>
+<div class="pipeline-flow" id="pipeline-flow"></div>
+</div>
+
+<!-- ── Tab: 支援型 Agents ── -->
+<div class="view" id="view-support">
+<div class="support-grid" id="support-grid"></div>
+</div>
+
+<!-- ── Tab: Skill 地圖 ── -->
+<div class="view" id="view-skills">
+<div class="skill-groups" id="skill-groups"></div>
+</div>
+
+<!-- ── Tab: 矩陣 ── -->
+<div class="view" id="view-matrix">
+<div class="matrix-wrap"><table id="matrix-table"></table></div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+const PIPELINES = [{"id": "P01", "name": "需求訪談", "color": "#6366f1", "agents": [{"id": "aicc-interviewer", "name": "Interviewer", "label": "需求訪談師", "skills": ["brainstorming", "verification-before-completion"], "output": "IR 文件 + Seed Scope Map"}, {"id": "aicc-pm", "name": "PM", "label": "產品經理", "skills": ["brainstorming", "verification-before-completion"], "output": "RS 規格 + User Story + AC"}, {"id": "aicc-ux", "name": "UX", "label": "UX 設計師", "skills": ["frontend-design", "screenshot-to-code", "brainstorming", "verification-before-completion"], "output": "Prototype HTML + USL 風格鎖定"}], "gate": {"name": "Gate 1", "label": "需求完整性"}, "unlocks": "P02"}, {"id": "P02", "name": "技術設計", "color": "#0ea5e9", "agents": [{"id": "aicc-architect", "name": "Architect", "label": "系統架構師", "skills": ["deep-research", "brainstorming", "verification-before-completion"], "output": "SA 架構文件 + ADR"}, {"id": "aicc-dba", "name": "DBA", "label": "資料庫管理師", "skills": ["deep-research", "verification-before-completion"], "output": "DB Schema + Field Registry"}, {"id": "aicc-review", "name": "Review", "label": "總審查官", "skills": ["requesting-code-review", "quality-gates", "verification-before-completion"], "output": "架構 Review 報告"}], "gate": {"name": "Gate 2", "label": "技術可行性"}, "unlocks": "P03"}, {"id": "P03", "name": "開發準備", "color": "#10b981", "agents": [{"id": "aicc-backend", "name": "Backend", "label": "後端工程師", "skills": ["test-driven-development", "using-git-worktrees", "systematic-debugging", "verification-before-completion"], "output": "API Spec 文件", "pre_trigger": "code-grounder"}, {"id": "aicc-frontend", "name": "Frontend", "label": "前端工程師", "skills": ["test-driven-development", "frontend-design", "screenshot-to-code", "verification-before-completion"], "output": "FE 元件規劃", "pre_trigger": "code-grounder"}, {"id": "aicc-qa", "name": "QA", "label": "QA 工程師", "skills": ["webapp-testing", "test-driven-development", "systematic-debugging", "verification-before-completion"], "output": "測試案例設計 TC"}], "gate": {"name": "G4-ENG", "label": "工程設計驗收"}, "unlocks": "P04"}, {"id": "P04", "name": "實作開發", "color": "#f59e0b", "agents": [{"id": "aicc-backend", "name": "Backend", "label": "後端工程師", "skills": ["test-driven-development", "using-git-worktrees", "finishing-a-development-branch", "systematic-debugging"], "output": "後端實作 src/", "pre_trigger": "code-grounder"}, {"id": "aicc-frontend", "name": "Frontend", "label": "前端工程師", "skills": ["test-driven-development", "using-git-worktrees", "finishing-a-development-branch", "frontend-design"], "output": "前端元件 src/", "pre_trigger": "code-grounder"}, {"id": "aicc-qa", "name": "QA", "label": "QA 工程師", "skills": ["webapp-testing", "systematic-debugging", "verification-before-completion"], "output": "測試報告 TR"}], "gate": {"name": "Gate 3", "label": "交付前審查"}, "unlocks": "P05/P06"}, {"id": "P05", "name": "合規審查", "color": "#ef4444", "agents": [{"id": "aicc-security", "name": "Security", "label": "資安合規專家", "skills": ["deep-research", "verification-before-completion"], "output": "SEC 資安報告"}, {"id": "aicc-review", "name": "Review", "label": "總審查官", "skills": ["quality-gates", "verification-before-completion"], "output": "合規 Review 報告"}], "gate": null, "unlocks": "P06"}, {"id": "P06", "name": "部署上線", "color": "#8b5cf6", "agents": [{"id": "aicc-devops", "name": "DevOps", "label": "DevOps 工程師", "skills": ["deep-research", "verification-before-completion"], "output": "CI/CD + 部署計畫"}, {"id": "aicc-review", "name": "Review", "label": "總審查官", "skills": ["quality-gates", "verification-before-completion"], "output": "部署驗收報告"}], "gate": {"name": "L2 回顧", "label": "模組回顧"}, "unlocks": null}];
+const SUPPORT   = [{"id": "code-grounder", "name": "Code Grounder", "trigger": "ground", "when": "任何 AI 修改程式碼前", "color": "#64748b"}, {"id": "gate-reviewer", "name": "Gate Reviewer", "trigger": "gate-check", "when": "Pipeline 完成後 Gate 審查", "color": "#64748b"}, {"id": "data-contract-validator", "name": "Contract Validator", "trigger": "validate-contract", "when": "欄位/API 異動後", "color": "#64748b"}, {"id": "retrospective-facilitator", "name": "Retro Facilitator", "trigger": "retro", "when": "Gate 通過後回顧", "color": "#64748b"}, {"id": "ssot-guardian", "name": "SSOT Guardian", "trigger": "ssot-guardian", "when": "文件異動 SSOT 驗證", "color": "#64748b"}, {"id": "doc-generator", "name": "Doc Generator", "trigger": "new-doc", "when": "建立新文件時", "color": "#64748b"}];
+
+const AGENT_EXISTS = {};
+const SKILL_EXISTS = {};
+
+// Pre-compute existence (embedded at build time)
+AGENT_EXISTS["aicc-architect"] = true;
+AGENT_EXISTS["aicc-backend"] = true;
+AGENT_EXISTS["aicc-dba"] = true;
+AGENT_EXISTS["aicc-devops"] = true;
+AGENT_EXISTS["aicc-frontend"] = true;
+AGENT_EXISTS["aicc-interviewer"] = true;
+AGENT_EXISTS["aicc-pm"] = true;
+AGENT_EXISTS["aicc-qa"] = true;
+AGENT_EXISTS["aicc-review"] = true;
+AGENT_EXISTS["aicc-security"] = true;
+AGENT_EXISTS["aicc-ux"] = true;
+AGENT_EXISTS["code-grounder"] = true;
+AGENT_EXISTS["data-contract-validator"] = true;
+AGENT_EXISTS["doc-generator"] = true;
+AGENT_EXISTS["gate-reviewer"] = true;
+AGENT_EXISTS["retrospective-facilitator"] = true;
+AGENT_EXISTS["ssot-guardian"] = true;
+SKILL_EXISTS["brainstorming"] = true;
+SKILL_EXISTS["deep-research"] = true;
+SKILL_EXISTS["finishing-a-development-branch"] = true;
+SKILL_EXISTS["frontend-design"] = true;
+SKILL_EXISTS["quality-gates"] = true;
+SKILL_EXISTS["requesting-code-review"] = true;
+SKILL_EXISTS["screenshot-to-code"] = true;
+SKILL_EXISTS["systematic-debugging"] = true;
+SKILL_EXISTS["test-driven-development"] = true;
+SKILL_EXISTS["using-git-worktrees"] = true;
+SKILL_EXISTS["verification-before-completion"] = true;
+SKILL_EXISTS["webapp-testing"] = true;
+
+const AGENT_ICONS = {
+  'aicc-interviewer':'🎙️','aicc-pm':'📋','aicc-ux':'🎨',
+  'aicc-architect':'🏛️','aicc-dba':'🗄️','aicc-backend':'⚙️',
+  'aicc-frontend':'💻','aicc-qa':'🔍','aicc-security':'🔒',
+  'aicc-devops':'🚀','aicc-review':'👁️',
+};
+const SUPPORT_ICONS = {
+  'code-grounder':'🧲','gate-reviewer':'🚦','data-contract-validator':'📐',
+  'retrospective-facilitator':'🔁','ssot-guardian':'🛡️','doc-generator':'📄',
+};
+
+function showTab(id, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── Pipeline Flow ──
+function renderFlow() {
+  const container = document.getElementById('pipeline-flow');
+  PIPELINES.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'pipeline-card';
+
+    // Header
+    const hdr = document.createElement('div');
+    hdr.className = 'pc-header';
+    hdr.innerHTML = `
+      <span class="pc-badge" style="background:${p.color}22;color:${p.color}">${p.id}</span>
+      <span class="pc-name" style="color:${p.color}">${p.name}</span>
+      <span class="pc-unlock">${p.unlocks ? '→ 解鎖 ' + p.unlocks : '終點'}</span>`;
+    card.appendChild(hdr);
+
+    // Agents row
+    const row = document.createElement('div');
+    row.className = 'agents-row';
+    p.agents.forEach((a, i) => {
+      // arrow
+      if (i > 0) {
+        const arr = document.createElement('div');
+        arr.className = 'ab-arrow';
+        arr.textContent = '→';
+        row.appendChild(arr);
+      }
+      const ok = AGENT_EXISTS[a.id];
+      const box = document.createElement('div');
+      box.className = 'agent-box' + (ok ? '' : ' missing');
+      const missingSkills = a.skills.filter(s => !SKILL_EXISTS[s]);
+      box.innerHTML = `
+        <span class="ab-status">${ok ? '🟢' : '🔴'}</span>
+        <div class="ab-header">
+          <div class="ab-icon" style="background:${p.color}">${AGENT_ICONS[a.id] || '🤖'}</div>
+          <div><div class="ab-name">${a.name}</div><div class="ab-label">${a.label}</div></div>
+        </div>
+        ${a.pre_trigger ? `<div class="pretrigger">⚡ 前置: ${a.pre_trigger}</div>` : ''}
+        <div class="ab-output">${a.output}</div>
+        <div class="skills-list">
+          ${a.skills.map(s => `<span class="skill-chip ${SKILL_EXISTS[s]?'skill-ok':'skill-miss'}">${s}</span>`).join('')}
+        </div>`;
+      row.appendChild(box);
+    });
+    card.appendChild(row);
+
+    // Gate
+    if (p.gate) {
+      const gate = document.createElement('div');
+      gate.className = 'gate-box';
+      gate.innerHTML = `
+        <span style="font-size:16px">🚦</span>
+        <span class="gate-name">${p.gate.name}</span>
+        <span class="gate-label">— ${p.gate.label}</span>
+        <span class="gate-agent">gate-reviewer agent</span>`;
+      card.appendChild(gate);
+    }
+
+    container.appendChild(card);
+  });
+}
+
+// ── Support Agents ──
+function renderSupport() {
+  const grid = document.getElementById('support-grid');
+  SUPPORT.forEach(s => {
+    const ok = AGENT_EXISTS[s.id];
+    const div = document.createElement('div');
+    div.className = 'support-card';
+    div.style.borderColor = ok ? 'var(--border)' : 'var(--fail)';
+    div.innerHTML = `
+      <div class="sc-header">
+        <div class="sc-icon">${SUPPORT_ICONS[s.id] || '🤖'}</div>
+        <div>
+          <div class="sc-name">${s.name} ${ok?'🟢':'🔴'}</div>
+          <div class="sc-id">${s.id}</div>
+        </div>
+      </div>
+      <div class="sc-body">
+        <div style="margin-bottom:8px;color:var(--text)">${s.when}</div>
+        <div class="sc-row">
+          <span style="color:var(--muted)">觸發 Skill:</span>
+          <span class="trigger-chip">/${s.trigger}</span>
+        </div>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+// ── Skill Map ──
+function renderSkills() {
+  const allSkills = {};
+  PIPELINES.forEach(p => p.agents.forEach(a => {
+    a.skills.forEach(sk => {
+      if (!allSkills[sk]) allSkills[sk] = { agents: [], pipelines: new Set() };
+      allSkills[sk].agents.push(a.name + '(' + p.id + ')');
+      allSkills[sk].pipelines.add(p.id);
+    });
+  }));
+
+  // Group by pipeline
+  const groups = {};
+  PIPELINES.forEach(p => {
+    groups[p.id + ' ' + p.name] = { color: p.color, skills: [] };
+    p.agents.forEach(a => a.skills.forEach(s => {
+      if (!groups[p.id + ' ' + p.name].skills.includes(s))
+        groups[p.id + ' ' + p.name].skills.push(s);
+    }));
+  });
+
+  const container = document.getElementById('skill-groups');
+  Object.entries(groups).forEach(([gname, g]) => {
+    const card = document.createElement('div');
+    card.className = 'sg-card';
+    card.style.borderTopColor = g.color;
+    card.style.borderTopWidth = '3px';
+    card.innerHTML = `<div class="sg-title" style="color:${g.color}">${gname}</div>` +
+      g.skills.map(s => {
+        const ok = SKILL_EXISTS[s];
+        const users = allSkills[s] ? allSkills[s].agents.join(', ') : '';
+        return `<div class="sg-item">
+          <span class="sg-name ${ok?'':'sg-name'}">
+            <span style="color:${ok?'var(--pass)':'var(--fail)'}">${ok?'●':'○'}</span> ${s}
+          </span>
+          <span class="sg-agents">${users}</span>
+        </div>`;
+      }).join('');
+    container.appendChild(card);
+  });
+}
+
+// ── Matrix ──
+function renderMatrix() {
+  const allSkills = [];
+  PIPELINES.forEach(p => p.agents.forEach(a => {
+    a.skills.forEach(s => { if (!allSkills.includes(s)) allSkills.push(s); });
+  }));
+
+  const agentList = [];
+  const agentMeta = {};
+  PIPELINES.forEach(p => p.agents.forEach(a => {
+    const key = a.id + '|' + p.id;
+    if (!agentList.includes(key)) {
+      agentList.push(key);
+      agentMeta[key] = { name: a.name, label: a.label, pid: p.id, color: p.color, skills: a.skills };
+    }
+  }));
+
+  const tbl = document.getElementById('matrix-table');
+  // Header
+  const thead = document.createElement('thead');
+  thead.innerHTML = '<tr><th>Agent</th>' + allSkills.map(s =>
+    `<th style="color:${SKILL_EXISTS[s]?'var(--pass)':'var(--fail)'}">${s}</th>`
+  ).join('') + '</tr>';
+  tbl.appendChild(thead);
+  // Body
+  const tbody = document.createElement('tbody');
+  agentList.forEach(key => {
+    const m = agentMeta[key];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="m-agent"><span style="color:${m.color}">${m.pid}</span> ${m.name}<br><span style="color:var(--muted);font-size:10px">${m.label}</span></td>` +
+      allSkills.map(s => `<td class="${m.skills.includes(s)?'m-yes':'m-no'}">${m.skills.includes(s)?'✓':'·'}</td>`).join('');
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+}
+
+// Init
+document.getElementById('ts').textContent = new Date().toLocaleString('zh-TW');
+renderFlow();
+renderSupport();
+renderSkills();
+renderMatrix();
+</script>
+</body>
+</html>
