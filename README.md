@@ -12,7 +12,9 @@ AI-First Framework is a context engineering and spec-driven development system t
 - **6 Pipelines** — structured workflows from idea → deployed product
 - **11 Agent Roles** — each with a clear scope (PM, Architect, DBA, Backend, Frontend, UX, QA, Security, DevOps, Review, Interviewer)
 - **4 Quality Gates** — mandatory checkpoints that prevent moving forward with broken foundations
-- **27 Skills** — reusable capability modules that agents invoke automatically
+- **29 Skills** — reusable capability modules that agents invoke automatically
+- **8 Slash Commands** — one-liner shortcuts for common framework operations
+- **3-Domain Standards** — canonical API / DB / UI rules enforced across all agents (SSOT)
 - **GSD Mechanics** — 10 reliability mechanisms built into every pipeline (§32–§41)
 
 ---
@@ -33,10 +35,10 @@ cd ai-first-framework
 # → Creates /path/to/MyProductName/ with everything configured
 ```
 
-Or manually copy the template:
+Or adopt an existing project:
 
 ```bash
-cp -r project-template/ ../MyProductName/
+./scripts/adopt-project.sh /path/to/existing-project
 ```
 
 ### Step 3 — Open with Cowork or Claude Code
@@ -65,25 +67,38 @@ That's it. Claude reads the navigation file, activates the Interviewer Agent, an
 ai-first-framework/
 ├── README.md                    ← You are here
 ├── CHANGELOG.md                 ← Version history
-├── VERSION                      ← Current version (2.3.0)
+├── VERSION                      ← Current version (2.4.0)
 ├── scripts/
-│   └── new-project.sh           ← One-command project setup
+│   ├── new-project.sh           ← One-command project setup
+│   └── adopt-project.sh         ← Onboard an existing codebase
 ├── docs/
 │   ├── PIPELINES.md             ← All 6 pipelines explained
-│   ├── GSD_MECHANICS.md         ← §32–§41 reliability systems
-│   └── AGENTS.md                ← 11 agent roles reference
+│   ├── AGENTS.md                ← 11 agent roles reference
+│   └── AGENT_SYNC.md            ← Multi-agent coordination guide
+├── tools/
+│   └── workflow-test/           ← Framework health test suite
 └── project-template/            ← Copy this for each new project
-    ├── CLAUDE.md                ← Navigation & routing
-    ├── TASKS.md                 ← Task tracking
+    ├── CLAUDE.md                ← Navigation & routing (SSOT)
+    ├── TASKS.md                 ← Task tracking (F-code + @owner)
+    ├── TEAM.md                  ← Multi-member config & handoff protocol
+    ├── MASTER_INDEX.md          ← Document registry
     ├── PROJECT_DASHBOARD.html   ← Visual progress dashboard
+    ├── .claude/
+    │   └── commands/            ← 8 slash commands (/init /health /quick …)
+    ├── 10_Standards/            ← 3-domain technical standards (SSOT)
+    │   ├── API/                 ← API design + error code standards
+    │   ├── DB/                  ← Schema rules + enum/field registry
+    │   └── UI/                  ← Design tokens + component guidelines
     ├── context-seeds/           ← 11 Agent activation prompts
-    ├── context-skills/          ← 27 capability skill modules
+    ├── context-skills/          ← 29 capability skill modules
+    ├── contracts/               ← Data contracts & field registry
     ├── memory/                  ← Cross-session state & rules
     │   ├── workflow_rules.md    ← GSD §32–§41 complete rulebook
     │   ├── STATE.md             ← Session state snapshot (§38)
     │   ├── decisions.md         ← Architecture decisions (ADR)
-    │   └── product.md           ← Product & tech stack info
-    ├── contracts/               ← Data contracts & field registry
+    │   ├── gate_baseline.yaml   ← Gate exit criteria baselines
+    │   ├── token_budget.md      ← Context budget tracking
+    │   └── smoke_tests.md       ← Deployment smoke test checklist
     └── 01–09 folders/           ← Structured output directories
 ```
 
@@ -124,6 +139,35 @@ Activate any agent: `讀取 context-seeds/SEED_[Role].md，你現在是 [Role] A
 
 ---
 
+## Slash Commands
+
+One-liner shortcuts built into every project (`.claude/commands/`):
+
+| Command | What it does |
+|---------|-------------|
+| `/init` | First-time project setup: validate structure → fill placeholders → setup team → create F01 |
+| `/health` | Run framework integrity check + `tools/workflow-test` suite |
+| `/quick` | Quick Mode (GSD §37) for ≤3 file changes with DSV declaration |
+| `/progress` | Instant status snapshot from STATE.md + TASKS.md |
+| `/pause` | Suspend work session, write `resume_command` to STATE.md |
+| `/handoff` | Agent completion handoff: update TASKS.md + STATE.md |
+| `/complete-milestone` | Archive after Gate pass + update status + optional git tag |
+| `/setup-team` | Interactive TEAM.md configuration (all 11 roles) |
+
+---
+
+## 3-Domain Technical Standards (`10_Standards/`)
+
+Canonical rules enforced by all agents — edit once, respected everywhere.
+
+| Domain | Files | Key Rules |
+|--------|-------|-----------|
+| **API** | `STD_API_Design.md` · `Error_Code_Standard_v1.0.md` | `/api/v{N}/` versioning · `{ success, data, message, errorCode }` envelope · `AICC-{LAYER}{CODE}` error format |
+| **DB** | `STD_DB_Schema.md` · `enum_registry.yaml` · `field_registry_template.yaml` | UUID PKs · `tenant_id NOT NULL` · `pii_` / `log_` / `enc_` prefixes · reversible migrations |
+| **UI** | `STD_UI_Design.md` · `Design_Token_Reference.md` | CSS variable-only styling · WCAG 2.1 AA · 44px tap targets · no hardcoded hex |
+
+---
+
 ## GSD Mechanics (§32–§41)
 
 Built into every pipeline automatically. No extra setup needed.
@@ -143,12 +187,12 @@ Built into every pipeline automatically. No extra setup needed.
 
 ---
 
-## The 27 Skills
+## The 29 Skills
 
 Skills are capability modules that agents automatically invoke. They live in `context-skills/` inside each project.
 
-**Workflow Skills (15):**
-`pipeline-orchestrator` · `quality-gates` · `brainstorming` · `systematic-debugging` · `verification-before-completion` · `subagent-driven-development` · `test-driven-development` · `using-git-worktrees` · `finishing-a-development-branch` · `requesting-code-review` · `webapp-testing` · `deep-research` · `frontend-design` · `update-dashboard` · `project-init`
+**Workflow Skills (17):**
+`pipeline-orchestrator` · `quality-gates` · `brainstorming` · `systematic-debugging` · `verification-before-completion` · `subagent-driven-development` · `test-driven-development` · `using-git-worktrees` · `finishing-a-development-branch` · `requesting-code-review` · `webapp-testing` · `deep-research` · `frontend-design` · `update-dashboard` · `project-init` · `planning-with-files` · `screenshot-to-code`
 
 **Document Skills (6):**
 `docx` · `xlsx` · `pptx` · `pdf` · `doc-coauthoring` · `internal-comms`
@@ -183,13 +227,12 @@ First message:
 
 ## Project Setup Details
 
-After running `new-project.sh`, open `CLAUDE.md` and complete:
+After running `new-project.sh` (or `/init` command), Claude will:
 
-1. Replace all `[專案名稱]` placeholders with your product name
-2. Fill in the Product Overview table (type, target users, tech stack, stage)
-3. Update `memory/product.md` with tech stack specifics
-4. Update seed files with your tech stack (at minimum: Architect, Frontend, Backend)
-5. Add domain terms to `memory/glossary.md`
+1. Validate framework structure integrity
+2. Fill in product name, type, and tech stack across all files
+3. Configure `TEAM.md` with your team members
+4. Create the first Feature task (F01) in `TASKS.md`
 
 Then run your first pipeline:
 ```
@@ -198,9 +241,25 @@ Then run your first pipeline:
 
 ---
 
+## Multi-Member Collaboration
+
+`TEAM.md` defines who owns which Agent role, handoff protocols, and branch naming conventions. The `task-master` agent reads `TASKS.md` + `STATE.md` to auto-assign work and route around blockers.
+
+TASKS.md format:
+```
+| F## | Description | @owner | Status | Blocked by |
+```
+
+Cross-feature dependencies:
+```
+F05 depends_on: F02-API-完成
+```
+
+---
+
 ## Version
 
-Current: **v2.3.0** — Includes GSD Phase 2 (§38 STATE.md · §39 Wave Analysis · §40 Model Profiles · §41 map-codebase)
+Current: **v2.4.0** — Multi-member collaboration, 8 slash commands, 3-domain Standards, adopt-project workflow, framework health test suite.
 
 See [CHANGELOG.md](./CHANGELOG.md) for full history.
 
