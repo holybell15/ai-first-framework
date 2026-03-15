@@ -219,7 +219,7 @@ Seed 檔位於 `context-seeds/` 目錄。啟動方式：`讀取 context-seeds/SE
 
 ---
 
-## 內建可靠性機制
+## 流程品質保障層
 
 以下機制自動內建於 Pipeline，無需額外設定：
 
