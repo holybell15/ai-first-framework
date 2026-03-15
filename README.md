@@ -1,270 +1,254 @@
 # AI-First Framework
 
-> **A production-grade, multi-agent development system for Claude Code and Cowork.**
-> Turn any product idea into shipping code using structured Pipelines, 11 specialized AI Agents, and built-in quality gates.
+> **為 Claude Code 和 Cowork 打造的生產級多 Agent 開發系統。**
+> 透過結構化 Pipeline、11 個專業 AI Agent 和內建品質關卡，將任何產品想法變成可交付的程式碼。
 
 ---
 
-## What is this?
+## 這是什麼？
 
-AI-First Framework is a context engineering and spec-driven development system that makes AI-assisted development **reliable, traceable, and repeatable**. Instead of ad-hoc prompting, it gives you:
+AI-First Framework 是一套以 Context Engineering 和規格驅動開發為核心的系統，讓 AI 輔助開發變得**可靠、可追溯、可重複**。告別隨意 prompting，改用：
 
-- **6 Pipelines** — structured workflows from idea → deployed product
-- **11 Agent Roles** — each with a clear scope (PM, Architect, DBA, Backend, Frontend, UX, QA, Security, DevOps, Review, Interviewer)
-- **4 Quality Gates** — mandatory checkpoints that prevent moving forward with broken foundations
-- **29 Skills** — reusable capability modules that agents invoke automatically
-- **8 Slash Commands** — one-liner shortcuts for common framework operations
-- **3-Domain Standards** — canonical API / DB / UI rules enforced across all agents (SSOT)
-- **GSD Mechanics** — 10 reliability mechanisms built into every pipeline (§32–§41)
+- **6 條 Pipeline** — 從想法到上線的結構化工作流
+- **11 個 Agent 角色** — 各司其職（PM、Architect、DBA、Backend、Frontend、UX、QA、Security、DevOps、Review、Interviewer）
+- **4 個品質關卡** — 強制檢查點，防止帶著爛地基往下走
+- **29 個 Skills** — Agent 自動調用的可重用能力模組
+- **8 個 Slash Commands** — 常用框架操作的一行指令
+- **三域技術標準** — API / DB / UI 的 SSOT 規範，全 Agent 強制遵守
+- **GSD 機制** — 10 個可靠性機制，內建於每條 Pipeline（§32–§41）
 
 ---
 
-## Quick Start (5 minutes)
+## 快速開始（5 分鐘）
 
-### Step 1 — Clone the framework
+### Step 1 — Clone 框架
 
 ```bash
-git clone https://github.com/your-org/ai-first-framework.git
+git clone https://github.com/holybell15/ai-first-framework.git
 cd ai-first-framework
 ```
 
-### Step 2 — Create your project
+### Step 2 — 建立你的專案
 
 ```bash
-./scripts/new-project.sh MyProductName
-# → Creates /path/to/MyProductName/ with everything configured
+./scripts/new-project.sh 我的產品名稱
+# → 自動在上層目錄建立完整設定的專案資料夾
 ```
 
-Or adopt an existing project:
+或接入現有專案：
 
 ```bash
 ./scripts/adopt-project.sh /path/to/existing-project
 ```
 
-### Step 3 — Open with Cowork or Claude Code
+### Step 3 — 用 Cowork 或 Claude Code 開啟
 
-**Cowork**: Open a new task, select the `MyProductName/` folder.
+**Cowork**：開新 task，選擇 `我的產品名稱/` 資料夾。
 
-**Claude Code**:
+**Claude Code**：
 ```bash
-cd ../MyProductName
+cd ../我的產品名稱
 claude
 ```
 
-### Step 4 — Start your first Pipeline
+### Step 4 — 開始第一條 Pipeline
 
 ```
 讀取 CLAUDE.md，然後執行 Pipeline: 需求訪談
 ```
 
-That's it. Claude reads the navigation file, activates the Interviewer Agent, and begins structured requirements gathering.
+就這樣。Claude 讀取導航檔，啟動 Interviewer Agent，開始結構化的需求蒐集。
 
 ---
 
-## Framework Architecture
+## 框架結構
 
 ```
 ai-first-framework/
-├── README.md                    ← You are here
-├── CHANGELOG.md                 ← Version history
-├── VERSION                      ← Current version (2.4.0)
+├── README.md                    ← 你在這裡
+├── CHANGELOG.md                 ← 版本歷史
+├── VERSION                      ← 當前版本（2.4.0）
 ├── scripts/
-│   ├── new-project.sh           ← One-command project setup
-│   └── adopt-project.sh         ← Onboard an existing codebase
+│   ├── new-project.sh           ← 一鍵建立新專案
+│   └── adopt-project.sh         ← 接入既有 Codebase
 ├── docs/
-│   ├── PIPELINES.md             ← All 6 pipelines explained
-│   ├── AGENTS.md                ← 11 agent roles reference
-│   └── AGENT_SYNC.md            ← Multi-agent coordination guide
+│   ├── PIPELINES.md             ← 6 條 Pipeline 詳解
+│   ├── AGENTS.md                ← 11 個 Agent 角色參考
+│   └── AGENT_SYNC.md            ← 多 Agent 協調指南
 ├── tools/
-│   └── workflow-test/           ← Framework health test suite
-└── project-template/            ← Copy this for each new project
-    ├── CLAUDE.md                ← Navigation & routing (SSOT)
-    ├── TASKS.md                 ← Task tracking (F-code + @owner)
-    ├── TEAM.md                  ← Multi-member config & handoff protocol
-    ├── MASTER_INDEX.md          ← Document registry
-    ├── PROJECT_DASHBOARD.html   ← Visual progress dashboard
+│   └── workflow-test/           ← 框架健康測試工具
+└── project-template/            ← 每個新專案複製這個
+    ├── CLAUDE.md                ← 導航總表（SSOT）
+    ├── TASKS.md                 ← 任務清單（F-code + @負責人）
+    ├── TEAM.md                  ← 多人協作設定 + 交接協議
+    ├── MASTER_INDEX.md          ← 文件登記索引
+    ├── PROJECT_DASHBOARD.html   ← 視覺化進度儀表板
     ├── .claude/
-    │   └── commands/            ← 8 slash commands (/init /health /quick …)
-    ├── 10_Standards/            ← 3-domain technical standards (SSOT)
-    │   ├── API/                 ← API design + error code standards
-    │   ├── DB/                  ← Schema rules + enum/field registry
-    │   └── UI/                  ← Design tokens + component guidelines
-    ├── context-seeds/           ← 11 Agent activation prompts
-    ├── context-skills/          ← 29 capability skill modules
-    ├── contracts/               ← Data contracts & field registry
-    ├── memory/                  ← Cross-session state & rules
-    │   ├── workflow_rules.md    ← GSD §32–§41 complete rulebook
-    │   ├── STATE.md             ← Session state snapshot (§38)
-    │   ├── decisions.md         ← Architecture decisions (ADR)
-    │   ├── gate_baseline.yaml   ← Gate exit criteria baselines
-    │   ├── token_budget.md      ← Context budget tracking
-    │   └── smoke_tests.md       ← Deployment smoke test checklist
-    └── 01–09 folders/           ← Structured output directories
+    │   └── commands/            ← 8 個 slash commands
+    ├── 10_Standards/            ← 三域技術標準（SSOT）
+    │   ├── API/                 ← API 設計 + 錯誤碼標準
+    │   ├── DB/                  ← Schema 規範 + ENUM / Field Registry
+    │   └── UI/                  ← Design Token + 元件規範
+    ├── context-seeds/           ← 11 個 Agent 啟動提示詞
+    ├── context-skills/          ← 29 個能力 Skill 模組
+    ├── contracts/               ← 資料契約 + Field Registry
+    ├── memory/                  ← 跨 Session 狀態與規則
+    │   ├── workflow_rules.md    ← GSD §32–§41 完整規則手冊
+    │   ├── STATE.md             ← Session 狀態快照（§38）
+    │   ├── decisions.md         ← 技術決策記錄（ADR）
+    │   ├── gate_baseline.yaml   ← Gate 出口基準
+    │   ├── token_budget.md      ← Context 預算追蹤
+    │   └── smoke_tests.md       ← 部署冒煙測試清單
+    └── 01–09 folders/           ← 結構化產出目錄
 ```
 
 ---
 
-## The 6 Pipelines
+## 6 條 Pipeline
 
-| # | Pipeline | What it produces | Gate |
-|---|---------|-----------------|------|
-| P01 | 需求訪談 | Interview records, User Stories, Prototype | Gate 1 |
-| P02 | 技術設計 | Architecture, DB Schema, ADR | Gate 2 |
-| P03 | 開發準備 | API Spec, Component plan, Test cases | G4-ENG |
-| P04 | 實作開發 | Working code + passing tests | Gate 3 |
-| P05 | 合規審查 | Security & compliance docs | — |
-| P06 | 部署上線 | CI/CD config, deployment, release | — |
+| # | Pipeline | 產出 | 品質關卡 |
+|---|---------|------|---------|
+| P01 | 需求訪談 | 訪談紀錄、User Story、Prototype | Gate 1 |
+| P02 | 技術設計 | 架構、DB Schema、ADR | Gate 2 |
+| P03 | 開發準備 | API Spec、元件規劃、測試案例 | G4-ENG |
+| P04 | 實作開發 | 可運行的程式碼 + 通過的測試 | Gate 3 |
+| P05 | 合規審查 | 資安與合規文件 | — |
+| P06 | 部署上線 | CI/CD 設定、部署紀錄、Release | — |
 
-Each Pipeline is executed by typing: `執行 Pipeline: [名稱]`
+觸發方式：`執行 Pipeline: [名稱]`
 
 ---
 
-## The 11 Agent Roles
+## 11 個 Agent 角色
 
-| Agent | Scope | Seed file |
-|-------|-------|-----------|
-| Interviewer | Requirements elicitation | `context-seeds/SEED_Interviewer.md` |
-| PM | User Stories + Acceptance Criteria | `context-seeds/SEED_PM.md` |
-| Architect | System design + ADR | `context-seeds/SEED_Architect.md` |
-| UX | User flows + HTML Prototype | `context-seeds/SEED_UX.md` |
-| Frontend | UI components + design system | `context-seeds/SEED_Frontend.md` |
-| Backend | API + business logic | `context-seeds/SEED_Backend.md` |
-| DBA | Database schema + migrations | `context-seeds/SEED_DBA.md` |
-| DevOps | CI/CD + cloud deployment | `context-seeds/SEED_DevOps.md` |
-| QA | Test cases + execution | `context-seeds/SEED_QA.md` |
-| Security | Security review + compliance | `context-seeds/SEED_Security.md` |
-| Review | Gate reviews + code review | `context-seeds/SEED_Review.md` |
+| Agent | 職責 | Seed 檔 |
+|-------|------|---------|
+| Interviewer | 需求蒐集與訪談 | `context-seeds/SEED_Interviewer.md` |
+| PM | User Story + 驗收條件 | `context-seeds/SEED_PM.md` |
+| Architect | 系統設計 + ADR | `context-seeds/SEED_Architect.md` |
+| UX | 使用者流程 + HTML Prototype | `context-seeds/SEED_UX.md` |
+| Frontend | UI 元件 + 設計系統 | `context-seeds/SEED_Frontend.md` |
+| Backend | API + 業務邏輯 | `context-seeds/SEED_Backend.md` |
+| DBA | DB Schema + Migration | `context-seeds/SEED_DBA.md` |
+| DevOps | CI/CD + 雲端部署 | `context-seeds/SEED_DevOps.md` |
+| QA | 測試案例設計 + 執行 | `context-seeds/SEED_QA.md` |
+| Security | 資安審查 + 合規 | `context-seeds/SEED_Security.md` |
+| Review | Gate 驗收 + Code Review | `context-seeds/SEED_Review.md` |
 
-Activate any agent: `讀取 context-seeds/SEED_[Role].md，你現在是 [Role] Agent`
+啟動任何 Agent：`讀取 context-seeds/SEED_[角色].md，你現在是 [角色] Agent`
 
 ---
 
 ## Slash Commands
 
-One-liner shortcuts built into every project (`.claude/commands/`):
+每個專案內建的一行指令（`.claude/commands/`）：
 
-| Command | What it does |
-|---------|-------------|
-| `/init` | First-time project setup: validate structure → fill placeholders → setup team → create F01 |
-| `/health` | Run framework integrity check + `tools/workflow-test` suite |
-| `/quick` | Quick Mode (GSD §37) for ≤3 file changes with DSV declaration |
-| `/progress` | Instant status snapshot from STATE.md + TASKS.md |
-| `/pause` | Suspend work session, write `resume_command` to STATE.md |
-| `/handoff` | Agent completion handoff: update TASKS.md + STATE.md |
-| `/complete-milestone` | Archive after Gate pass + update status + optional git tag |
-| `/setup-team` | Interactive TEAM.md configuration (all 11 roles) |
-
----
-
-## 3-Domain Technical Standards (`10_Standards/`)
-
-Canonical rules enforced by all agents — edit once, respected everywhere.
-
-| Domain | Files | Key Rules |
-|--------|-------|-----------|
-| **API** | `STD_API_Design.md` · `Error_Code_Standard_v1.0.md` | `/api/v{N}/` versioning · `{ success, data, message, errorCode }` envelope · `AICC-{LAYER}{CODE}` error format |
-| **DB** | `STD_DB_Schema.md` · `enum_registry.yaml` · `field_registry_template.yaml` | UUID PKs · `tenant_id NOT NULL` · `pii_` / `log_` / `enc_` prefixes · reversible migrations |
-| **UI** | `STD_UI_Design.md` · `Design_Token_Reference.md` | CSS variable-only styling · WCAG 2.1 AA · 44px tap targets · no hardcoded hex |
+| 指令 | 功能 |
+|------|------|
+| `/init` | 新專案初始化：驗證結構 → 填寫佔位符 → 設定團隊 → 建立 F01 |
+| `/health` | 框架完整性檢查 + `tools/workflow-test` 測試套件 |
+| `/quick` | Quick Mode（GSD §37），≤3 個檔案的小修正 |
+| `/progress` | 從 STATE.md + TASKS.md 輸出即時進度快照 |
+| `/pause` | 暫停工作，將 `resume_command` 寫入 STATE.md |
+| `/handoff` | Agent 完成交接：更新 TASKS.md + STATE.md |
+| `/complete-milestone` | Gate 通過後歸檔 + 更新狀態 + 可選 git tag |
+| `/setup-team` | 互動式設定 TEAM.md（全 11 個角色） |
 
 ---
 
-## GSD Mechanics (§32–§41)
+## 三域技術標準（`10_Standards/`）
 
-Built into every pipeline automatically. No extra setup needed.
+所有 Agent 強制遵守的規範，改一處，全局生效。
 
-| Mechanism | What it does | §Ref |
-|-----------|-------------|------|
-| Context Health Check | Detects context degradation before handoff | §32 |
-| Discuss Phase | Confirms technical preferences at pipeline transitions | §33 |
-| Lightweight Plan Check | 5-dimension self-review before marking done | §34 |
-| Nyquist Validation | Every AC comes with a testability hint | §35 |
-| Auto-Fix Loop | Failed verify → debug → fix → re-verify (max 3 rounds) | §36 |
-| Quick Mode | Skip pipeline overhead for tiny changes | §37 |
-| STATE.md Memory | Cross-session state snapshot — never lose your place | §38 |
-| Wave-Based Parallel | Dependency analysis before parallel agent launch | §39 |
-| Model Profiles | quality / balanced / budget switching | §40 |
-| map-codebase | 4-agent codebase entry scan for existing repos | §41 |
+| 領域 | 檔案 | 核心規則 |
+|------|------|---------|
+| **API** | `STD_API_Design.md` · `Error_Code_Standard_v1.0.md` | `/api/v{N}/` 版本路由 · `{ success, data, message, errorCode }` 回應格式 · `AICC-{LAYER}{CODE}` 錯誤碼格式 |
+| **DB** | `STD_DB_Schema.md` · `enum_registry.yaml` · `field_registry_template.yaml` | UUID 主鍵 · `tenant_id NOT NULL` · `pii_` / `log_` / `enc_` 欄位前綴 · 可逆 Migration |
+| **UI** | `STD_UI_Design.md` · `Design_Token_Reference.md` | 只用 CSS 變數 · WCAG 2.1 AA · 44px 點擊目標 · 禁止 hardcode hex |
 
 ---
 
-## The 29 Skills
+## GSD 機制（§32–§41）
 
-Skills are capability modules that agents automatically invoke. They live in `context-skills/` inside each project.
+自動內建於每條 Pipeline，無需額外設定。
 
-**Workflow Skills (17):**
+| 機制 | 功能 | §參考 |
+|------|------|------|
+| Context Health Check | 交接前偵測 context 衰退 | §32 |
+| Discuss Phase | Pipeline 銜接時確認技術偏好 | §33 |
+| Lightweight Plan Check | Agent 產出後的 5 維度自檢 | §34 |
+| Nyquist 驗證層 | 每條 AC 附驗證提示，QA 從此設計 TC | §35 |
+| Auto-Fix Loop | Verify 失敗 → debug → fix → re-verify（最多 3 輪）| §36 |
+| Quick Mode | 小修正跳過完整 Pipeline | §37 |
+| STATE.md 記憶體 | 跨 Session 狀態快照，永不失憶 | §38 |
+| Wave-Based 並行 | 並行前先做依賴波分析 | §39 |
+| Model Profiles | quality / balanced / budget 三檔切換 | §40 |
+| map-codebase | 進入既有 Codebase 前的 4 Agent 並行掃描 | §41 |
+
+---
+
+## 29 個 Skills
+
+Skill 是 Agent 自動調用的能力模組，存放於每個專案的 `context-skills/` 目錄。
+
+**工作流 Skills（17 個）：**
 `pipeline-orchestrator` · `quality-gates` · `brainstorming` · `systematic-debugging` · `verification-before-completion` · `subagent-driven-development` · `test-driven-development` · `using-git-worktrees` · `finishing-a-development-branch` · `requesting-code-review` · `webapp-testing` · `deep-research` · `frontend-design` · `update-dashboard` · `project-init` · `planning-with-files` · `screenshot-to-code`
 
-**Document Skills (6):**
+**文件 Skills（6 個）：**
 `docx` · `xlsx` · `pptx` · `pdf` · `doc-coauthoring` · `internal-comms`
 
-**Platform Skills (6):**
+**平台 Skills（6 個）：**
 `algorithmic-art` · `theme-factory` · `web-artifacts-builder` · `mcp-builder` · `schedule` · `skill-creator`
 
 ---
 
-## Quality Gates
+## 品質關卡
 
-Gates are mandatory checkpoints. A pipeline **cannot proceed** until its gate passes.
+關卡是強制檢查點，未通過不得進入下一條 Pipeline。
 
-| Gate | After | Checks | Tool |
-|------|-------|--------|------|
-| Gate 1 | P01 | Requirements completeness, AC testability, Prototype coverage | `quality-gates` skill |
-| Gate 2 | P02 | Architecture viability, ADR completeness, DB schema | `quality-gates` skill |
-| G4-ENG | P03 | Cross-layer consistency, GA density, Engineering sign-off | `quality-gates` skill |
-| Gate 3 | P04 | Test coverage ≥80%, E2E pass, security review | `quality-gates` skill |
+| 關卡 | 在何時執行 | 檢查內容 | 工具 |
+|------|----------|---------|------|
+| Gate 1 | P01 完成後 | 需求完整性、AC 可測試性、Prototype 覆蓋率 | `quality-gates` skill |
+| Gate 2 | P02 完成後 | 架構可行性、ADR 完整性、DB Schema | `quality-gates` skill |
+| G4-ENG | P03 完成後 | 跨層一致性、GA 密度、工程簽核 | `quality-gates` skill |
+| Gate 3 | P04 完成後 | 測試覆蓋率 ≥80%、E2E 通過、安全審查 | `quality-gates` skill |
 
-**Important:** Gate Reviews must run in a **separate session** from the pipeline that produced the artifacts. This is the same principle as "the developer doesn't review their own code."
+**重要：** Gate Review 必須在**獨立的 session** 中執行，與產出文件的 Pipeline 分開。道理等同「寫 code 的人不自己做 code review」。
 
 ```
-# Cowork: open a NEW Cowork task on the same folder
-# Claude Code: open a NEW terminal window
+# Cowork：開一個新的 Cowork task，選同一個專案資料夾
+# Claude Code：開一個新的終端機視窗
 
-First message:
+第一句話：
 "你是 Review Agent。讀取 CLAUDE.md，執行 Gate [N] 驗收。"
 ```
 
 ---
 
-## Project Setup Details
+## 多人協作
 
-After running `new-project.sh` (or `/init` command), Claude will:
+`TEAM.md` 定義每個成員負責哪個 Agent 角色、交接協議，以及 Git 分支命名規範。`task-master` agent 讀取 `TASKS.md` + `STATE.md`，自動分配工作並在遇到阻塞時重新路由。
 
-1. Validate framework structure integrity
-2. Fill in product name, type, and tech stack across all files
-3. Configure `TEAM.md` with your team members
-4. Create the first Feature task (F01) in `TASKS.md`
-
-Then run your first pipeline:
+TASKS.md 格式：
 ```
-執行 Pipeline: 需求訪談
+| F## | 功能描述 | @負責人 | 狀態 | 阻塞項 |
 ```
 
----
-
-## Multi-Member Collaboration
-
-`TEAM.md` defines who owns which Agent role, handoff protocols, and branch naming conventions. The `task-master` agent reads `TASKS.md` + `STATE.md` to auto-assign work and route around blockers.
-
-TASKS.md format:
-```
-| F## | Description | @owner | Status | Blocked by |
-```
-
-Cross-feature dependencies:
+跨 Feature 依賴：
 ```
 F05 depends_on: F02-API-完成
 ```
 
 ---
 
-## Version
+## 版本
 
-Current: **v2.4.0** — Multi-member collaboration, 8 slash commands, 3-domain Standards, adopt-project workflow, framework health test suite.
+當前：**v2.4.0** — 多人協作 TEAM.md、8 個 Slash Commands、三域 10_Standards/、adopt-project 接入流程、框架健康測試工具。
 
-See [CHANGELOG.md](./CHANGELOG.md) for full history.
+完整歷史見 [CHANGELOG.md](./CHANGELOG.md)。
 
 ---
 
 ## License
 
-MIT — use freely, attribution appreciated.
+MIT — 自由使用，歡迎標註出處。
