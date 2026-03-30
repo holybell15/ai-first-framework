@@ -1,0 +1,1719 @@
+{
+  "tier": 2,
+  "name": "工作流模擬測試（透明模式）",
+  "timestamp": "2026-03-29T09:18:18.059903",
+  "summary": {
+    "pass": 106,
+    "fail": 0,
+    "total_checks": 106,
+    "score": 100.0
+  },
+  "stages": [
+    {
+      "name": "P00 需求建立",
+      "icon": "💡",
+      "tests": [
+        {
+          "name": "SRS 完整模板",
+          "status": "pass",
+          "logic": "P00 的核心產出模板必須存在",
+          "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+          "exists": true,
+          "size": 10554,
+          "lines": 348
+        },
+        {
+          "name": "SRS 含 [封面]",
+          "status": "pass",
+          "logic": "SRS 必須有封面（產品名/文件編號/版本號/機密等級）",
+          "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+          "pattern": "封面",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+            "line": 12,
+            "match": "產出格式：Word (.docx)，含封面、目錄、版本歷程。",
+            "context": [
+              "  L11:   此文件在 Gate 1 前必須完成，通過後才能進入 Prototyping 和 P02 技術設計。",
+              "  L12:   產出格式：Word (.docx)，含封面、目錄、版本歷程。",
+              "  L13: ---"
+            ]
+          }
+        },
+        {
+          "name": "SRS 含 [版本歷程]",
+          "status": "pass",
+          "logic": "每次修改都追蹤版本，防止文件混亂",
+          "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+          "pattern": "版本歷程",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+            "line": 12,
+            "match": "產出格式：Word (.docx)，含封面、目錄、版本歷程。",
+            "context": [
+              "  L11:   此文件在 Gate 1 前必須完成，通過後才能進入 Prototyping 和 P02 技術設計。",
+              "  L12:   產出格式：Word (.docx)，含封面、目錄、版本歷程。",
+              "  L13: ---"
+            ]
+          }
+        },
+        {
+          "name": "SRS 含 [系統定位]",
+          "status": "pass",
+          "logic": "包含專案資訊+核心定位+角色定義",
+          "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+          "pattern": "系統定位",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+            "line": 29,
+            "match": "├── 第一章 系統定位 ........................ [必填]",
+            "context": [
+              "  L28: 目錄（自動生成）",
+              "  L29: ├── 第一章 系統定位 ........................ [必填]",
+              "  L30: │   ├── 1.1 專案基本資訊"
+            ]
+          }
+        },
+        {
+          "name": "SRS 含 [系統範圍]",
+          "status": "pass",
+          "logic": "定義系統邊界+外部責任+資料隔離",
+          "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+          "pattern": "系統範圍",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+            "line": 33,
+            "match": "├── 第二章 系統範圍與責任邊界 ............ [必填]",
+            "context": [
+              "  L32: │   └── 1.3 使用者角色定義",
+              "  L33: ├── 第二章 系統範圍與責任邊界 ............ [必填]",
+              "  L34: │   ├── 2.1 系統承載範圍"
+            ]
+          }
+        },
+        {
+          "name": "SRS 含 [功能規格]",
+          "status": "pass",
+          "logic": "逐項功能 7 區塊（說明/角色/流程/情境/欄位/限制/AC）",
+          "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+          "pattern": "功能規格|功能說明",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+            "line": 38,
+            "match": "├── 第三章～第 N 章 功能規格 ............. [必填，每功能模組一章]",
+            "context": [
+              "  L37: │   └── 2.4 資料隔離機制",
+              "  L38: ├── 第三章～第 N 章 功能規格 ............. [必填，每功能模組一章]",
+              "  L39: │   ├── N.1 功能 A（F-code）"
+            ]
+          }
+        },
+        {
+          "name": "SRS 含 [SLA]",
+          "status": "pass",
+          "logic": "可用性+效能+容量+安全的具體數字",
+          "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+          "pattern": "非功能.*指標|SLA",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+            "line": 54,
+            "match": "├── 技術附件五：非功能性指標（SLA） ...... [必填]",
+            "context": [
+              "  L53: ├── 技術附件四：可靠性與災難處理 ......... [建議]",
+              "  L54: ├── 技術附件五：非功能性指標（SLA） ...... [必填]",
+              "  L55: ├── 技術附件五之一：部署架構與規格 ....... [建議]"
+            ]
+          }
+        },
+        {
+          "name": "SRS 含 [MVP 範圍]",
+          "status": "pass",
+          "logic": "明確切分 MVP 和 Phase 2",
+          "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+          "pattern": "MVP.*Phase",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_SRS_Complete.md",
+            "line": 58,
+            "match": "└── MVP 與 Phase 2 功能範圍定義 ......... [必填]",
+            "context": [
+              "  L57: ├── 技術附件七：資料保存策略 ............. [建議]",
+              "  L58: └── MVP 與 Phase 2 功能範圍定義 ......... [必填]",
+              "  L59: ```"
+            ]
+          }
+        },
+        {
+          "name": "功能規格 7 區塊模板",
+          "status": "pass",
+          "logic": "每個功能的標準格式模板",
+          "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+          "exists": true,
+          "size": 5255,
+          "lines": 149
+        },
+        {
+          "name": "7 區塊：功能說明",
+          "status": "pass",
+          "logic": "回答：誰/情境/操作/目的",
+          "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+          "pattern": "功能說明",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+            "line": 21,
+            "match": "## 1. 功能說明",
+            "context": [
+              "  L20: ",
+              "  L21: ## 1. 功能說明",
+              "  L22: "
+            ]
+          }
+        },
+        {
+          "name": "7 區塊：操作角色",
+          "status": "pass",
+          "logic": "角色×操作矩陣，讓 Frontend 做 RBAC 渲染",
+          "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+          "pattern": "操作角色",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+            "line": 27,
+            "match": "## 2. 操作角色",
+            "context": [
+              "  L26: ",
+              "  L27: ## 2. 操作角色",
+              "  L28: "
+            ]
+          }
+        },
+        {
+          "name": "7 區塊：操作流程",
+          "status": "pass",
+          "logic": "每步「使用者做 X → 系統做 Y」，讓 Backend 設計 API",
+          "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+          "pattern": "操作流程",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+            "line": 38,
+            "match": "## 3. 操作流程",
+            "context": [
+              "  L37: ",
+              "  L38: ## 3. 操作流程",
+              "  L39: "
+            ]
+          }
+        },
+        {
+          "name": "7 區塊：情境描述",
+          "status": "pass",
+          "logic": "≥4 種情境（正常/錯誤/邊界/降級），讓 QA 寫 TC",
+          "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+          "pattern": "情境描述",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+            "line": 60,
+            "match": "## 4. 情境描述",
+            "context": [
+              "  L59: ",
+              "  L60: ## 4. 情境描述",
+              "  L61: "
+            ]
+          }
+        },
+        {
+          "name": "7 區塊：欄位規格",
+          "status": "pass",
+          "logic": "含型別+必填+限制，讓 DBA 設計 Schema",
+          "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+          "pattern": "欄位.*參數",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+            "line": 76,
+            "match": "## 5. 欄位/參數規格",
+            "context": [
+              "  L75: ",
+              "  L76: ## 5. 欄位/參數規格",
+              "  L77: "
+            ]
+          }
+        },
+        {
+          "name": "7 區塊：條件限制",
+          "status": "pass",
+          "logic": "技術/安全/合規/效能/多租戶約束",
+          "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+          "pattern": "條件限制",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+            "line": 93,
+            "match": "## 6. 條件限制",
+            "context": [
+              "  L92: ",
+              "  L93: ## 6. 條件限制",
+              "  L94: "
+            ]
+          }
+        },
+        {
+          "name": "7 區塊：驗收條件",
+          "status": "pass",
+          "logic": "三段式 AC：前置+操作+預期，QA 唯一依據",
+          "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+          "pattern": "驗收條件",
+          "found": {
+            "file": "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+            "line": 108,
+            "match": "## 7. 驗收條件（AC）",
+            "context": [
+              "  L107: ",
+              "  L108: ## 7. 驗收條件（AC）",
+              "  L109: "
+            ]
+          }
+        },
+        {
+          "name": "P00 願景模板",
+          "status": "pass",
+          "logic": "P00 的替代模板（較輕量）",
+          "file": "02_Specifications/TEMPLATE_P00_Product_Vision.md",
+          "exists": true,
+          "size": 8371,
+          "lines": 247
+        }
+      ]
+    },
+    {
+      "name": "P01 精煉+Prototype",
+      "icon": "✨",
+      "tests": [
+        {
+          "name": "PM 含 7 區塊格式",
+          "status": "pass",
+          "logic": "PM 撰寫 RS 時必須遵循 7 區塊模板",
+          "file": "context-seeds/SEED_PM.md",
+          "pattern": "7 區塊|TEMPLATE_RS_Function_Spec",
+          "found": {
+            "file": "context-seeds/SEED_PM.md",
+            "line": 344,
+            "match": "> **品質基準**：每個功能規格必須寫到和 `TEMPLATE_RS_Function_Spec.md` 一樣的深度。",
+            "context": [
+              "  L343: ",
+              "  L344: > **品質基準**：每個功能規格必須寫到和 `TEMPLATE_RS_Function_Spec.md` 一樣的深度。",
+              "  L345: > 這是經過實戰驗證的格式（來源：REQ_CONFIRM_AICC-II_v4.0.4）。"
+            ]
+          }
+        },
+        {
+          "name": "PM 含 4 Scope Modes",
+          "status": "pass",
+          "logic": "收到需求後先選 Scope Mode（Expansion/Selective/Hold/Reduction）",
+          "file": "context-seeds/SEED_PM.md",
+          "pattern": "Scope Mode|4 Scope|Expansion",
+          "found": {
+            "file": "context-seeds/SEED_PM.md",
+            "line": 247,
+            "match": "### 4 Scope Modes（開始前必選）",
+            "context": [
+              "  L246: ",
+              "  L247: ### 4 Scope Modes（開始前必選）",
+              "  L248: "
+            ]
+          }
+        },
+        {
+          "name": "PM 含 Kill Criteria",
+          "status": "pass",
+          "logic": "每功能定義「什麼情況下放棄」— Review Agent 檢查是否觸發",
+          "file": "context-seeds/SEED_PM.md",
+          "pattern": "Kill Criteria",
+          "found": {
+            "file": "context-seeds/SEED_PM.md",
+            "line": 315,
+            "match": "### Pre-Mortem Kill Criteria（開始前定義放棄條件）",
+            "context": [
+              "  L314: ",
+              "  L315: ### Pre-Mortem Kill Criteria（開始前定義放棄條件）",
+              "  L316: "
+            ]
+          }
+        },
+        {
+          "name": "PM 含 Type 1/2 Door",
+          "status": "pass",
+          "logic": "可逆決策快速做、不可逆決策慎重做（Bezos 模型）",
+          "file": "context-seeds/SEED_PM.md",
+          "pattern": "Type 1|Type 2|Bezos",
+          "found": {
+            "file": "context-seeds/SEED_PM.md",
+            "line": 282,
+            "match": "### Type 1/2 Door 決策分類（Bezos 模型）",
+            "context": [
+              "  L281: ",
+              "  L282: ### Type 1/2 Door 決策分類（Bezos 模型）",
+              "  L283: "
+            ]
+          }
+        },
+        {
+          "name": "UX 含 6 Interaction States",
+          "status": "pass",
+          "logic": "每畫面必須定義 6 態（Empty/Loading/Error/Overflow/First-time/Permission）",
+          "file": "context-seeds/SEED_UX.md",
+          "pattern": "Interaction State|Empty.*Loading.*Error",
+          "found": {
+            "file": "context-seeds/SEED_UX.md",
+            "line": 201,
+            "match": "### Interaction State 強制覆蓋（每個畫面必答）",
+            "context": [
+              "  L200: ",
+              "  L201: ### Interaction State 強制覆蓋（每個畫面必答）",
+              "  L202: "
+            ]
+          }
+        },
+        {
+          "name": "Gate 1 含 RS 品質檢查",
+          "status": "pass",
+          "logic": "Gate 1 審查 PM 產出的 RS 是否符合 7 區塊標準",
+          "file": "context-skills/quality-gates/SKILL.md",
+          "pattern": "RS 功能規格品質",
+          "found": {
+            "file": "context-skills/quality-gates/SKILL.md",
+            "line": 123,
+            "match": "**RS 功能規格品質檢查（v2.8 新增 — 基準：AICC-II v4.0.4）**",
+            "context": [
+              "  L122: ",
+              "  L123: **RS 功能規格品質檢查（v2.8 新增 — 基準：AICC-II v4.0.4）**",
+              "  L124: - [ ] 每個功能包含完整 7 區塊（功能說明/操作角色/操作流程/情境描述/欄位規格/條件限制/AC）"
+            ]
+          }
+        },
+        {
+          "name": "Gate 1 含模糊用語偵測",
+          "status": "pass",
+          "logic": "搜尋「適當」「合理」「良好」— 全部退回改為具體描述",
+          "file": "context-skills/quality-gates/SKILL.md",
+          "pattern": "模糊用語|適當.*合理",
+          "found": {
+            "file": "context-skills/quality-gates/SKILL.md",
+            "line": 129,
+            "match": "- [ ] 無模糊用語：搜尋「適當」「合理」「良好」→ 如有，退回修正",
+            "context": [
+              "  L128: - [ ] AC 表格：每個功能 ≥ 5 條 AC，含「前置條件 + 操作 + 預期結果」三段式",
+              "  L129: - [ ] 無模糊用語：搜尋「適當」「合理」「良好」→ 如有，退回修正",
+              "  L130: - [ ] Phase 標記：Phase 2 功能有完整規格但明確標記"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "P02 技術設計 + Slice",
+      "icon": "🏛️",
+      "tests": [
+        {
+          "name": "Architect 含 Complexity Smell",
+          "status": "pass",
+          "logic": "修改 >8 檔案 = 🔴 必須拆分（防過度設計）",
+          "file": "context-seeds/SEED_Architect.md",
+          "pattern": "Complexity Smell",
+          "found": {
+            "file": "context-seeds/SEED_Architect.md",
+            "line": 171,
+            "match": "### Complexity Smell（複雜度警報）",
+            "context": [
+              "  L170: ",
+              "  L171: ### Complexity Smell（複雜度警報）",
+              "  L172: "
+            ]
+          }
+        },
+        {
+          "name": "Architect 含 Existing Code Leverage",
+          "status": "pass",
+          "logic": "設計前搜尋 context-skills/10_Standards/npm 有無可重用方案",
+          "file": "context-seeds/SEED_Architect.md",
+          "pattern": "Existing Code",
+          "found": {
+            "file": "context-seeds/SEED_Architect.md",
+            "line": 181,
+            "match": "### Existing Code Leverage Check（強制）",
+            "context": [
+              "  L180: ",
+              "  L181: ### Existing Code Leverage Check（強制）",
+              "  L182: "
+            ]
+          }
+        },
+        {
+          "name": "Architect 含 Failure Scenario",
+          "status": "pass",
+          "logic": "每個新 API/模組附一個生產環境失敗場景",
+          "file": "context-seeds/SEED_Architect.md",
+          "pattern": "Failure Scenario|失敗場景|生產環境失敗",
+          "found": {
+            "file": "context-seeds/SEED_Architect.md",
+            "line": 194,
+            "match": "### Failure Scenario（每個 codepath 必填）",
+            "context": [
+              "  L193: ",
+              "  L194: ### Failure Scenario（每個 codepath 必填）",
+              "  L195: "
+            ]
+          }
+        },
+        {
+          "name": "Gate 2 含 Slice Backlog 審查",
+          "status": "pass",
+          "logic": "Gate 2 驗證 Slice Backlog 存在 + Entry/Exit Criteria + 依賴無循環",
+          "file": "context-skills/quality-gates/SKILL.md",
+          "pattern": "Slice Backlog",
+          "found": {
+            "file": "context-skills/quality-gates/SKILL.md",
+            "line": 191,
+            "match": "**Slice Backlog 審查（v2.9 新增）**",
+            "context": [
+              "  L190: ",
+              "  L191: **Slice Backlog 審查（v2.9 新增）**",
+              "  L192: - [ ] Slice Backlog 存在（`F##-SLICE-BACKLOG.md`）且每 slice 有 Entry/Exit Criteria"
+            ]
+          }
+        },
+        {
+          "name": "Orchestrator 含 Slice Cycle",
+          "status": "pass",
+          "logic": "Gate 2 通過後自動進入 Slice Cycle 模式",
+          "file": "context-skills/pipeline-orchestrator/SKILL.md",
+          "pattern": "Slice Cycle",
+          "found": {
+            "file": "context-skills/pipeline-orchestrator/SKILL.md",
+            "line": 153,
+            "match": "| P03+P04 **Slice Cycle** | **每 slice 循環**：Feature Pack → Design → G4-ENG-D → Code → G4-ENG-R → Stabilize → Harden | G4-ENG-D + G4-ENG-R（每 slice） |",
+            "context": [
+              "  L152: | P02 技術設計 | Architect → DBA → **Slice Backlog（含 Entry/Exit Criteria）** | Gate 2 |",
+              "  L153: | P03+P04 **Slice Cycle** | **每 slice 循環**：Feature Pack → Design → G4-ENG-D → Code → G4-ENG-R → Stabilize → Harden | G4-ENG-D + G4-ENG-R（每 slice） |",
+              "  L154: | Gate 3 | 所有 slice 完成後的總審查 | Gate 3 |"
+            ]
+          }
+        },
+        {
+          "name": "Orchestrator 含 Entry/Exit",
+          "status": "pass",
+          "logic": "每個 slice 有進入和退出條件",
+          "file": "context-skills/pipeline-orchestrator/SKILL.md",
+          "pattern": "Entry.*Criteria|Entry",
+          "found": {
+            "file": "context-skills/pipeline-orchestrator/SKILL.md",
+            "line": 152,
+            "match": "| P02 技術設計 | Architect → DBA → **Slice Backlog（含 Entry/Exit Criteria）** | Gate 2 |",
+            "context": [
+              "  L151: | P01 精煉+Prototype | PM 精修 AC → UX Prototype | Gate 1 |",
+              "  L152: | P02 技術設計 | Architect → DBA → **Slice Backlog（含 Entry/Exit Criteria）** | Gate 2 |",
+              "  L153: | P03+P04 **Slice Cycle** | **每 slice 循環**：Feature Pack → Design → G4-ENG-D → Code → G4-ENG-R → Stabilize → Harden | G4-ENG-D + G4-ENG-R（每 slice） |"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "P03+P04 Slice Cycle",
+      "icon": "🔄",
+      "tests": [
+        {
+          "name": "slice-cycle SKILL.md",
+          "status": "pass",
+          "logic": "垂直切片循環的完整定義",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "exists": true,
+          "size": 11598,
+          "lines": 319
+        },
+        {
+          "name": "Slice 7 步：Feature Pack",
+          "status": "pass",
+          "logic": "Step 1：確認本 slice 範圍（做什麼/不做什麼）",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "Feature Pack",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 37,
+            "match": "│  Step 1: Feature Pack（確認範圍）                    │",
+            "context": [
+              "  L36: │                                                     │",
+              "  L37: │  Step 1: Feature Pack（確認範圍）                    │",
+              "  L38: │  Step 2: Design（設計，⛔ 不寫 code）                │"
+            ]
+          }
+        },
+        {
+          "name": "Slice 7 步：Design",
+          "status": "pass",
+          "logic": "Step 2：設計 API+DB+Sequence，⛔不寫 code",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "Step 2.*Design|Design.*不寫 code",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 38,
+            "match": "│  Step 2: Design（設計，⛔ 不寫 code）                │",
+            "context": [
+              "  L37: │  Step 1: Feature Pack（確認範圍）                    │",
+              "  L38: │  Step 2: Design（設計，⛔ 不寫 code）                │",
+              "  L39: │  Step 3: G4-ENG-D（設計審查）                        │"
+            ]
+          }
+        },
+        {
+          "name": "Slice 7 步：G4-ENG-D",
+          "status": "pass",
+          "logic": "Step 3：設計審查 Gate，未通過不得寫 code",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "G4-ENG-D",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 39,
+            "match": "│  Step 3: G4-ENG-D（設計審查）                        │",
+            "context": [
+              "  L38: │  Step 2: Design（設計，⛔ 不寫 code）                │",
+              "  L39: │  Step 3: G4-ENG-D（設計審查）                        │",
+              "  L40: │  Step 4: Code（只做本 slice，⛔ 不碰其他 slice）     │"
+            ]
+          }
+        },
+        {
+          "name": "Slice 7 步：Code",
+          "status": "pass",
+          "logic": "Step 4：只實作本 slice，⛔不碰其他 slice",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "Step 4.*Code|Code.*只做本",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 40,
+            "match": "│  Step 4: Code（只做本 slice，⛔ 不碰其他 slice）     │",
+            "context": [
+              "  L39: │  Step 3: G4-ENG-D（設計審查）                        │",
+              "  L40: │  Step 4: Code（只做本 slice，⛔ 不碰其他 slice）     │",
+              "  L41: │  Step 5: G4-ENG-R（實作後審查 + 範圍比對）           │"
+            ]
+          }
+        },
+        {
+          "name": "Slice 7 步：G4-ENG-R",
+          "status": "pass",
+          "logic": "Step 5：實作後審查 Gate，範圍比對+假設清單",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "G4-ENG-R",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 41,
+            "match": "│  Step 5: G4-ENG-R（實作後審查 + 範圍比對）           │",
+            "context": [
+              "  L40: │  Step 4: Code（只做本 slice，⛔ 不碰其他 slice）     │",
+              "  L41: │  Step 5: G4-ENG-R（實作後審查 + 範圍比對）           │",
+              "  L42: │  Step 6: Stabilization（能跑）                       │"
+            ]
+          }
+        },
+        {
+          "name": "Slice 7 步：Stabilization",
+          "status": "pass",
+          "logic": "Step 6：確保能跑（編譯通過+主流程可驗證）",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "Stabilization|P0 穩定",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 42,
+            "match": "│  Step 6: Stabilization（能跑）                       │",
+            "context": [
+              "  L41: │  Step 5: G4-ENG-R（實作後審查 + 範圍比對）           │",
+              "  L42: │  Step 6: Stabilization（能跑）                       │",
+              "  L43: │  Step 7: Hardening（可靠 + 基線判定）                │"
+            ]
+          }
+        },
+        {
+          "name": "Slice 7 步：Hardening",
+          "status": "pass",
+          "logic": "Step 7：確保可靠+可作為下一個 slice 的依賴",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "Hardening|基線判定",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 43,
+            "match": "│  Step 7: Hardening（可靠 + 基線判定）                │",
+            "context": [
+              "  L42: │  Step 6: Stabilization（能跑）                       │",
+              "  L43: │  Step 7: Hardening（可靠 + 基線判定）                │",
+              "  L44: │    ↓ ✅ 基線通過 → 下一個 slice                     │"
+            ]
+          }
+        },
+        {
+          "name": "回退：範圍漂移",
+          "status": "pass",
+          "logic": "偷補需求 → 回 G4-ENG-R 刪除超出範圍實作",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "範圍漂移",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 204,
+            "match": "| **範圍漂移 / 偷補需求** | → G4-ENG-R（Step 5） | 刪除超出範圍的實作，重新 Review |",
+            "context": [
+              "  L203: |---------|--------|------|",
+              "  L204: | **範圍漂移 / 偷補需求** | → G4-ENG-R（Step 5） | 刪除超出範圍的實作，重新 Review |",
+              "  L205: | **設計與實作不一致** | → P03 Design（Step 2） | 修正設計或修正 code 使其一致 |"
+            ]
+          }
+        },
+        {
+          "name": "回退：設計不一致",
+          "status": "pass",
+          "logic": "code 和 design 對不上 → 回 Design 修正",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "設計與實作不一致",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 205,
+            "match": "| **設計與實作不一致** | → P03 Design（Step 2） | 修正設計或修正 code 使其一致 |",
+            "context": [
+              "  L204: | **範圍漂移 / 偷補需求** | → G4-ENG-R（Step 5） | 刪除超出範圍的實作，重新 Review |",
+              "  L205: | **設計與實作不一致** | → P03 Design（Step 2） | 修正設計或修正 code 使其一致 |",
+              "  L206: | **啟動 / 安全 / 主流程** | → Stabilization（Step 6） | P0 等級問題，先修到能跑 |"
+            ]
+          }
+        },
+        {
+          "name": "回退：啟動/安全",
+          "status": "pass",
+          "logic": "P0 問題 → 回 Stabilization 先修到能跑",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "啟動.*安全|安全.*主流程",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 143,
+            "match": "| R-07 | 無 P0 阻塞（啟動失敗 / 安全漏洞 / 主流程壞） | 🔴 |",
+            "context": [
+              "  L142: | R-06 | 編譯通過 | 🔴 |",
+              "  L143: | R-07 | 無 P0 阻塞（啟動失敗 / 安全漏洞 / 主流程壞） | 🔴 |",
+              "  L144: | R-08 | Open Issues 更新（新增 / 已解決 / 待決） | 🟡 |"
+            ]
+          }
+        },
+        {
+          "name": "回退：邏輯/測試",
+          "status": "pass",
+          "logic": "邊界沒覆蓋 → 回 Hardening 補測試",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "邏輯語意|邊界測試",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 177,
+            "match": "□ 邏輯語意修正（業務規則正確）",
+            "context": [
+              "  L176: □ 狀態模型正確性（state machine 行為和設計一致）",
+              "  L177: □ 邏輯語意修正（業務規則正確）",
+              "  L178: □ 關鍵 edge case 測試補齊"
+            ]
+          }
+        },
+        {
+          "name": "回退：架構錯誤",
+          "status": "pass",
+          "logic": "slice 切法有誤 → 升級回 P02 重新設計",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "架構邊界",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 208,
+            "match": "| **架構邊界錯誤** | → **P02 / Gate 2**（升級） | slice 切法有誤或模組邊界需重定義 |",
+            "context": [
+              "  L207: | **邏輯語意 / 邊界測試** | → Hardening（Step 7） | 補測試、修邏輯，確認可靠 |",
+              "  L208: | **架構邊界錯誤** | → **P02 / Gate 2**（升級） | slice 切法有誤或模組邊界需重定義 |",
+              "  L209: "
+            ]
+          }
+        },
+        {
+          "name": "Cross-Slice Integration Check",
+          "status": "pass",
+          "logic": "第 3 骨幹 slice 後+每 2 slice+修改共用模組 → 強制整合檢查",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "Cross-Slice",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 47,
+            "match": "│  ※ Cross-Slice Integration Check：                  │",
+            "context": [
+              "  L46: │                                                     │",
+              "  L47: │  ※ Cross-Slice Integration Check：                  │",
+              "  L48: │    第 3 個骨幹 slice 後觸發，之後每 2 slice 觸發     │"
+            ]
+          }
+        },
+        {
+          "name": "Open Issue Protocol",
+          "status": "pass",
+          "logic": "未定義事項不假設，結構化記錄 OI-NNN",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "Open Issue|OI-",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 72,
+            "match": "| 8 | Open Issues | 未定義事項（⛔ 不自行假設） |",
+            "context": [
+              "  L71: | 7 | 依賴的前序 Slice | 哪些 slice 必須先完成 |",
+              "  L72: | 8 | Open Issues | 未定義事項（⛔ 不自行假設） |",
+              "  L73: "
+            ]
+          }
+        },
+        {
+          "name": "Entry Criteria 範本",
+          "status": "pass",
+          "logic": "每 slice 進入前必須滿足的條件（前序基線、API 穩定、Schema 可用）",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "Entry Criteria",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 69,
+            "match": "| 5 | Entry Criteria | 從 P02 Slice Backlog 讀取（見下方） |",
+            "context": [
+              "  L68: | 4 | 範圍外 | 明確列出不做的（即使很近的功能） |",
+              "  L69: | 5 | Entry Criteria | 從 P02 Slice Backlog 讀取（見下方） |",
+              "  L70: | 6 | Exit Criteria | 從 P02 Slice Backlog 讀取（見下方） |"
+            ]
+          }
+        },
+        {
+          "name": "Exit Criteria 範本",
+          "status": "pass",
+          "logic": "每 slice 退出=基線判定（AC 完成、測試全過、API 穩定、無 P0）",
+          "file": "context-skills/slice-cycle/SKILL.md",
+          "pattern": "Exit Criteria",
+          "found": {
+            "file": "context-skills/slice-cycle/SKILL.md",
+            "line": 70,
+            "match": "| 6 | Exit Criteria | 從 P02 Slice Backlog 讀取（見下方） |",
+            "context": [
+              "  L69: | 5 | Entry Criteria | 從 P02 Slice Backlog 讀取（見下方） |",
+              "  L70: | 6 | Exit Criteria | 從 P02 Slice Backlog 讀取（見下方） |",
+              "  L71: | 7 | 依賴的前序 Slice | 哪些 slice 必須先完成 |"
+            ]
+          }
+        },
+        {
+          "name": "G4-ENG-D checklist",
+          "status": "pass",
+          "logic": "設計審查 8 項 checklist（D-01~D-08）",
+          "file": "context-skills/quality-gates/SKILL.md",
+          "pattern": "G4-ENG-D",
+          "found": {
+            "file": "context-skills/quality-gates/SKILL.md",
+            "line": 231,
+            "match": "## G4-ENG — 拆為雙層：G4-ENG-D（設計審查）+ G4-ENG-R（實作後審查）",
+            "context": [
+              "  L230: ",
+              "  L231: ## G4-ENG — 拆為雙層：G4-ENG-D（設計審查）+ G4-ENG-R（實作後審查）",
+              "  L232: "
+            ]
+          }
+        },
+        {
+          "name": "G4-ENG-R checklist",
+          "status": "pass",
+          "logic": "實作後審查 10 項 checklist（R-01~R-10）",
+          "file": "context-skills/quality-gates/SKILL.md",
+          "pattern": "G4-ENG-R",
+          "found": {
+            "file": "context-skills/quality-gates/SKILL.md",
+            "line": 231,
+            "match": "## G4-ENG — 拆為雙層：G4-ENG-D（設計審查）+ G4-ENG-R（實作後審查）",
+            "context": [
+              "  L230: ",
+              "  L231: ## G4-ENG — 拆為雙層：G4-ENG-D（設計審查）+ G4-ENG-R（實作後審查）",
+              "  L232: "
+            ]
+          }
+        },
+        {
+          "name": "Cross-Slice IC checklist",
+          "status": "pass",
+          "logic": "整合檢查 8 項 checklist（IC-01~IC-08）",
+          "file": "context-skills/quality-gates/SKILL.md",
+          "pattern": "IC-01|Cross-Slice Integration",
+          "found": {
+            "file": "context-skills/quality-gates/SKILL.md",
+            "line": 294,
+            "match": "### Cross-Slice Integration Check（整合檢查）",
+            "context": [
+              "  L293: ",
+              "  L294: ### Cross-Slice Integration Check（整合檢查）",
+              "  L295: "
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "自動化機制",
+      "icon": "⚡",
+      "tests": [
+        {
+          "name": "destructive-guard-hook.sh",
+          "status": "pass",
+          "logic": "PreToolUse Hook：攔截 rm -rf/DROP/force-push 等危險指令"
+        },
+        {
+          "name": "freeze-hook.sh",
+          "status": "pass",
+          "logic": "PreToolUse Hook：P04 時鎖定只能改 Feature 對應目錄"
+        },
+        {
+          "name": "auto-state-update.sh",
+          "status": "pass",
+          "logic": "PostToolUse Hook：偵測 Pipeline 產出物自動更新 STATE.md"
+        },
+        {
+          "name": "validate-skills.sh",
+          "status": "pass",
+          "logic": "CI 腳本：驗證 SKILL.md 格式+SEED 完整+交叉引用"
+        },
+        {
+          "name": "skill-eval.sh",
+          "status": "pass",
+          "logic": "評估腳本：Tier 2 結構+Tier 3 LLM-as-Judge"
+        },
+        {
+          "name": "worktree-setup.sh",
+          "status": "pass",
+          "logic": "Worktree 建立後自動安裝依賴+複製 .env+基準測試"
+        },
+        {
+          "name": "worktree-archive.sh",
+          "status": "pass",
+          "logic": "Worktree 完成後自動歸檔+清理+記錄日誌"
+        },
+        {
+          "name": "Hook 配置：UserPromptSubmit",
+          "status": "pass",
+          "logic": "/clear 後每次送訊息自動提醒讀取 planning files",
+          "file": "CLAUDE.md",
+          "pattern": "UserPromptSubmit",
+          "found": {
+            "file": "CLAUDE.md",
+            "line": 264,
+            "match": "\"UserPromptSubmit\": [",
+            "context": [
+              "  L263:   \"hooks\": {",
+              "  L264:     \"UserPromptSubmit\": [",
+              "  L265:       { \"matcher\": \"\", \"hooks\": ["
+            ]
+          }
+        },
+        {
+          "name": "Hook 配置：PreToolUse",
+          "status": "pass",
+          "logic": "Bash 指令前自動攔截危險操作 + Edit/Write 前檢查 scope",
+          "file": "CLAUDE.md",
+          "pattern": "PreToolUse",
+          "found": {
+            "file": "CLAUDE.md",
+            "line": 269,
+            "match": "\"PreToolUse\": [",
+            "context": [
+              "  L268:     ],",
+              "  L269:     \"PreToolUse\": [",
+              "  L270:       { \"matcher\": \"Bash\", \"hooks\": ["
+            ]
+          }
+        },
+        {
+          "name": "Autopilot 模式定義",
+          "status": "pass",
+          "logic": "三模式切換：Autopilot（自動）/Copilot（確認）/Manual（手動）",
+          "file": "CLAUDE.md",
+          "pattern": "Autopilot.*Copilot.*Manual|三種執行模式",
+          "found": {
+            "file": "CLAUDE.md",
+            "line": 230,
+            "match": "### 三種執行模式（v2.8）",
+            "context": [
+              "  L229: ",
+              "  L230: ### 三種執行模式（v2.8）",
+              "  L231: "
+            ]
+          }
+        },
+        {
+          "name": "ETHOS.md",
+          "status": "pass",
+          "logic": "4 原則：Boil the Lake/Search Before Building/Fix-First/Evidence",
+          "file": "ETHOS.md",
+          "exists": true,
+          "size": 4857,
+          "lines": 108
+        },
+        {
+          "name": "conductor.json",
+          "status": "pass",
+          "logic": "並行工作區配置（Worktree lifecycle hooks）",
+          "file": "conductor.json",
+          "exists": true,
+          "size": 953,
+          "lines": 40
+        }
+      ]
+    },
+    {
+      "name": "Agent 思維模式覆蓋",
+      "icon": "🧠",
+      "tests": [
+        {
+          "name": "SEED_Interviewer: ETHOS 引用",
+          "status": "pass",
+          "logic": "Agent 知道框架的 4 原則",
+          "file": "context-seeds/SEED_Interviewer.md",
+          "pattern": "ETHOS.md",
+          "found": {
+            "file": "context-seeds/SEED_Interviewer.md",
+            "line": 27,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L26: ",
+              "  L27: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L28: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Interviewer: Push-Until-Specific",
+          "status": "pass",
+          "logic": "每個問題有「推到什麼程度才算回答」的標準",
+          "file": "context-seeds/SEED_Interviewer.md",
+          "pattern": "Push-Until-Specific",
+          "found": {
+            "file": "context-seeds/SEED_Interviewer.md",
+            "line": 592,
+            "match": "### Push-Until-Specific 協議",
+            "context": [
+              "  L591: ",
+              "  L592: ### Push-Until-Specific 協議",
+              "  L593: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Interviewer: Escape Hatch",
+          "status": "pass",
+          "logic": "用戶不耐煩時自動減少問題，不問第三次",
+          "file": "context-seeds/SEED_Interviewer.md",
+          "pattern": "Escape Hatch",
+          "found": {
+            "file": "context-seeds/SEED_Interviewer.md",
+            "line": 612,
+            "match": "### Escape Hatch（用戶不耐煩時）",
+            "context": [
+              "  L611: ",
+              "  L612: ### Escape Hatch（用戶不耐煩時）",
+              "  L613: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Interviewer: Anti-Sycophancy",
+          "status": "pass",
+          "logic": "禁止說「很有趣」— 訪談師不評價只追問",
+          "file": "context-seeds/SEED_Interviewer.md",
+          "pattern": "Anti-Sycophancy",
+          "found": {
+            "file": "context-seeds/SEED_Interviewer.md",
+            "line": 620,
+            "match": "### Anti-Sycophancy Rules（禁止討好）",
+            "context": [
+              "  L619: ",
+              "  L620: ### Anti-Sycophancy Rules（禁止討好）",
+              "  L621: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Interviewer: Struggle Moments",
+          "status": "pass",
+          "logic": "從「掙扎時刻」定義需求而非功能列表",
+          "file": "context-seeds/SEED_Interviewer.md",
+          "pattern": "Struggle Moments",
+          "found": {
+            "file": "context-seeds/SEED_Interviewer.md",
+            "line": 637,
+            "match": "### Struggle Moments（從掙扎時刻定義需求）",
+            "context": [
+              "  L636: ",
+              "  L637: ### Struggle Moments（從掙扎時刻定義需求）",
+              "  L638: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_PM: ETHOS 引用",
+          "status": "pass",
+          "logic": "Agent 知道框架的 4 原則",
+          "file": "context-seeds/SEED_PM.md",
+          "pattern": "ETHOS.md",
+          "found": {
+            "file": "context-seeds/SEED_PM.md",
+            "line": 28,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L27: ",
+              "  L28: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L29: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_PM: 4 Scope Modes",
+          "status": "pass",
+          "logic": "需求建立前先選模式",
+          "file": "context-seeds/SEED_PM.md",
+          "pattern": "Scope Mode|Expansion",
+          "found": {
+            "file": "context-seeds/SEED_PM.md",
+            "line": 247,
+            "match": "### 4 Scope Modes（開始前必選）",
+            "context": [
+              "  L246: ",
+              "  L247: ### 4 Scope Modes（開始前必選）",
+              "  L248: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_PM: Implementation Alternatives",
+          "status": "pass",
+          "logic": "每功能至少 2 條路徑比較",
+          "file": "context-seeds/SEED_PM.md",
+          "pattern": "Implementation Alternatives",
+          "found": {
+            "file": "context-seeds/SEED_PM.md",
+            "line": 258,
+            "match": "### Implementation Alternatives（強制產出）",
+            "context": [
+              "  L257: ",
+              "  L258: ### Implementation Alternatives（強制產出）",
+              "  L259: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_PM: Type 1/2 Door",
+          "status": "pass",
+          "logic": "可逆決策快速做、不可逆慎重做",
+          "file": "context-seeds/SEED_PM.md",
+          "pattern": "Type 1|Type 2",
+          "found": {
+            "file": "context-seeds/SEED_PM.md",
+            "line": 282,
+            "match": "### Type 1/2 Door 決策分類（Bezos 模型）",
+            "context": [
+              "  L281: ",
+              "  L282: ### Type 1/2 Door 決策分類（Bezos 模型）",
+              "  L283: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_PM: Kill Criteria",
+          "status": "pass",
+          "logic": "開始前定義放棄條件",
+          "file": "context-seeds/SEED_PM.md",
+          "pattern": "Kill Criteria",
+          "found": {
+            "file": "context-seeds/SEED_PM.md",
+            "line": 315,
+            "match": "### Pre-Mortem Kill Criteria（開始前定義放棄條件）",
+            "context": [
+              "  L314: ",
+              "  L315: ### Pre-Mortem Kill Criteria（開始前定義放棄條件）",
+              "  L316: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_PM: Appetite",
+          "status": "pass",
+          "logic": "「願意花多少時間」取代「估計多少時間」",
+          "file": "context-seeds/SEED_PM.md",
+          "pattern": "Appetite",
+          "found": {
+            "file": "context-seeds/SEED_PM.md",
+            "line": 298,
+            "match": "### Appetite not Estimates（Ryan Singer 模型）",
+            "context": [
+              "  L297: ",
+              "  L298: ### Appetite not Estimates（Ryan Singer 模型）",
+              "  L299: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_UX: ETHOS 引用",
+          "status": "pass",
+          "logic": "Agent 知道框架的 4 原則",
+          "file": "context-seeds/SEED_UX.md",
+          "pattern": "ETHOS.md",
+          "found": {
+            "file": "context-seeds/SEED_UX.md",
+            "line": 107,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L106: ",
+              "  L107: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L108: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_UX: 12 Cognitive Patterns",
+          "status": "pass",
+          "logic": "12 個設計師內化直覺",
+          "file": "context-seeds/SEED_UX.md",
+          "pattern": "Cognitive Pattern|看系統不看畫面",
+          "found": {
+            "file": "context-seeds/SEED_UX.md",
+            "line": 182,
+            "match": "## 🧠 思維模式（Cognitive Patterns）",
+            "context": [
+              "  L181: ",
+              "  L182: ## 🧠 思維模式（Cognitive Patterns）",
+              "  L183: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_UX: 6 Interaction States",
+          "status": "pass",
+          "logic": "每畫面 6 態強制覆蓋",
+          "file": "context-seeds/SEED_UX.md",
+          "pattern": "Interaction State|Empty",
+          "found": {
+            "file": "context-seeds/SEED_UX.md",
+            "line": 81,
+            "match": "□ Empty / 無資料",
+            "context": [
+              "  L80: □ Error / 錯誤",
+              "  L81: □ Empty / 無資料",
+              "  L82: □ 其他：___"
+            ]
+          }
+        },
+        {
+          "name": "SEED_Architect: ETHOS 引用",
+          "status": "pass",
+          "logic": "Agent 知道框架的 4 原則",
+          "file": "context-seeds/SEED_Architect.md",
+          "pattern": "ETHOS.md",
+          "found": {
+            "file": "context-seeds/SEED_Architect.md",
+            "line": 45,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L44: ",
+              "  L45: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L46: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Architect: 15 Engineering Patterns",
+          "status": "pass",
+          "logic": "15 個工程師思維直覺",
+          "file": "context-seeds/SEED_Architect.md",
+          "pattern": "Engineering.*Pattern|Boring by Default",
+          "found": {
+            "file": "context-seeds/SEED_Architect.md",
+            "line": 115,
+            "match": "### 15 Engineering Cognitive Patterns",
+            "context": [
+              "  L114: ",
+              "  L115: ### 15 Engineering Cognitive Patterns",
+              "  L116: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Architect: Complexity Smell",
+          "status": "pass",
+          "logic": ">8 檔案 = 🔴 必須拆分",
+          "file": "context-seeds/SEED_Architect.md",
+          "pattern": "Complexity Smell",
+          "found": {
+            "file": "context-seeds/SEED_Architect.md",
+            "line": 171,
+            "match": "### Complexity Smell（複雜度警報）",
+            "context": [
+              "  L170: ",
+              "  L171: ### Complexity Smell（複雜度警報）",
+              "  L172: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Architect: Context Engineering",
+          "status": "pass",
+          "logic": "AI 功能品質=context 設計品質",
+          "file": "context-seeds/SEED_Architect.md",
+          "pattern": "Context Engineering",
+          "found": {
+            "file": "context-seeds/SEED_Architect.md",
+            "line": 133,
+            "match": "### Context Engineering > Prompt Engineering（AI 功能設計原則）",
+            "context": [
+              "  L132: ",
+              "  L133: ### Context Engineering > Prompt Engineering（AI 功能設計原則）",
+              "  L134: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_DBA: ETHOS 引用",
+          "status": "pass",
+          "logic": "Agent 知道框架的 4 原則",
+          "file": "context-seeds/SEED_DBA.md",
+          "pattern": "ETHOS.md",
+          "found": {
+            "file": "context-seeds/SEED_DBA.md",
+            "line": 44,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L43: ",
+              "  L44: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L45: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_DBA: Shadow Path Tracing",
+          "status": "pass",
+          "logic": "每資料流追蹤 4 路徑（happy/null/empty/error）",
+          "file": "context-seeds/SEED_DBA.md",
+          "pattern": "Shadow Path",
+          "found": {
+            "file": "context-seeds/SEED_DBA.md",
+            "line": 103,
+            "match": "### Shadow Path Tracing（每個資料流必做）",
+            "context": [
+              "  L102: ",
+              "  L103: ### Shadow Path Tracing（每個資料流必做）",
+              "  L104: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_DBA: Temporal Depth",
+          "status": "pass",
+          "logic": "Schema 能承受 5x 資料量？",
+          "file": "context-seeds/SEED_DBA.md",
+          "pattern": "Temporal Depth",
+          "found": {
+            "file": "context-seeds/SEED_DBA.md",
+            "line": 113,
+            "match": "### Temporal Depth（時間維度思考）",
+            "context": [
+              "  L112: ",
+              "  L113: ### Temporal Depth（時間維度思考）",
+              "  L114: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Backend: ETHOS 引用",
+          "status": "pass",
+          "logic": "Agent 知道框架的 4 原則",
+          "file": "context-seeds/SEED_Backend.md",
+          "pattern": "ETHOS.md",
+          "found": {
+            "file": "context-seeds/SEED_Backend.md",
+            "line": 52,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L51: ",
+              "  L52: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L53: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Backend: 三層 Never Rules",
+          "status": "pass",
+          "logic": "Controller/Service/Repository 各層禁止行為",
+          "file": "context-seeds/SEED_Backend.md",
+          "pattern": "Never Rules|三層",
+          "found": {
+            "file": "context-seeds/SEED_Backend.md",
+            "line": 220,
+            "match": "### 三層 Never Rules（各層禁止行為）",
+            "context": [
+              "  L219: ",
+              "  L220: ### 三層 Never Rules（各層禁止行為）",
+              "  L221: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Backend: 18 Anti-Patterns",
+          "status": "pass",
+          "logic": "Don't/Do 對照表",
+          "file": "context-seeds/SEED_Backend.md",
+          "pattern": "Anti-Pattern",
+          "found": {
+            "file": "context-seeds/SEED_Backend.md",
+            "line": 230,
+            "match": "### 18 Anti-Patterns 對照表（Don't / Do Instead）",
+            "context": [
+              "  L229: ",
+              "  L230: ### 18 Anti-Patterns 對照表（Don't / Do Instead）",
+              "  L231: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Backend: Test Coverage Diagram",
+          "status": "pass",
+          "logic": "每 API 附 ASCII 覆蓋圖",
+          "file": "context-seeds/SEED_Backend.md",
+          "pattern": "Test Coverage Diagram",
+          "found": {
+            "file": "context-seeds/SEED_Backend.md",
+            "line": 121,
+            "match": "### Test Coverage Diagram（每個 API 必附）",
+            "context": [
+              "  L120: ",
+              "  L121: ### Test Coverage Diagram（每個 API 必附）",
+              "  L122: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Frontend: ETHOS 引用",
+          "status": "pass",
+          "logic": "Agent 知道框架的 4 原則",
+          "file": "context-seeds/SEED_Frontend.md",
+          "pattern": "ETHOS.md",
+          "found": {
+            "file": "context-seeds/SEED_Frontend.md",
+            "line": 57,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L56: ",
+              "  L57: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L58: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Frontend: Per-Page QA",
+          "status": "pass",
+          "logic": "前端自己先跑 7 步 QA",
+          "file": "context-seeds/SEED_Frontend.md",
+          "pattern": "Per-Page QA",
+          "found": {
+            "file": "context-seeds/SEED_Frontend.md",
+            "line": 143,
+            "match": "### Per-Page QA Checklist（前端自我 QA）",
+            "context": [
+              "  L142: ",
+              "  L143: ### Per-Page QA Checklist（前端自我 QA）",
+              "  L144: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Frontend: Design Review Lite",
+          "status": "pass",
+          "logic": "改 UI 就自動對照 checklist",
+          "file": "context-seeds/SEED_Frontend.md",
+          "pattern": "Design Review Lite",
+          "found": {
+            "file": "context-seeds/SEED_Frontend.md",
+            "line": 159,
+            "match": "### Design Review Lite on Diff（改 UI 就跑）",
+            "context": [
+              "  L158: ",
+              "  L159: ### Design Review Lite on Diff（改 UI 就跑）",
+              "  L160: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_QA: ETHOS 引用",
+          "status": "pass",
+          "logic": "Agent 知道框架的 4 原則",
+          "file": "context-seeds/SEED_QA.md",
+          "pattern": "ETHOS.md",
+          "found": {
+            "file": "context-seeds/SEED_QA.md",
+            "line": 47,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L46: ",
+              "  L47: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L48: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_QA: Diff-Aware Testing",
+          "status": "pass",
+          "logic": "只測改動的（不是全跑）",
+          "file": "context-seeds/SEED_QA.md",
+          "pattern": "Diff-Aware",
+          "found": {
+            "file": "context-seeds/SEED_QA.md",
+            "line": 145,
+            "match": "> 靈感來源：gstack /qa — diff-aware + regression + per-page 系統化探索。",
+            "context": [
+              "  L144: ",
+              "  L145: > 靈感來源：gstack /qa — diff-aware + regression + per-page 系統化探索。",
+              "  L146: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_QA: Regression Mode",
+          "status": "pass",
+          "logic": "和上次比較，追蹤品質趨勢",
+          "file": "context-seeds/SEED_QA.md",
+          "pattern": "Regression Mode",
+          "found": {
+            "file": "context-seeds/SEED_QA.md",
+            "line": 165,
+            "match": "### Regression Mode（和上次比較）",
+            "context": [
+              "  L164: ",
+              "  L165: ### Regression Mode（和上次比較）",
+              "  L166: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_QA: Evals as PRD",
+          "status": "pass",
+          "logic": "AI 功能用 binary eval+統計 pass rate",
+          "file": "context-seeds/SEED_QA.md",
+          "pattern": "Evals as PRD",
+          "found": {
+            "file": "context-seeds/SEED_QA.md",
+            "line": 201,
+            "match": "### Evals as PRD（AI 功能的測試思維轉變）",
+            "context": [
+              "  L200: ",
+              "  L201: ### Evals as PRD（AI 功能的測試思維轉變）",
+              "  L202: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Security: ETHOS 引用",
+          "status": "pass",
+          "logic": "Agent 知道框架的 4 原則",
+          "file": "context-seeds/SEED_Security.md",
+          "pattern": "ETHOS.md",
+          "found": {
+            "file": "context-seeds/SEED_Security.md",
+            "line": 45,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L44: ",
+              "  L45: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L46: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Security: Attack Surface Census",
+          "status": "pass",
+          "logic": "量化攻擊面：N 個公開 endpoint/認證/上傳/整合",
+          "file": "context-seeds/SEED_Security.md",
+          "pattern": "Attack Surface",
+          "found": {
+            "file": "context-seeds/SEED_Security.md",
+            "line": 142,
+            "match": "### Attack Surface Census（量化攻擊面）",
+            "context": [
+              "  L141: ",
+              "  L142: ### Attack Surface Census（量化攻擊面）",
+              "  L143: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Security: False Positive Rules",
+          "status": "pass",
+          "logic": "每個檢查類別有誤報排除規則",
+          "file": "context-seeds/SEED_Security.md",
+          "pattern": "False Positive",
+          "found": {
+            "file": "context-seeds/SEED_Security.md",
+            "line": 165,
+            "match": "### False Positive Rules（誤報排除）",
+            "context": [
+              "  L164: ",
+              "  L165: ### False Positive Rules（誤報排除）",
+              "  L166: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Security: 14 Phase Audit",
+          "status": "pass",
+          "logic": "14 階段安全審計架構",
+          "file": "context-seeds/SEED_Security.md",
+          "pattern": "14.*階段|Phase.*0",
+          "found": {
+            "file": "context-seeds/SEED_Security.md",
+            "line": 72,
+            "match": "【14 階段安全審計架構（gstack /cso 參考）】",
+            "context": [
+              "  L71: ",
+              "  L72: 【14 階段安全審計架構（gstack /cso 參考）】",
+              "  L73: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_DevOps: ETHOS 引用",
+          "status": "pass",
+          "logic": "Agent 知道框架的 4 原則",
+          "file": "context-seeds/SEED_DevOps.md",
+          "pattern": "ETHOS.md",
+          "found": {
+            "file": "context-seeds/SEED_DevOps.md",
+            "line": 42,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L41: ",
+              "  L42: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L43: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_DevOps: Land-and-Deploy",
+          "status": "pass",
+          "logic": "verify→merge→deploy→canary→confirm 一條龍",
+          "file": "context-seeds/SEED_DevOps.md",
+          "pattern": "Land-and-Deploy",
+          "found": {
+            "file": "context-seeds/SEED_DevOps.md",
+            "line": 109,
+            "match": "### Land-and-Deploy 一條龍",
+            "context": [
+              "  L108: ",
+              "  L109: ### Land-and-Deploy 一條龍",
+              "  L110: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_DevOps: Rollback-First",
+          "status": "pass",
+          "logic": "部署前必須確認 rollback 方案",
+          "file": "context-seeds/SEED_DevOps.md",
+          "pattern": "Rollback-First|Rollback.*原則",
+          "found": {
+            "file": "context-seeds/SEED_DevOps.md",
+            "line": 135,
+            "match": "### Rollback-First 原則",
+            "context": [
+              "  L134: ",
+              "  L135: ### Rollback-First 原則",
+              "  L136: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Review: ETHOS 引用",
+          "status": "pass",
+          "logic": "Agent 知道框架的 4 原則",
+          "file": "context-seeds/SEED_Review.md",
+          "pattern": "ETHOS.md",
+          "found": {
+            "file": "context-seeds/SEED_Review.md",
+            "line": 30,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L29: ",
+              "  L30: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L31: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Review: Scope Drift Detection",
+          "status": "pass",
+          "logic": "比對 plan vs diff：做的是不是當初說的",
+          "file": "context-seeds/SEED_Review.md",
+          "pattern": "Scope Drift",
+          "found": {
+            "file": "context-seeds/SEED_Review.md",
+            "line": 330,
+            "match": "【Scope Drift Detection（範圍偏移偵測）】",
+            "context": [
+              "  L329: ═══════════════════════════════════════",
+              "  L330: 【Scope Drift Detection（範圍偏移偵測）】",
+              "  L331: ═══════════════════════════════════════"
+            ]
+          }
+        },
+        {
+          "name": "SEED_Review: Two-Pass Review",
+          "status": "pass",
+          "logic": "Pass 1 Critical（阻塞）→ Pass 2 Informational（不阻塞）",
+          "file": "context-seeds/SEED_Review.md",
+          "pattern": "Two-Pass",
+          "found": {
+            "file": "context-seeds/SEED_Review.md",
+            "line": 376,
+            "match": "【Two-Pass Review（兩階段審查）】",
+            "context": [
+              "  L375: ═══════════════════════════════════════",
+              "  L376: 【Two-Pass Review（兩階段審查）】",
+              "  L377: ═══════════════════════════════════════"
+            ]
+          }
+        },
+        {
+          "name": "SEED_Review: Fix-First",
+          "status": "pass",
+          "logic": "格式/lint/console.log 自動修，業務邏輯才問人",
+          "file": "context-seeds/SEED_Review.md",
+          "pattern": "Fix-First",
+          "found": {
+            "file": "context-seeds/SEED_Review.md",
+            "line": 30,
+            "match": "> 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+            "context": [
+              "  L29: ",
+              "  L30: > 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）",
+              "  L31: "
+            ]
+          }
+        },
+        {
+          "name": "SEED_Review: Kill Criteria Check",
+          "status": "pass",
+          "logic": "檢查 RS 的放棄條件是否已觸發",
+          "file": "context-seeds/SEED_Review.md",
+          "pattern": "Kill Criteria",
+          "found": {
+            "file": "context-seeds/SEED_Review.md",
+            "line": 362,
+            "match": "【Kill Criteria Check（放棄條件檢查）】",
+            "context": [
+              "  L361: ═══════════════════════════════════════",
+              "  L362: 【Kill Criteria Check（放棄條件檢查）】",
+              "  L363: ═══════════════════════════════════════"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

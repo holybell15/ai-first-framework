@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-First Framework — Tier 2 工作流測試報告</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft JhengHei',sans-serif;background:#0B0E14;color:#E4E7EF;min-height:100vh;padding:24px}
+.header{text-align:center;padding:32px 0;border-bottom:1px solid #1E2535}
+.header h1{font-size:20px;color:#6C5CE7;margin-bottom:4px}
+.header .sub{font-size:13px;color:#8B90A0}
+.score-ring{width:120px;height:120px;margin:24px auto}
+.score-ring svg{width:100%;height:100%}
+.score-ring .score-text{font-size:28px;font-weight:800}
+.score-ring .score-label{font-size:11px;fill:#8B90A0}
+.summary{display:flex;justify-content:center;gap:32px;margin:16px 0 32px}
+.summary .s-item{text-align:center}
+.summary .s-num{font-size:24px;font-weight:700}
+.summary .s-label{font-size:11px;color:#8B90A0}
+.stage{margin-bottom:16px;border:1px solid #1E2535;border-radius:10px;overflow:hidden}
+.stage-header{display:flex;align-items:center;gap:10px;padding:14px 18px;background:#141822;cursor:pointer}
+.stage-header:hover{background:#1A1F2E}
+.stage-icon{font-size:18px}
+.stage-name{font-size:14px;font-weight:600;flex:1}
+.stage-score{font-size:13px;font-weight:700;min-width:50px;text-align:right}
+.stage-bar{width:80px;height:6px;background:#1E2535;border-radius:3px;overflow:hidden}
+.stage-fill{height:100%;border-radius:3px;transition:.3s}
+.stage-tests{padding:0 12px 12px}
+.test-item{margin-top:8px;border-radius:8px;padding:10px 14px;cursor:pointer;transition:.15s}
+.test-item:hover{filter:brightness(1.1)}
+.t-header{display:flex;align-items:center;gap:8px}
+.t-icon{font-size:14px;flex-shrink:0}
+.t-name{font-size:12px;font-weight:600;flex:1}
+.t-arrow{font-size:10px;color:#8B90A0;transition:.2s}
+.t-detail{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #ffffff10;font-size:11px;line-height:1.8}
+.t-detail.open{display:block}
+.t-detail .open+.t-arrow{transform:rotate(90deg)}
+.t-logic{color:#8B90A0}
+.t-file{color:#6C5CE7}
+.t-file code{background:#1E2535;padding:1px 6px;border-radius:4px;font-size:11px}
+.t-match{color:#10B981;margin-top:2px}
+.t-match code{background:#10B98115;padding:1px 6px;border-radius:4px;color:#6EE7B7;font-size:11px}
+.t-ctx{background:#0D1117;border:1px solid #1E2535;border-radius:6px;padding:8px 12px;font-size:11px;color:#8B90A0;margin-top:6px;overflow-x:auto;white-space:pre;font-family:'SF Mono','Fira Code',monospace}
+.footer{text-align:center;padding:24px;font-size:11px;color:#8B90A0;border-top:1px solid #1E2535;margin-top:32px}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>AI-First Framework v2.9</h1>
+  <div class="sub">Tier 2 工作流模擬測試 — 透明模式報告</div>
+  <div class="sub">2026-03-29T09:18:18.059903</div>
+</div>
+
+<div class="score-ring">
+  <svg viewBox="0 0 120 120">
+    <circle cx="60" cy="60" r="50" fill="none" stroke="#1E2535" stroke-width="8"/>
+    <circle cx="60" cy="60" r="50" fill="none" stroke="#10B981" stroke-width="8"
+      stroke-dasharray="314.0 314" stroke-dashoffset="0" stroke-linecap="round"
+      transform="rotate(-90 60 60)"/>
+    <text x="60" y="56" text-anchor="middle" class="score-text" fill="#10B981">100.0%</text>
+    <text x="60" y="72" text-anchor="middle" class="score-label">PASS</text>
+  </svg>
+</div>
+
+<div class="summary">
+  <div class="s-item"><div class="s-num" style="color:#10B981">106</div><div class="s-label">Pass</div></div>
+  <div class="s-item"><div class="s-num" style="color:#EF4444">0</div><div class="s-label">Fail</div></div>
+  <div class="s-item"><div class="s-num" style="color:#6C5CE7">106</div><div class="s-label">Total</div></div>
+</div>
+
+
+        <div class="stage">
+          <div class="stage-header">
+            <span class="stage-icon">💡</span>
+            <span class="stage-name">P00 需求建立</span>
+            <span class="stage-score" style="color:#10B981">17/17</span>
+            <div class="stage-bar"><div class="stage-fill" style="width:100%;background:#10B981"></div></div>
+          </div>
+          <div class="stage-tests">
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SRS 完整模板</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：P00 的核心產出模板必須存在</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_SRS_Complete.md</code></div>
+<div class="t-match">結果：存在（348 行, 10554 bytes）</div></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SRS 含 [封面]</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：SRS 必須有封面（產品名/文件編號/版本號/機密等級）</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_SRS_Complete.md</code></div>
+<div class="t-match">找到：<strong>L12</strong> → <code>產出格式：Word (.docx)，含封面、目錄、版本歷程。</code></div>
+<pre class="t-ctx">  L11:   此文件在 Gate 1 前必須完成，通過後才能進入 Prototyping 和 P02 技術設計。
+  L12:   產出格式：Word (.docx)，含封面、目錄、版本歷程。
+  L13: ---</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SRS 含 [版本歷程]</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每次修改都追蹤版本，防止文件混亂</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_SRS_Complete.md</code></div>
+<div class="t-match">找到：<strong>L12</strong> → <code>產出格式：Word (.docx)，含封面、目錄、版本歷程。</code></div>
+<pre class="t-ctx">  L11:   此文件在 Gate 1 前必須完成，通過後才能進入 Prototyping 和 P02 技術設計。
+  L12:   產出格式：Word (.docx)，含封面、目錄、版本歷程。
+  L13: ---</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SRS 含 [系統定位]</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：包含專案資訊+核心定位+角色定義</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_SRS_Complete.md</code></div>
+<div class="t-match">找到：<strong>L29</strong> → <code>├── 第一章 系統定位 ........................ [必填]</code></div>
+<pre class="t-ctx">  L28: 目錄（自動生成）
+  L29: ├── 第一章 系統定位 ........................ [必填]
+  L30: │   ├── 1.1 專案基本資訊</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SRS 含 [系統範圍]</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：定義系統邊界+外部責任+資料隔離</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_SRS_Complete.md</code></div>
+<div class="t-match">找到：<strong>L33</strong> → <code>├── 第二章 系統範圍與責任邊界 ............ [必填]</code></div>
+<pre class="t-ctx">  L32: │   └── 1.3 使用者角色定義
+  L33: ├── 第二章 系統範圍與責任邊界 ............ [必填]
+  L34: │   ├── 2.1 系統承載範圍</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SRS 含 [功能規格]</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：逐項功能 7 區塊（說明/角色/流程/情境/欄位/限制/AC）</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_SRS_Complete.md</code></div>
+<div class="t-match">找到：<strong>L38</strong> → <code>├── 第三章～第 N 章 功能規格 ............. [必填，每功能模組一章]</code></div>
+<pre class="t-ctx">  L37: │   └── 2.4 資料隔離機制
+  L38: ├── 第三章～第 N 章 功能規格 ............. [必填，每功能模組一章]
+  L39: │   ├── N.1 功能 A（F-code）</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SRS 含 [SLA]</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：可用性+效能+容量+安全的具體數字</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_SRS_Complete.md</code></div>
+<div class="t-match">找到：<strong>L54</strong> → <code>├── 技術附件五：非功能性指標（SLA） ...... [必填]</code></div>
+<pre class="t-ctx">  L53: ├── 技術附件四：可靠性與災難處理 ......... [建議]
+  L54: ├── 技術附件五：非功能性指標（SLA） ...... [必填]
+  L55: ├── 技術附件五之一：部署架構與規格 ....... [建議]</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SRS 含 [MVP 範圍]</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：明確切分 MVP 和 Phase 2</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_SRS_Complete.md</code></div>
+<div class="t-match">找到：<strong>L58</strong> → <code>└── MVP 與 Phase 2 功能範圍定義 ......... [必填]</code></div>
+<pre class="t-ctx">  L57: ├── 技術附件七：資料保存策略 ............. [建議]
+  L58: └── MVP 與 Phase 2 功能範圍定義 ......... [必填]
+  L59: ```</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">功能規格 7 區塊模板</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每個功能的標準格式模板</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_RS_Function_Spec.md</code></div>
+<div class="t-match">結果：存在（149 行, 5255 bytes）</div></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">7 區塊：功能說明</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：回答：誰/情境/操作/目的</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_RS_Function_Spec.md</code></div>
+<div class="t-match">找到：<strong>L21</strong> → <code>## 1. 功能說明</code></div>
+<pre class="t-ctx">  L20: 
+  L21: ## 1. 功能說明
+  L22: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">7 區塊：操作角色</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：角色×操作矩陣，讓 Frontend 做 RBAC 渲染</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_RS_Function_Spec.md</code></div>
+<div class="t-match">找到：<strong>L27</strong> → <code>## 2. 操作角色</code></div>
+<pre class="t-ctx">  L26: 
+  L27: ## 2. 操作角色
+  L28: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">7 區塊：操作流程</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每步「使用者做 X → 系統做 Y」，讓 Backend 設計 API</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_RS_Function_Spec.md</code></div>
+<div class="t-match">找到：<strong>L38</strong> → <code>## 3. 操作流程</code></div>
+<pre class="t-ctx">  L37: 
+  L38: ## 3. 操作流程
+  L39: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">7 區塊：情境描述</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：≥4 種情境（正常/錯誤/邊界/降級），讓 QA 寫 TC</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_RS_Function_Spec.md</code></div>
+<div class="t-match">找到：<strong>L60</strong> → <code>## 4. 情境描述</code></div>
+<pre class="t-ctx">  L59: 
+  L60: ## 4. 情境描述
+  L61: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">7 區塊：欄位規格</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：含型別+必填+限制，讓 DBA 設計 Schema</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_RS_Function_Spec.md</code></div>
+<div class="t-match">找到：<strong>L76</strong> → <code>## 5. 欄位/參數規格</code></div>
+<pre class="t-ctx">  L75: 
+  L76: ## 5. 欄位/參數規格
+  L77: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">7 區塊：條件限制</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：技術/安全/合規/效能/多租戶約束</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_RS_Function_Spec.md</code></div>
+<div class="t-match">找到：<strong>L93</strong> → <code>## 6. 條件限制</code></div>
+<pre class="t-ctx">  L92: 
+  L93: ## 6. 條件限制
+  L94: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">7 區塊：驗收條件</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：三段式 AC：前置+操作+預期，QA 唯一依據</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_RS_Function_Spec.md</code></div>
+<div class="t-match">找到：<strong>L108</strong> → <code>## 7. 驗收條件（AC）</code></div>
+<pre class="t-ctx">  L107: 
+  L108: ## 7. 驗收條件（AC）
+  L109: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">P00 願景模板</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：P00 的替代模板（較輕量）</div>
+<div class="t-file">檔案：<code>02_Specifications/TEMPLATE_P00_Product_Vision.md</code></div>
+<div class="t-match">結果：存在（247 行, 8371 bytes）</div></div>
+            </div></div>
+        </div>
+        <div class="stage">
+          <div class="stage-header">
+            <span class="stage-icon">✨</span>
+            <span class="stage-name">P01 精煉+Prototype</span>
+            <span class="stage-score" style="color:#10B981">7/7</span>
+            <div class="stage-bar"><div class="stage-fill" style="width:100%;background:#10B981"></div></div>
+          </div>
+          <div class="stage-tests">
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">PM 含 7 區塊格式</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：PM 撰寫 RS 時必須遵循 7 區塊模板</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_PM.md</code></div>
+<div class="t-match">找到：<strong>L344</strong> → <code>&gt; **品質基準**：每個功能規格必須寫到和 `TEMPLATE_RS_Function_Spec.md` 一樣的深度。</code></div>
+<pre class="t-ctx">  L343: 
+  L344: &gt; **品質基準**：每個功能規格必須寫到和 `TEMPLATE_RS_Function_Spec.md` 一樣的深度。
+  L345: &gt; 這是經過實戰驗證的格式（來源：REQ_CONFIRM_AICC-II_v4.0.4）。</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">PM 含 4 Scope Modes</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：收到需求後先選 Scope Mode（Expansion/Selective/Hold/Reduction）</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_PM.md</code></div>
+<div class="t-match">找到：<strong>L247</strong> → <code>### 4 Scope Modes（開始前必選）</code></div>
+<pre class="t-ctx">  L246: 
+  L247: ### 4 Scope Modes（開始前必選）
+  L248: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">PM 含 Kill Criteria</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每功能定義「什麼情況下放棄」— Review Agent 檢查是否觸發</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_PM.md</code></div>
+<div class="t-match">找到：<strong>L315</strong> → <code>### Pre-Mortem Kill Criteria（開始前定義放棄條件）</code></div>
+<pre class="t-ctx">  L314: 
+  L315: ### Pre-Mortem Kill Criteria（開始前定義放棄條件）
+  L316: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">PM 含 Type 1/2 Door</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：可逆決策快速做、不可逆決策慎重做（Bezos 模型）</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_PM.md</code></div>
+<div class="t-match">找到：<strong>L282</strong> → <code>### Type 1/2 Door 決策分類（Bezos 模型）</code></div>
+<pre class="t-ctx">  L281: 
+  L282: ### Type 1/2 Door 決策分類（Bezos 模型）
+  L283: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">UX 含 6 Interaction States</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每畫面必須定義 6 態（Empty/Loading/Error/Overflow/First-time/Permission）</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_UX.md</code></div>
+<div class="t-match">找到：<strong>L201</strong> → <code>### Interaction State 強制覆蓋（每個畫面必答）</code></div>
+<pre class="t-ctx">  L200: 
+  L201: ### Interaction State 強制覆蓋（每個畫面必答）
+  L202: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Gate 1 含 RS 品質檢查</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Gate 1 審查 PM 產出的 RS 是否符合 7 區塊標準</div>
+<div class="t-file">檔案：<code>context-skills/quality-gates/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L123</strong> → <code>**RS 功能規格品質檢查（v2.8 新增 — 基準：AICC-II v4.0.4）**</code></div>
+<pre class="t-ctx">  L122: 
+  L123: **RS 功能規格品質檢查（v2.8 新增 — 基準：AICC-II v4.0.4）**
+  L124: - [ ] 每個功能包含完整 7 區塊（功能說明/操作角色/操作流程/情境描述/欄位規格/條件限制/AC）</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Gate 1 含模糊用語偵測</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：搜尋「適當」「合理」「良好」— 全部退回改為具體描述</div>
+<div class="t-file">檔案：<code>context-skills/quality-gates/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L129</strong> → <code>- [ ] 無模糊用語：搜尋「適當」「合理」「良好」→ 如有，退回修正</code></div>
+<pre class="t-ctx">  L128: - [ ] AC 表格：每個功能 ≥ 5 條 AC，含「前置條件 + 操作 + 預期結果」三段式
+  L129: - [ ] 無模糊用語：搜尋「適當」「合理」「良好」→ 如有，退回修正
+  L130: - [ ] Phase 標記：Phase 2 功能有完整規格但明確標記</pre></div>
+            </div></div>
+        </div>
+        <div class="stage">
+          <div class="stage-header">
+            <span class="stage-icon">🏛️</span>
+            <span class="stage-name">P02 技術設計 + Slice</span>
+            <span class="stage-score" style="color:#10B981">6/6</span>
+            <div class="stage-bar"><div class="stage-fill" style="width:100%;background:#10B981"></div></div>
+          </div>
+          <div class="stage-tests">
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Architect 含 Complexity Smell</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：修改 >8 檔案 = 🔴 必須拆分（防過度設計）</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Architect.md</code></div>
+<div class="t-match">找到：<strong>L171</strong> → <code>### Complexity Smell（複雜度警報）</code></div>
+<pre class="t-ctx">  L170: 
+  L171: ### Complexity Smell（複雜度警報）
+  L172: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Architect 含 Existing Code Leverage</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：設計前搜尋 context-skills/10_Standards/npm 有無可重用方案</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Architect.md</code></div>
+<div class="t-match">找到：<strong>L181</strong> → <code>### Existing Code Leverage Check（強制）</code></div>
+<pre class="t-ctx">  L180: 
+  L181: ### Existing Code Leverage Check（強制）
+  L182: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Architect 含 Failure Scenario</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每個新 API/模組附一個生產環境失敗場景</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Architect.md</code></div>
+<div class="t-match">找到：<strong>L194</strong> → <code>### Failure Scenario（每個 codepath 必填）</code></div>
+<pre class="t-ctx">  L193: 
+  L194: ### Failure Scenario（每個 codepath 必填）
+  L195: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Gate 2 含 Slice Backlog 審查</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Gate 2 驗證 Slice Backlog 存在 + Entry/Exit Criteria + 依賴無循環</div>
+<div class="t-file">檔案：<code>context-skills/quality-gates/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L191</strong> → <code>**Slice Backlog 審查（v2.9 新增）**</code></div>
+<pre class="t-ctx">  L190: 
+  L191: **Slice Backlog 審查（v2.9 新增）**
+  L192: - [ ] Slice Backlog 存在（`F##-SLICE-BACKLOG.md`）且每 slice 有 Entry/Exit Criteria</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Orchestrator 含 Slice Cycle</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Gate 2 通過後自動進入 Slice Cycle 模式</div>
+<div class="t-file">檔案：<code>context-skills/pipeline-orchestrator/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L153</strong> → <code>| P03+P04 **Slice Cycle** | **每 slice 循環**：Feature Pack → Design → G4-ENG-D → Code → G4-ENG-R → Stabilize → Harden | G4-</code></div>
+<pre class="t-ctx">  L152: | P02 技術設計 | Architect → DBA → **Slice Backlog（含 Entry/Exit Criteria）** | Gate 2 |
+  L153: | P03+P04 **Slice Cycle** | **每 slice 循環**：Feature Pack → Design → G4-ENG-D → Code → G4-ENG-R → Stabilize → Harden | G4-ENG-D + G4-ENG-R（每 slice） |
+  L154: | Gate 3 | 所有 slice 完成後的總審查 | Gate 3 |</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Orchestrator 含 Entry/Exit</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每個 slice 有進入和退出條件</div>
+<div class="t-file">檔案：<code>context-skills/pipeline-orchestrator/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L152</strong> → <code>| P02 技術設計 | Architect → DBA → **Slice Backlog（含 Entry/Exit Criteria）** | Gate 2 |</code></div>
+<pre class="t-ctx">  L151: | P01 精煉+Prototype | PM 精修 AC → UX Prototype | Gate 1 |
+  L152: | P02 技術設計 | Architect → DBA → **Slice Backlog（含 Entry/Exit Criteria）** | Gate 2 |
+  L153: | P03+P04 **Slice Cycle** | **每 slice 循環**：Feature Pack → Design → G4-ENG-D → Code → G4-ENG-R → Stabilize → Harden | G4-ENG-D + G4-ENG-R（每 slice） |</pre></div>
+            </div></div>
+        </div>
+        <div class="stage">
+          <div class="stage-header">
+            <span class="stage-icon">🔄</span>
+            <span class="stage-name">P03+P04 Slice Cycle</span>
+            <span class="stage-score" style="color:#10B981">20/20</span>
+            <div class="stage-bar"><div class="stage-fill" style="width:100%;background:#10B981"></div></div>
+          </div>
+          <div class="stage-tests">
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">slice-cycle SKILL.md</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：垂直切片循環的完整定義</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">結果：存在（319 行, 11598 bytes）</div></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Slice 7 步：Feature Pack</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Step 1：確認本 slice 範圍（做什麼/不做什麼）</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L37</strong> → <code>│  Step 1: Feature Pack（確認範圍）                    │</code></div>
+<pre class="t-ctx">  L36: │                                                     │
+  L37: │  Step 1: Feature Pack（確認範圍）                    │
+  L38: │  Step 2: Design（設計，⛔ 不寫 code）                │</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Slice 7 步：Design</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Step 2：設計 API+DB+Sequence，⛔不寫 code</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L38</strong> → <code>│  Step 2: Design（設計，⛔ 不寫 code）                │</code></div>
+<pre class="t-ctx">  L37: │  Step 1: Feature Pack（確認範圍）                    │
+  L38: │  Step 2: Design（設計，⛔ 不寫 code）                │
+  L39: │  Step 3: G4-ENG-D（設計審查）                        │</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Slice 7 步：G4-ENG-D</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Step 3：設計審查 Gate，未通過不得寫 code</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L39</strong> → <code>│  Step 3: G4-ENG-D（設計審查）                        │</code></div>
+<pre class="t-ctx">  L38: │  Step 2: Design（設計，⛔ 不寫 code）                │
+  L39: │  Step 3: G4-ENG-D（設計審查）                        │
+  L40: │  Step 4: Code（只做本 slice，⛔ 不碰其他 slice）     │</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Slice 7 步：Code</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Step 4：只實作本 slice，⛔不碰其他 slice</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L40</strong> → <code>│  Step 4: Code（只做本 slice，⛔ 不碰其他 slice）     │</code></div>
+<pre class="t-ctx">  L39: │  Step 3: G4-ENG-D（設計審查）                        │
+  L40: │  Step 4: Code（只做本 slice，⛔ 不碰其他 slice）     │
+  L41: │  Step 5: G4-ENG-R（實作後審查 + 範圍比對）           │</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Slice 7 步：G4-ENG-R</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Step 5：實作後審查 Gate，範圍比對+假設清單</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L41</strong> → <code>│  Step 5: G4-ENG-R（實作後審查 + 範圍比對）           │</code></div>
+<pre class="t-ctx">  L40: │  Step 4: Code（只做本 slice，⛔ 不碰其他 slice）     │
+  L41: │  Step 5: G4-ENG-R（實作後審查 + 範圍比對）           │
+  L42: │  Step 6: Stabilization（能跑）                       │</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Slice 7 步：Stabilization</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Step 6：確保能跑（編譯通過+主流程可驗證）</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L42</strong> → <code>│  Step 6: Stabilization（能跑）                       │</code></div>
+<pre class="t-ctx">  L41: │  Step 5: G4-ENG-R（實作後審查 + 範圍比對）           │
+  L42: │  Step 6: Stabilization（能跑）                       │
+  L43: │  Step 7: Hardening（可靠 + 基線判定）                │</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Slice 7 步：Hardening</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Step 7：確保可靠+可作為下一個 slice 的依賴</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L43</strong> → <code>│  Step 7: Hardening（可靠 + 基線判定）                │</code></div>
+<pre class="t-ctx">  L42: │  Step 6: Stabilization（能跑）                       │
+  L43: │  Step 7: Hardening（可靠 + 基線判定）                │
+  L44: │    ↓ ✅ 基線通過 → 下一個 slice                     │</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">回退：範圍漂移</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：偷補需求 → 回 G4-ENG-R 刪除超出範圍實作</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L204</strong> → <code>| **範圍漂移 / 偷補需求** | → G4-ENG-R（Step 5） | 刪除超出範圍的實作，重新 Review |</code></div>
+<pre class="t-ctx">  L203: |---------|--------|------|
+  L204: | **範圍漂移 / 偷補需求** | → G4-ENG-R（Step 5） | 刪除超出範圍的實作，重新 Review |
+  L205: | **設計與實作不一致** | → P03 Design（Step 2） | 修正設計或修正 code 使其一致 |</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">回退：設計不一致</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：code 和 design 對不上 → 回 Design 修正</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L205</strong> → <code>| **設計與實作不一致** | → P03 Design（Step 2） | 修正設計或修正 code 使其一致 |</code></div>
+<pre class="t-ctx">  L204: | **範圍漂移 / 偷補需求** | → G4-ENG-R（Step 5） | 刪除超出範圍的實作，重新 Review |
+  L205: | **設計與實作不一致** | → P03 Design（Step 2） | 修正設計或修正 code 使其一致 |
+  L206: | **啟動 / 安全 / 主流程** | → Stabilization（Step 6） | P0 等級問題，先修到能跑 |</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">回退：啟動/安全</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：P0 問題 → 回 Stabilization 先修到能跑</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L143</strong> → <code>| R-07 | 無 P0 阻塞（啟動失敗 / 安全漏洞 / 主流程壞） | 🔴 |</code></div>
+<pre class="t-ctx">  L142: | R-06 | 編譯通過 | 🔴 |
+  L143: | R-07 | 無 P0 阻塞（啟動失敗 / 安全漏洞 / 主流程壞） | 🔴 |
+  L144: | R-08 | Open Issues 更新（新增 / 已解決 / 待決） | 🟡 |</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">回退：邏輯/測試</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：邊界沒覆蓋 → 回 Hardening 補測試</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L177</strong> → <code>□ 邏輯語意修正（業務規則正確）</code></div>
+<pre class="t-ctx">  L176: □ 狀態模型正確性（state machine 行為和設計一致）
+  L177: □ 邏輯語意修正（業務規則正確）
+  L178: □ 關鍵 edge case 測試補齊</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">回退：架構錯誤</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：slice 切法有誤 → 升級回 P02 重新設計</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L208</strong> → <code>| **架構邊界錯誤** | → **P02 / Gate 2**（升級） | slice 切法有誤或模組邊界需重定義 |</code></div>
+<pre class="t-ctx">  L207: | **邏輯語意 / 邊界測試** | → Hardening（Step 7） | 補測試、修邏輯，確認可靠 |
+  L208: | **架構邊界錯誤** | → **P02 / Gate 2**（升級） | slice 切法有誤或模組邊界需重定義 |
+  L209: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Cross-Slice Integration Check</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：第 3 骨幹 slice 後+每 2 slice+修改共用模組 → 強制整合檢查</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L47</strong> → <code>│  ※ Cross-Slice Integration Check：                  │</code></div>
+<pre class="t-ctx">  L46: │                                                     │
+  L47: │  ※ Cross-Slice Integration Check：                  │
+  L48: │    第 3 個骨幹 slice 後觸發，之後每 2 slice 觸發     │</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Open Issue Protocol</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：未定義事項不假設，結構化記錄 OI-NNN</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L72</strong> → <code>| 8 | Open Issues | 未定義事項（⛔ 不自行假設） |</code></div>
+<pre class="t-ctx">  L71: | 7 | 依賴的前序 Slice | 哪些 slice 必須先完成 |
+  L72: | 8 | Open Issues | 未定義事項（⛔ 不自行假設） |
+  L73: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Entry Criteria 範本</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每 slice 進入前必須滿足的條件（前序基線、API 穩定、Schema 可用）</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L69</strong> → <code>| 5 | Entry Criteria | 從 P02 Slice Backlog 讀取（見下方） |</code></div>
+<pre class="t-ctx">  L68: | 4 | 範圍外 | 明確列出不做的（即使很近的功能） |
+  L69: | 5 | Entry Criteria | 從 P02 Slice Backlog 讀取（見下方） |
+  L70: | 6 | Exit Criteria | 從 P02 Slice Backlog 讀取（見下方） |</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Exit Criteria 範本</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每 slice 退出=基線判定（AC 完成、測試全過、API 穩定、無 P0）</div>
+<div class="t-file">檔案：<code>context-skills/slice-cycle/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L70</strong> → <code>| 6 | Exit Criteria | 從 P02 Slice Backlog 讀取（見下方） |</code></div>
+<pre class="t-ctx">  L69: | 5 | Entry Criteria | 從 P02 Slice Backlog 讀取（見下方） |
+  L70: | 6 | Exit Criteria | 從 P02 Slice Backlog 讀取（見下方） |
+  L71: | 7 | 依賴的前序 Slice | 哪些 slice 必須先完成 |</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">G4-ENG-D checklist</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：設計審查 8 項 checklist（D-01~D-08）</div>
+<div class="t-file">檔案：<code>context-skills/quality-gates/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L231</strong> → <code>## G4-ENG — 拆為雙層：G4-ENG-D（設計審查）+ G4-ENG-R（實作後審查）</code></div>
+<pre class="t-ctx">  L230: 
+  L231: ## G4-ENG — 拆為雙層：G4-ENG-D（設計審查）+ G4-ENG-R（實作後審查）
+  L232: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">G4-ENG-R checklist</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：實作後審查 10 項 checklist（R-01~R-10）</div>
+<div class="t-file">檔案：<code>context-skills/quality-gates/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L231</strong> → <code>## G4-ENG — 拆為雙層：G4-ENG-D（設計審查）+ G4-ENG-R（實作後審查）</code></div>
+<pre class="t-ctx">  L230: 
+  L231: ## G4-ENG — 拆為雙層：G4-ENG-D（設計審查）+ G4-ENG-R（實作後審查）
+  L232: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Cross-Slice IC checklist</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：整合檢查 8 項 checklist（IC-01~IC-08）</div>
+<div class="t-file">檔案：<code>context-skills/quality-gates/SKILL.md</code></div>
+<div class="t-match">找到：<strong>L294</strong> → <code>### Cross-Slice Integration Check（整合檢查）</code></div>
+<pre class="t-ctx">  L293: 
+  L294: ### Cross-Slice Integration Check（整合檢查）
+  L295: </pre></div>
+            </div></div>
+        </div>
+        <div class="stage">
+          <div class="stage-header">
+            <span class="stage-icon">⚡</span>
+            <span class="stage-name">自動化機制</span>
+            <span class="stage-score" style="color:#10B981">12/12</span>
+            <div class="stage-bar"><div class="stage-fill" style="width:100%;background:#10B981"></div></div>
+          </div>
+          <div class="stage-tests">
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">destructive-guard-hook.sh</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：PreToolUse Hook：攔截 rm -rf/DROP/force-push 等危險指令</div>
+<div class="t-file">檔案：<code></code></div></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">freeze-hook.sh</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：PreToolUse Hook：P04 時鎖定只能改 Feature 對應目錄</div>
+<div class="t-file">檔案：<code></code></div></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">auto-state-update.sh</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：PostToolUse Hook：偵測 Pipeline 產出物自動更新 STATE.md</div>
+<div class="t-file">檔案：<code></code></div></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">validate-skills.sh</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：CI 腳本：驗證 SKILL.md 格式+SEED 完整+交叉引用</div>
+<div class="t-file">檔案：<code></code></div></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">skill-eval.sh</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：評估腳本：Tier 2 結構+Tier 3 LLM-as-Judge</div>
+<div class="t-file">檔案：<code></code></div></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">worktree-setup.sh</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Worktree 建立後自動安裝依賴+複製 .env+基準測試</div>
+<div class="t-file">檔案：<code></code></div></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">worktree-archive.sh</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Worktree 完成後自動歸檔+清理+記錄日誌</div>
+<div class="t-file">檔案：<code></code></div></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Hook 配置：UserPromptSubmit</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：/clear 後每次送訊息自動提醒讀取 planning files</div>
+<div class="t-file">檔案：<code>CLAUDE.md</code></div>
+<div class="t-match">找到：<strong>L264</strong> → <code>&quot;UserPromptSubmit&quot;: [</code></div>
+<pre class="t-ctx">  L263:   &quot;hooks&quot;: {
+  L264:     &quot;UserPromptSubmit&quot;: [
+  L265:       { &quot;matcher&quot;: &quot;&quot;, &quot;hooks&quot;: [</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Hook 配置：PreToolUse</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Bash 指令前自動攔截危險操作 + Edit/Write 前檢查 scope</div>
+<div class="t-file">檔案：<code>CLAUDE.md</code></div>
+<div class="t-match">找到：<strong>L269</strong> → <code>&quot;PreToolUse&quot;: [</code></div>
+<pre class="t-ctx">  L268:     ],
+  L269:     &quot;PreToolUse&quot;: [
+  L270:       { &quot;matcher&quot;: &quot;Bash&quot;, &quot;hooks&quot;: [</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">Autopilot 模式定義</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：三模式切換：Autopilot（自動）/Copilot（確認）/Manual（手動）</div>
+<div class="t-file">檔案：<code>CLAUDE.md</code></div>
+<div class="t-match">找到：<strong>L230</strong> → <code>### 三種執行模式（v2.8）</code></div>
+<pre class="t-ctx">  L229: 
+  L230: ### 三種執行模式（v2.8）
+  L231: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">ETHOS.md</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：4 原則：Boil the Lake/Search Before Building/Fix-First/Evidence</div>
+<div class="t-file">檔案：<code>ETHOS.md</code></div>
+<div class="t-match">結果：存在（108 行, 4857 bytes）</div></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">conductor.json</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：並行工作區配置（Worktree lifecycle hooks）</div>
+<div class="t-file">檔案：<code>conductor.json</code></div>
+<div class="t-match">結果：存在（40 行, 953 bytes）</div></div>
+            </div></div>
+        </div>
+        <div class="stage">
+          <div class="stage-header">
+            <span class="stage-icon">🧠</span>
+            <span class="stage-name">Agent 思維模式覆蓋</span>
+            <span class="stage-score" style="color:#10B981">44/44</span>
+            <div class="stage-bar"><div class="stage-fill" style="width:100%;background:#10B981"></div></div>
+          </div>
+          <div class="stage-tests">
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Interviewer: ETHOS 引用</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Agent 知道框架的 4 原則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Interviewer.md</code></div>
+<div class="t-match">找到：<strong>L27</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L26: 
+  L27: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L28: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Interviewer: Push-Until-Specific</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每個問題有「推到什麼程度才算回答」的標準</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Interviewer.md</code></div>
+<div class="t-match">找到：<strong>L592</strong> → <code>### Push-Until-Specific 協議</code></div>
+<pre class="t-ctx">  L591: 
+  L592: ### Push-Until-Specific 協議
+  L593: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Interviewer: Escape Hatch</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：用戶不耐煩時自動減少問題，不問第三次</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Interviewer.md</code></div>
+<div class="t-match">找到：<strong>L612</strong> → <code>### Escape Hatch（用戶不耐煩時）</code></div>
+<pre class="t-ctx">  L611: 
+  L612: ### Escape Hatch（用戶不耐煩時）
+  L613: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Interviewer: Anti-Sycophancy</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：禁止說「很有趣」— 訪談師不評價只追問</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Interviewer.md</code></div>
+<div class="t-match">找到：<strong>L620</strong> → <code>### Anti-Sycophancy Rules（禁止討好）</code></div>
+<pre class="t-ctx">  L619: 
+  L620: ### Anti-Sycophancy Rules（禁止討好）
+  L621: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Interviewer: Struggle Moments</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：從「掙扎時刻」定義需求而非功能列表</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Interviewer.md</code></div>
+<div class="t-match">找到：<strong>L637</strong> → <code>### Struggle Moments（從掙扎時刻定義需求）</code></div>
+<pre class="t-ctx">  L636: 
+  L637: ### Struggle Moments（從掙扎時刻定義需求）
+  L638: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_PM: ETHOS 引用</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Agent 知道框架的 4 原則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_PM.md</code></div>
+<div class="t-match">找到：<strong>L28</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L27: 
+  L28: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L29: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_PM: 4 Scope Modes</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：需求建立前先選模式</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_PM.md</code></div>
+<div class="t-match">找到：<strong>L247</strong> → <code>### 4 Scope Modes（開始前必選）</code></div>
+<pre class="t-ctx">  L246: 
+  L247: ### 4 Scope Modes（開始前必選）
+  L248: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_PM: Implementation Alternatives</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每功能至少 2 條路徑比較</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_PM.md</code></div>
+<div class="t-match">找到：<strong>L258</strong> → <code>### Implementation Alternatives（強制產出）</code></div>
+<pre class="t-ctx">  L257: 
+  L258: ### Implementation Alternatives（強制產出）
+  L259: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_PM: Type 1/2 Door</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：可逆決策快速做、不可逆慎重做</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_PM.md</code></div>
+<div class="t-match">找到：<strong>L282</strong> → <code>### Type 1/2 Door 決策分類（Bezos 模型）</code></div>
+<pre class="t-ctx">  L281: 
+  L282: ### Type 1/2 Door 決策分類（Bezos 模型）
+  L283: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_PM: Kill Criteria</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：開始前定義放棄條件</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_PM.md</code></div>
+<div class="t-match">找到：<strong>L315</strong> → <code>### Pre-Mortem Kill Criteria（開始前定義放棄條件）</code></div>
+<pre class="t-ctx">  L314: 
+  L315: ### Pre-Mortem Kill Criteria（開始前定義放棄條件）
+  L316: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_PM: Appetite</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：「願意花多少時間」取代「估計多少時間」</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_PM.md</code></div>
+<div class="t-match">找到：<strong>L298</strong> → <code>### Appetite not Estimates（Ryan Singer 模型）</code></div>
+<pre class="t-ctx">  L297: 
+  L298: ### Appetite not Estimates（Ryan Singer 模型）
+  L299: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_UX: ETHOS 引用</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Agent 知道框架的 4 原則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_UX.md</code></div>
+<div class="t-match">找到：<strong>L107</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L106: 
+  L107: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L108: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_UX: 12 Cognitive Patterns</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：12 個設計師內化直覺</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_UX.md</code></div>
+<div class="t-match">找到：<strong>L182</strong> → <code>## 🧠 思維模式（Cognitive Patterns）</code></div>
+<pre class="t-ctx">  L181: 
+  L182: ## 🧠 思維模式（Cognitive Patterns）
+  L183: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_UX: 6 Interaction States</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每畫面 6 態強制覆蓋</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_UX.md</code></div>
+<div class="t-match">找到：<strong>L81</strong> → <code>□ Empty / 無資料</code></div>
+<pre class="t-ctx">  L80: □ Error / 錯誤
+  L81: □ Empty / 無資料
+  L82: □ 其他：___</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Architect: ETHOS 引用</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Agent 知道框架的 4 原則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Architect.md</code></div>
+<div class="t-match">找到：<strong>L45</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L44: 
+  L45: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L46: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Architect: 15 Engineering Patterns</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：15 個工程師思維直覺</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Architect.md</code></div>
+<div class="t-match">找到：<strong>L115</strong> → <code>### 15 Engineering Cognitive Patterns</code></div>
+<pre class="t-ctx">  L114: 
+  L115: ### 15 Engineering Cognitive Patterns
+  L116: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Architect: Complexity Smell</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：>8 檔案 = 🔴 必須拆分</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Architect.md</code></div>
+<div class="t-match">找到：<strong>L171</strong> → <code>### Complexity Smell（複雜度警報）</code></div>
+<pre class="t-ctx">  L170: 
+  L171: ### Complexity Smell（複雜度警報）
+  L172: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Architect: Context Engineering</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：AI 功能品質=context 設計品質</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Architect.md</code></div>
+<div class="t-match">找到：<strong>L133</strong> → <code>### Context Engineering &gt; Prompt Engineering（AI 功能設計原則）</code></div>
+<pre class="t-ctx">  L132: 
+  L133: ### Context Engineering &gt; Prompt Engineering（AI 功能設計原則）
+  L134: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_DBA: ETHOS 引用</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Agent 知道框架的 4 原則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_DBA.md</code></div>
+<div class="t-match">找到：<strong>L44</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L43: 
+  L44: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L45: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_DBA: Shadow Path Tracing</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每資料流追蹤 4 路徑（happy/null/empty/error）</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_DBA.md</code></div>
+<div class="t-match">找到：<strong>L103</strong> → <code>### Shadow Path Tracing（每個資料流必做）</code></div>
+<pre class="t-ctx">  L102: 
+  L103: ### Shadow Path Tracing（每個資料流必做）
+  L104: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_DBA: Temporal Depth</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Schema 能承受 5x 資料量？</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_DBA.md</code></div>
+<div class="t-match">找到：<strong>L113</strong> → <code>### Temporal Depth（時間維度思考）</code></div>
+<pre class="t-ctx">  L112: 
+  L113: ### Temporal Depth（時間維度思考）
+  L114: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Backend: ETHOS 引用</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Agent 知道框架的 4 原則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Backend.md</code></div>
+<div class="t-match">找到：<strong>L52</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L51: 
+  L52: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L53: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Backend: 三層 Never Rules</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Controller/Service/Repository 各層禁止行為</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Backend.md</code></div>
+<div class="t-match">找到：<strong>L220</strong> → <code>### 三層 Never Rules（各層禁止行為）</code></div>
+<pre class="t-ctx">  L219: 
+  L220: ### 三層 Never Rules（各層禁止行為）
+  L221: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Backend: 18 Anti-Patterns</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Don't/Do 對照表</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Backend.md</code></div>
+<div class="t-match">找到：<strong>L230</strong> → <code>### 18 Anti-Patterns 對照表（Don't / Do Instead）</code></div>
+<pre class="t-ctx">  L229: 
+  L230: ### 18 Anti-Patterns 對照表（Don't / Do Instead）
+  L231: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Backend: Test Coverage Diagram</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每 API 附 ASCII 覆蓋圖</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Backend.md</code></div>
+<div class="t-match">找到：<strong>L121</strong> → <code>### Test Coverage Diagram（每個 API 必附）</code></div>
+<pre class="t-ctx">  L120: 
+  L121: ### Test Coverage Diagram（每個 API 必附）
+  L122: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Frontend: ETHOS 引用</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Agent 知道框架的 4 原則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Frontend.md</code></div>
+<div class="t-match">找到：<strong>L57</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L56: 
+  L57: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L58: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Frontend: Per-Page QA</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：前端自己先跑 7 步 QA</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Frontend.md</code></div>
+<div class="t-match">找到：<strong>L143</strong> → <code>### Per-Page QA Checklist（前端自我 QA）</code></div>
+<pre class="t-ctx">  L142: 
+  L143: ### Per-Page QA Checklist（前端自我 QA）
+  L144: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Frontend: Design Review Lite</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：改 UI 就自動對照 checklist</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Frontend.md</code></div>
+<div class="t-match">找到：<strong>L159</strong> → <code>### Design Review Lite on Diff（改 UI 就跑）</code></div>
+<pre class="t-ctx">  L158: 
+  L159: ### Design Review Lite on Diff（改 UI 就跑）
+  L160: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_QA: ETHOS 引用</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Agent 知道框架的 4 原則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_QA.md</code></div>
+<div class="t-match">找到：<strong>L47</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L46: 
+  L47: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L48: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_QA: Diff-Aware Testing</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：只測改動的（不是全跑）</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_QA.md</code></div>
+<div class="t-match">找到：<strong>L145</strong> → <code>&gt; 靈感來源：gstack /qa — diff-aware + regression + per-page 系統化探索。</code></div>
+<pre class="t-ctx">  L144: 
+  L145: &gt; 靈感來源：gstack /qa — diff-aware + regression + per-page 系統化探索。
+  L146: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_QA: Regression Mode</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：和上次比較，追蹤品質趨勢</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_QA.md</code></div>
+<div class="t-match">找到：<strong>L165</strong> → <code>### Regression Mode（和上次比較）</code></div>
+<pre class="t-ctx">  L164: 
+  L165: ### Regression Mode（和上次比較）
+  L166: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_QA: Evals as PRD</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：AI 功能用 binary eval+統計 pass rate</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_QA.md</code></div>
+<div class="t-match">找到：<strong>L201</strong> → <code>### Evals as PRD（AI 功能的測試思維轉變）</code></div>
+<pre class="t-ctx">  L200: 
+  L201: ### Evals as PRD（AI 功能的測試思維轉變）
+  L202: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Security: ETHOS 引用</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Agent 知道框架的 4 原則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Security.md</code></div>
+<div class="t-match">找到：<strong>L45</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L44: 
+  L45: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L46: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Security: Attack Surface Census</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：量化攻擊面：N 個公開 endpoint/認證/上傳/整合</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Security.md</code></div>
+<div class="t-match">找到：<strong>L142</strong> → <code>### Attack Surface Census（量化攻擊面）</code></div>
+<pre class="t-ctx">  L141: 
+  L142: ### Attack Surface Census（量化攻擊面）
+  L143: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Security: False Positive Rules</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：每個檢查類別有誤報排除規則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Security.md</code></div>
+<div class="t-match">找到：<strong>L165</strong> → <code>### False Positive Rules（誤報排除）</code></div>
+<pre class="t-ctx">  L164: 
+  L165: ### False Positive Rules（誤報排除）
+  L166: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Security: 14 Phase Audit</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：14 階段安全審計架構</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Security.md</code></div>
+<div class="t-match">找到：<strong>L72</strong> → <code>【14 階段安全審計架構（gstack /cso 參考）】</code></div>
+<pre class="t-ctx">  L71: 
+  L72: 【14 階段安全審計架構（gstack /cso 參考）】
+  L73: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_DevOps: ETHOS 引用</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Agent 知道框架的 4 原則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_DevOps.md</code></div>
+<div class="t-match">找到：<strong>L42</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L41: 
+  L42: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L43: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_DevOps: Land-and-Deploy</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：verify→merge→deploy→canary→confirm 一條龍</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_DevOps.md</code></div>
+<div class="t-match">找到：<strong>L109</strong> → <code>### Land-and-Deploy 一條龍</code></div>
+<pre class="t-ctx">  L108: 
+  L109: ### Land-and-Deploy 一條龍
+  L110: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_DevOps: Rollback-First</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：部署前必須確認 rollback 方案</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_DevOps.md</code></div>
+<div class="t-match">找到：<strong>L135</strong> → <code>### Rollback-First 原則</code></div>
+<pre class="t-ctx">  L134: 
+  L135: ### Rollback-First 原則
+  L136: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Review: ETHOS 引用</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Agent 知道框架的 4 原則</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Review.md</code></div>
+<div class="t-match">找到：<strong>L30</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L29: 
+  L30: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L31: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Review: Scope Drift Detection</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：比對 plan vs diff：做的是不是當初說的</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Review.md</code></div>
+<div class="t-match">找到：<strong>L330</strong> → <code>【Scope Drift Detection（範圍偏移偵測）】</code></div>
+<pre class="t-ctx">  L329: ═══════════════════════════════════════
+  L330: 【Scope Drift Detection（範圍偏移偵測）】
+  L331: ═══════════════════════════════════════</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Review: Two-Pass Review</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：Pass 1 Critical（阻塞）→ Pass 2 Informational（不阻塞）</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Review.md</code></div>
+<div class="t-match">找到：<strong>L376</strong> → <code>【Two-Pass Review（兩階段審查）】</code></div>
+<pre class="t-ctx">  L375: ═══════════════════════════════════════
+  L376: 【Two-Pass Review（兩階段審查）】
+  L377: ═══════════════════════════════════════</pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Review: Fix-First</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：格式/lint/console.log 自動修，業務邏輯才問人</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Review.md</code></div>
+<div class="t-match">找到：<strong>L30</strong> → <code>&gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assert</code></div>
+<pre class="t-ctx">  L29: 
+  L30: &gt; 本 Agent 應內化 `ETHOS.md` 的 4 項原則：Boil the Lake（做完整）/ Search Before Building（先查再建）/ Fix-First（能修就修）/ Evidence Over Assertion（證據優先）
+  L31: </pre></div>
+            </div>
+            <div class="test-item" style="background:#0F291D;border:1px solid #10B98133" onclick="this.querySelector('.t-detail').classList.toggle('open')">
+              <div class="t-header">
+                <span class="t-icon">✅</span>
+                <span class="t-name">SEED_Review: Kill Criteria Check</span>
+                <span class="t-arrow">▸</span>
+              </div>
+              <div class="t-detail"><div class="t-logic">驗證：檢查 RS 的放棄條件是否已觸發</div>
+<div class="t-file">檔案：<code>context-seeds/SEED_Review.md</code></div>
+<div class="t-match">找到：<strong>L362</strong> → <code>【Kill Criteria Check（放棄條件檢查）】</code></div>
+<pre class="t-ctx">  L361: ═══════════════════════════════════════
+  L362: 【Kill Criteria Check（放棄條件檢查）】
+  L363: ═══════════════════════════════════════</pre></div>
+            </div></div>
+        </div>
+
+<div class="footer">
+  AI-First Framework Tier 2 Test Report — Generated 2026-03-29 09:19
+  <br>點擊任一測試項目展開查看驗證邏輯、檔案位置和匹配內容
+</div>
+
+<script>
+document.querySelectorAll('.stage-header').forEach(h=>{
+  h.addEventListener('click',()=>{
+    const tests=h.nextElementSibling;
+    tests.style.display=tests.style.display==='none'?'block':'none';
+  });
+});
+</script>
+</body>
+</html>

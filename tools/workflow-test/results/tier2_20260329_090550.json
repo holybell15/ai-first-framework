@@ -1,0 +1,692 @@
+{
+  "tier": 2,
+  "name": "工作流模擬測試",
+  "timestamp": "2026-03-29T09:05:50.730340",
+  "test_feature": "用戶登入（F01）",
+  "summary": {
+    "pass": 107,
+    "fail": 0,
+    "warn": 0,
+    "score": 100.0
+  },
+  "stages": [
+    {
+      "name": "P00 需求建立",
+      "icon": "💡",
+      "tests": [
+        {
+          "name": "SRS 完整模板存在",
+          "status": "pass",
+          "detail": "/Users/holylin/Projects/ai-first-framework/project-template/02_Specifications/TEMPLATE_SRS_Complete.md",
+          "hint": ""
+        },
+        {
+          "name": "SRS 模板含 [封面]",
+          "status": "pass",
+          "detail": "✅ 找到 封面 章節",
+          "hint": ""
+        },
+        {
+          "name": "SRS 模板含 [版本歷程]",
+          "status": "pass",
+          "detail": "✅ 找到 版本歷程 章節",
+          "hint": ""
+        },
+        {
+          "name": "SRS 模板含 [系統定位]",
+          "status": "pass",
+          "detail": "✅ 找到 系統定位 章節",
+          "hint": ""
+        },
+        {
+          "name": "SRS 模板含 [系統範圍]",
+          "status": "pass",
+          "detail": "✅ 找到 系統範圍 章節",
+          "hint": ""
+        },
+        {
+          "name": "SRS 模板含 [功能規格]",
+          "status": "pass",
+          "detail": "✅ 找到 功能規格 章節",
+          "hint": ""
+        },
+        {
+          "name": "SRS 模板含 [SLA]",
+          "status": "pass",
+          "detail": "✅ 找到 SLA 章節",
+          "hint": ""
+        },
+        {
+          "name": "SRS 模板含 [MVP 範圍]",
+          "status": "pass",
+          "detail": "✅ 找到 MVP 範圍 章節",
+          "hint": ""
+        },
+        {
+          "name": "功能規格模板存在",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "7 區塊：[功能說明]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "7 區塊：[操作角色]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "7 區塊：[操作流程]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "7 區塊：[情境描述]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "7 區塊：[欄位.*參數]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "7 區塊：[條件限制]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "7 區塊：[驗收條件]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "P00 願景模板存在",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        }
+      ]
+    },
+    {
+      "name": "P01 精煉+Prototype",
+      "icon": "✨",
+      "tests": [
+        {
+          "name": "PM SEED 含 7 區塊格式要求",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "PM SEED 含 Scope Mode",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "PM SEED 含 Kill Criteria",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "PM SEED 含 Type 1/2 Door",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "UX SEED 含 6 Interaction States",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Gate 1 含 RS 7 區塊品質檢查",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Gate 1 含模糊用語偵測",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        }
+      ]
+    },
+    {
+      "name": "P02 技術設計 + Slice Backlog",
+      "icon": "🏛️",
+      "tests": [
+        {
+          "name": "Architect 含 Complexity Smell",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Architect 含 Existing Code Leverage",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Architect 含 Failure Scenario",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Gate 2 含 Slice Backlog 審查",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Orchestrator 含 Slice Cycle",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Orchestrator 含 Entry/Exit Criteria",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        }
+      ]
+    },
+    {
+      "name": "P03+P04 Slice Cycle",
+      "icon": "🔄",
+      "tests": [
+        {
+          "name": "slice-cycle SKILL.md 存在",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Slice Cycle 含 [Feature Pack]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Slice Cycle 含 [Design]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Slice Cycle 含 [G4-ENG-D]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Slice Cycle 含 [Code]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Slice Cycle 含 [G4-ENG-R]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Slice Cycle 含 [Stabilization]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Slice Cycle 含 [Hardening]",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "含回退規則",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "回退：範圍漂移",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "回退：設計與實作不一致",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "回退：啟動",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "回退：邏輯語意",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "回退：架構邊界",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "含 Cross-Slice Integration Check",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "含 Open Issue Protocol",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "含 Entry Criteria 範本",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "含 Exit Criteria 範本",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "G4-ENG-D checklist 存在",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "G4-ENG-R checklist 存在",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "Cross-Slice IC checklist 存在",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        }
+      ]
+    },
+    {
+      "name": "自動化機制",
+      "icon": "⚡",
+      "tests": [
+        {
+          "name": "destructive-guard-hook.sh",
+          "status": "pass",
+          "detail": "PreToolUse 安全攔截 — ✅ 可執行",
+          "hint": ""
+        },
+        {
+          "name": "freeze-hook.sh",
+          "status": "pass",
+          "detail": "Edit/Write 目錄鎖定 — ✅ 可執行",
+          "hint": ""
+        },
+        {
+          "name": "auto-state-update.sh",
+          "status": "pass",
+          "detail": "PostToolUse 狀態更新 — ✅ 可執行",
+          "hint": ""
+        },
+        {
+          "name": "validate-skills.sh",
+          "status": "pass",
+          "detail": "Skill/Seed 靜態驗證 — ✅ 可執行",
+          "hint": ""
+        },
+        {
+          "name": "skill-eval.sh",
+          "status": "pass",
+          "detail": "Skill 品質評估 — ✅ 可執行",
+          "hint": ""
+        },
+        {
+          "name": "worktree-setup.sh",
+          "status": "pass",
+          "detail": "Worktree 自動 setup — ✅ 可執行",
+          "hint": ""
+        },
+        {
+          "name": "worktree-archive.sh",
+          "status": "pass",
+          "detail": "Worktree 自動歸檔 — ✅ 可執行",
+          "hint": ""
+        },
+        {
+          "name": "CLAUDE.md 含 Hook 配置建議",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "CLAUDE.md 含 Autopilot 模式",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "ETHOS.md 存在",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "conductor.json 存在",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        }
+      ]
+    },
+    {
+      "name": "Agent 思維模式覆蓋",
+      "icon": "🧠",
+      "tests": [
+        {
+          "name": "SEED_Interviewer 引用 ETHOS.md",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Interviewer: Push-Until-Specific",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Interviewer: Escape Hatch",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Interviewer: Anti-Sycophancy",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Interviewer: Struggle Moments",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_PM 引用 ETHOS.md",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_PM: Scope Mode",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_PM: Implementation Alternatives",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_PM: Type 1",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_PM: Kill Criteria",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_PM: Appetite",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_UX 引用 ETHOS.md",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_UX: Cognitive Pattern",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_UX: Interaction State",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Architect 引用 ETHOS.md",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Architect: Engineering.*Pattern",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Architect: Complexity Smell",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Architect: Context Engineering",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_DBA 引用 ETHOS.md",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_DBA: Shadow Path",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_DBA: Temporal Depth",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Backend 引用 ETHOS.md",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Backend: Never Rules",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Backend: Anti-Pattern",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Backend: Test Coverage Diagram",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Backend: API Client",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Frontend 引用 ETHOS.md",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Frontend: Per-Page QA",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Frontend: Design Review Lite",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_QA 引用 ETHOS.md",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_QA: Diff-Aware",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_QA: Regression Mode",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_QA: Evals as PRD",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Security 引用 ETHOS.md",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Security: Attack Surface",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Security: False Positive",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Security: 14.*階段",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_DevOps 引用 ETHOS.md",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_DevOps: Land-and-Deploy",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_DevOps: Rollback-First",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Review 引用 ETHOS.md",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Review: Scope Drift",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Review: Two-Pass",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Review: Fix-First",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "SEED_Review: Kill Criteria",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        }
+      ]
+    }
+  ]
+}

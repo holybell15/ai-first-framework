@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-03-15T20:32:31.696679",
+  "timestamp": "2026-03-30T11:39:22.575789",
   "summary": {
-    "pass": 142,
+    "pass": 166,
     "fail": 0,
     "warn": 0,
-    "total": 142,
+    "total": 166,
     "score": 100.0
   },
   "categories": [
@@ -163,6 +163,12 @@
           "hint": ""
         },
         {
+          "name": "aicc-interviewer → forced-thinking",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
           "name": "aicc-interviewer → verification-before-completion",
           "status": "pass",
           "detail": "",
@@ -170,6 +176,12 @@
         },
         {
           "name": "aicc-pm → brainstorming",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "aicc-pm → forced-thinking",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -206,6 +218,12 @@
         },
         {
           "name": "aicc-architect → brainstorming",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "aicc-architect → forced-thinking",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -253,6 +271,12 @@
           "hint": ""
         },
         {
+          "name": "aicc-backend → destructive-guard",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
           "name": "aicc-backend → verification-before-completion",
           "status": "pass",
           "detail": "",
@@ -284,6 +308,12 @@
         },
         {
           "name": "aicc-frontend → systematic-debugging",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "aicc-frontend → destructive-guard",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -343,6 +373,18 @@
           "hint": ""
         },
         {
+          "name": "aicc-devops → info-canary",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "aicc-devops → info-doc-sync",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
           "name": "aicc-review → requesting-code-review",
           "status": "pass",
           "detail": "",
@@ -350,6 +392,12 @@
         },
         {
           "name": "aicc-review → quality-gates",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "aicc-review → slice-cycle",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -415,19 +463,31 @@
       "icon": "🔄",
       "tests": [
         {
-          "name": "P01 需求訪談 agents",
+          "name": "P00 需求建立 agents",
           "status": "pass",
-          "detail": "aicc-interviewer → aicc-pm → aicc-ux",
+          "detail": "aicc-interviewer → aicc-pm",
           "hint": ""
         },
         {
-          "name": "P01 需求訪談 skills",
+          "name": "P00 需求建立 skills",
           "status": "pass",
-          "detail": "brainstorming, verification-before-completion",
+          "detail": "brainstorming, forced-thinking, verification-before-completion",
           "hint": ""
         },
         {
-          "name": "P01 需求訪談 gate",
+          "name": "P01 精煉+Prototype agents",
+          "status": "pass",
+          "detail": "aicc-pm → aicc-ux",
+          "hint": ""
+        },
+        {
+          "name": "P01 精煉+Prototype skills",
+          "status": "pass",
+          "detail": "frontend-design, verification-before-completion",
+          "hint": ""
+        },
+        {
+          "name": "P01 精煉+Prototype gate",
           "status": "pass",
           "detail": "gate-reviewer + quality-gates",
           "hint": ""
@@ -441,7 +501,7 @@
         {
           "name": "P02 技術設計 skills",
           "status": "pass",
-          "detail": "deep-research, brainstorming, verification-before-completion",
+          "detail": "deep-research, brainstorming, forced-thinking, verification-before-completion",
           "hint": ""
         },
         {
@@ -451,37 +511,19 @@
           "hint": ""
         },
         {
-          "name": "P03 開發準備 agents",
+          "name": "P03+P04 Slice Cycle agents",
           "status": "pass",
-          "detail": "aicc-backend → aicc-frontend → aicc-qa",
+          "detail": "aicc-backend → aicc-frontend → aicc-qa → aicc-review",
           "hint": ""
         },
         {
-          "name": "P03 開發準備 skills",
+          "name": "P03+P04 Slice Cycle skills",
           "status": "pass",
-          "detail": "test-driven-development, using-git-worktrees, validate-contract",
+          "detail": "slice-cycle, test-driven-development, using-git-worktrees, finishing-a-development-branch, systematic-debugging, destructive-guard, webapp-testing, verification-before-completion",
           "hint": ""
         },
         {
-          "name": "P03 開發準備 gate",
-          "status": "pass",
-          "detail": "gate-reviewer + quality-gates",
-          "hint": ""
-        },
-        {
-          "name": "P04 實作開發 agents",
-          "status": "pass",
-          "detail": "aicc-backend → aicc-frontend → aicc-qa",
-          "hint": ""
-        },
-        {
-          "name": "P04 實作開發 skills",
-          "status": "pass",
-          "detail": "test-driven-development, finishing-a-development-branch, systematic-debugging",
-          "hint": ""
-        },
-        {
-          "name": "P04 實作開發 gate",
+          "name": "P03+P04 Slice Cycle gate",
           "status": "pass",
           "detail": "gate-reviewer + quality-gates",
           "hint": ""
@@ -507,7 +549,7 @@
         {
           "name": "P06 部署上線 skills",
           "status": "pass",
-          "detail": "deep-research, verification-before-completion",
+          "detail": "deep-research, verification-before-completion, info-canary, info-doc-sync, quantitative-retro",
           "hint": ""
         },
         {
@@ -525,7 +567,7 @@
         {
           "name": "agent 名稱引用",
           "status": "pass",
-          "detail": "所有 aicc-* agents 均有引用",
+          "detail": "所有 * agents 均有引用",
           "hint": ""
         },
         {
@@ -577,61 +619,61 @@
           "hint": ""
         },
         {
-          "name": "FIX-3: aicc-devops 多環境升級路徑",
+          "name": "FIX-3: devops 多環境升級路徑",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "FIX-3: aicc-devops Production Runbook",
+          "name": "FIX-3: devops Production Runbook",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "FIX-4: aicc-security Secrets Management 審查區塊",
+          "name": "FIX-4: security Secrets Management 審查區塊",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "FIX-4: aicc-security Secret Rotation 策略",
+          "name": "FIX-4: security Secret Rotation 策略",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "FIX-5: aicc-frontend Accessibility WCAG 2.1 AA",
+          "name": "FIX-5: frontend Accessibility WCAG 2.1 AA",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "FIX-5: aicc-frontend axe-core 自動化掃描",
+          "name": "FIX-5: frontend axe-core 自動化掃描",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "FIX-6: aicc-ux Accessibility 設計原則",
+          "name": "FIX-6: ux Accessibility 設計原則",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "FIX-6: aicc-ux 動畫可關閉原則",
+          "name": "FIX-6: ux 動畫可關閉原則",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "FIX-7: aicc-backend Feature Flag 設計規則",
+          "name": "FIX-7: backend Feature Flag 設計規則",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "FIX-7: aicc-backend Feature Flag 生命週期管理",
+          "name": "FIX-7: backend Feature Flag 生命週期管理",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
@@ -643,25 +685,25 @@
           "hint": ""
         },
         {
-          "name": "planning-with-files 整合: aicc-pm",
+          "name": "planning-with-files 整合: pm",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "planning-with-files 整合: aicc-architect",
+          "name": "planning-with-files 整合: architect",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "planning-with-files 整合: aicc-qa",
+          "name": "planning-with-files 整合: qa",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
         },
         {
-          "name": "planning-with-files 整合: aicc-devops",
+          "name": "planning-with-files 整合: devops",
           "status": "pass",
           "detail": "已實作",
           "hint": ""
@@ -681,25 +723,25 @@
         {
           "name": "10_Standards/API/STD_API_Design.md",
           "status": "pass",
-          "detail": "存在（4043 bytes）",
+          "detail": "存在（4094 bytes）",
           "hint": ""
         },
         {
           "name": "10_Standards/API/Error_Code_Standard_v1.0.md",
           "status": "pass",
-          "detail": "存在（2095 bytes）",
+          "detail": "存在（2232 bytes）",
           "hint": ""
         },
         {
           "name": "10_Standards/DB/STD_DB_Schema.md",
           "status": "pass",
-          "detail": "存在（5209 bytes）",
+          "detail": "存在（5226 bytes）",
           "hint": ""
         },
         {
           "name": "10_Standards/DB/enum_registry.yaml",
           "status": "pass",
-          "detail": "存在（5313 bytes）",
+          "detail": "存在（5321 bytes）",
           "hint": ""
         },
         {
@@ -711,13 +753,13 @@
         {
           "name": "10_Standards/UI/STD_UI_Design.md",
           "status": "pass",
-          "detail": "存在（4401 bytes）",
+          "detail": "存在（4412 bytes）",
           "hint": ""
         },
         {
           "name": "10_Standards/UI/Design_Token_Reference.md",
           "status": "pass",
-          "detail": "存在（4374 bytes）",
+          "detail": "存在（4382 bytes）",
           "hint": ""
         },
         {
@@ -739,69 +781,69 @@
       "icon": "⚡",
       "tests": [
         {
-          "name": "/init",
+          "name": "/info-init",
           "status": "pass",
-          "detail": "project-template/.claude/commands/init.md (2393 bytes)",
+          "detail": "project-template/.claude/commands/info-init.md (2526 bytes)",
           "hint": ""
         },
         {
-          "name": "/health",
+          "name": "/info-health",
           "status": "pass",
-          "detail": "project-template/.claude/commands/health.md (2207 bytes)",
+          "detail": "project-template/.claude/commands/info-health.md (2445 bytes)",
           "hint": ""
         },
         {
-          "name": "/setup-team",
+          "name": "/info-setup-team",
           "status": "pass",
-          "detail": "project-template/.claude/commands/setup-team.md (1340 bytes)",
+          "detail": "project-template/.claude/commands/info-setup-team.md (1340 bytes)",
           "hint": ""
         },
         {
-          "name": "/pipeline",
+          "name": "/info-pipeline",
           "status": "pass",
-          "detail": "project-template/.claude/commands/pipeline.md (1963 bytes)",
+          "detail": "project-template/.claude/commands/info-pipeline.md (2493 bytes)",
           "hint": ""
         },
         {
-          "name": "/gate",
+          "name": "/info-gate",
           "status": "pass",
-          "detail": "project-template/.claude/commands/gate.md (1883 bytes)",
+          "detail": "project-template/.claude/commands/info-gate.md (1883 bytes)",
           "hint": ""
         },
         {
-          "name": "/hotfix",
+          "name": "/info-hotfix",
           "status": "pass",
-          "detail": "project-template/.claude/commands/hotfix.md (2154 bytes)",
+          "detail": "project-template/.claude/commands/info-hotfix.md (2154 bytes)",
           "hint": ""
         },
         {
-          "name": "/progress",
+          "name": "/info-progress",
           "status": "pass",
-          "detail": "project-template/.claude/commands/progress.md (701 bytes)",
+          "detail": "project-template/.claude/commands/info-progress.md (701 bytes)",
           "hint": ""
         },
         {
-          "name": "/pause",
+          "name": "/info-pause",
           "status": "pass",
-          "detail": "project-template/.claude/commands/pause.md (1173 bytes)",
+          "detail": "project-template/.claude/commands/info-pause.md (1173 bytes)",
           "hint": ""
         },
         {
-          "name": "/handoff",
+          "name": "/info-handoff",
           "status": "pass",
-          "detail": "project-template/.claude/commands/handoff.md (1574 bytes)",
+          "detail": "project-template/.claude/commands/info-handoff.md (1574 bytes)",
           "hint": ""
         },
         {
-          "name": "/complete-milestone",
+          "name": "/info-complete-milestone",
           "status": "pass",
-          "detail": "project-template/.claude/commands/complete-milestone.md (1737 bytes)",
+          "detail": "project-template/.claude/commands/info-complete-milestone.md (1737 bytes)",
           "hint": ""
         },
         {
-          "name": "/quick",
+          "name": "/info-quick",
           "status": "pass",
-          "detail": "project-template/.claude/commands/quick.md (1374 bytes)",
+          "detail": "project-template/.claude/commands/info-quick.md (1374 bytes)",
           "hint": ""
         },
         {
@@ -817,7 +859,13 @@
       "icon": "🎯",
       "tests": [
         {
-          "name": "P01 需求訪談 觸發詞",
+          "name": "P00 需求建立 觸發詞",
+          "status": "pass",
+          "detail": "orchestrator 有引用",
+          "hint": ""
+        },
+        {
+          "name": "P01 精煉+Prototype 觸發詞",
           "status": "pass",
           "detail": "orchestrator 有引用",
           "hint": ""
@@ -829,13 +877,7 @@
           "hint": ""
         },
         {
-          "name": "P03 開發準備 觸發詞",
-          "status": "pass",
-          "detail": "orchestrator 有引用",
-          "hint": ""
-        },
-        {
-          "name": "P04 實作開發 觸發詞",
+          "name": "P03+P04 Slice Cycle 觸發詞",
           "status": "pass",
           "detail": "orchestrator 有引用",
           "hint": ""
@@ -928,6 +970,126 @@
           "name": "task-master description 品質",
           "status": "pass",
           "detail": "包含 TASKS.md / STATE.md / 優先排序 / block 等關鍵觸發詞",
+          "hint": ""
+        }
+      ]
+    },
+    {
+      "name": "Framework Productization Docs",
+      "icon": "🧭",
+      "tests": [
+        {
+          "name": "Lite Mode guide",
+          "status": "pass",
+          "detail": "docs/LITE_MODE.md",
+          "hint": ""
+        },
+        {
+          "name": "Priority roadmap",
+          "status": "pass",
+          "detail": "docs/ROADMAP_PRIORITIES.md",
+          "hint": ""
+        },
+        {
+          "name": "Information architecture",
+          "status": "pass",
+          "detail": "docs/INFORMATION_ARCHITECTURE.md",
+          "hint": ""
+        },
+        {
+          "name": "Start here guide",
+          "status": "pass",
+          "detail": "docs/START_HERE.md",
+          "hint": ""
+        },
+        {
+          "name": "Validation repair guide",
+          "status": "pass",
+          "detail": "docs/VALIDATION_REPAIR.md",
+          "hint": ""
+        },
+        {
+          "name": "Project template start guide",
+          "status": "pass",
+          "detail": "project-template/START_HERE.md",
+          "hint": ""
+        },
+        {
+          "name": "README 引用 Lite Mode",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "README 引用 validate-framework",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "README 引用 START_HERE",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        }
+      ]
+    },
+    {
+      "name": "Information Architecture Boundaries",
+      "icon": "🗂️",
+      "tests": [
+        {
+          "name": "STATE resume",
+          "status": "pass",
+          "detail": "找到關鍵詞 'resume_command'",
+          "hint": ""
+        },
+        {
+          "name": "TASKS handoff",
+          "status": "pass",
+          "detail": "找到關鍵詞 '交接摘要'",
+          "hint": ""
+        },
+        {
+          "name": "MASTER_INDEX f-code",
+          "status": "pass",
+          "detail": "找到關鍵詞 'F-code 分配登記'",
+          "hint": ""
+        },
+        {
+          "name": "decisions ADR",
+          "status": "pass",
+          "detail": "找到關鍵詞 'ADR'",
+          "hint": ""
+        }
+      ]
+    },
+    {
+      "name": "Lite Mode Command Routing",
+      "icon": "⚡",
+      "tests": [
+        {
+          "name": "info-init Lite",
+          "status": "pass",
+          "detail": "找到關鍵詞 'Lite Mode'",
+          "hint": ""
+        },
+        {
+          "name": "info-pipeline Lite",
+          "status": "pass",
+          "detail": "找到關鍵詞 'Lite Mode'",
+          "hint": ""
+        },
+        {
+          "name": "info-task-master Lite",
+          "status": "pass",
+          "detail": "找到關鍵詞 'Lite Mode'",
+          "hint": ""
+        },
+        {
+          "name": "orchestrator Lite trigger",
+          "status": "pass",
+          "detail": "找到關鍵詞 '使用 Lite Mode 啟動 F01'",
           "hint": ""
         }
       ]

@@ -1,0 +1,38 @@
+{
+  "tier": 3,
+  "name": "A/B 品質比對測試",
+  "timestamp": "2026-03-30T11:32:12.084632",
+  "test_feature": "座席管理 CRUD",
+  "model": "haiku",
+  "stats": {
+    "行數": {
+      "a": 377,
+      "b": 18
+    },
+    "字數": {
+      "a": 7453,
+      "b": 485
+    },
+    "AC 數量": {
+      "a": 0,
+      "b": 2
+    },
+    "情境數": {
+      "a": 0,
+      "b": 0
+    },
+    "欄位數": {
+      "a": 30,
+      "b": 0
+    },
+    "模糊用語": {
+      "a": 0,
+      "b": 0
+    }
+  },
+  "files": {
+    "doc_a": "/Users/holylin/Projects/ai-first-framework/tools/workflow-test/ab-test-outputs/doc_a_old_workflow.md",
+    "doc_b": "/Users/holylin/Projects/ai-first-framework/tools/workflow-test/ab-test-outputs/doc_b_new_workflow.md",
+    "judge": "/Users/holylin/Projects/ai-first-framework/tools/workflow-test/ab-test-outputs/judge_result.json"
+  }
+}

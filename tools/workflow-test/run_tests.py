@@ -16,29 +16,35 @@ HTML_OUTPUT = SCRIPT_DIR / "index.html"
 
 # ── 期望設定 ────────────────────────────────────────────────────────
 PIPELINE_CONFIG = {
-    "P01 需求訪談": {
-        "agents": ["aicc-interviewer", "aicc-pm", "aicc-ux"],
-        "skills": ["brainstorming", "verification-before-completion"],
+    "P00 需求建立": {
+        "agents": ["aicc-interviewer", "aicc-pm"],
+        "skills": ["brainstorming", "forced-thinking", "verification-before-completion"],
+        "gate_agent": None,
+        "gate_skill": None,
+        "confirms": ["C0", "C1", "C2"],
+        "templates": ["TEMPLATE_SRS_Complete.md", "TEMPLATE_RS_Function_Spec.md"],
+    },
+    "P01 精煉+Prototype": {
+        "agents": ["aicc-pm", "aicc-ux"],
+        "skills": ["frontend-design", "verification-before-completion"],
         "gate_agent": "gate-reviewer",
         "gate_skill": "quality-gates",
     },
     "P02 技術設計": {
         "agents": ["aicc-architect", "aicc-dba", "aicc-review"],
-        "skills": ["deep-research", "brainstorming", "verification-before-completion"],
+        "skills": ["deep-research", "brainstorming", "forced-thinking", "verification-before-completion"],
         "gate_agent": "gate-reviewer",
         "gate_skill": "quality-gates",
+        "extra_outputs": ["SLICE-BACKLOG"],
     },
-    "P03 開發準備": {
-        "agents": ["aicc-backend", "aicc-frontend", "aicc-qa"],
-        "skills": ["test-driven-development", "using-git-worktrees", "validate-contract"],
+    "P03+P04 Slice Cycle": {
+        "agents": ["aicc-backend", "aicc-frontend", "aicc-qa", "aicc-review"],
+        "skills": ["slice-cycle", "test-driven-development", "using-git-worktrees",
+                   "finishing-a-development-branch", "systematic-debugging",
+                   "destructive-guard", "webapp-testing", "verification-before-completion"],
         "gate_agent": "gate-reviewer",
         "gate_skill": "quality-gates",
-    },
-    "P04 實作開發": {
-        "agents": ["aicc-backend", "aicc-frontend", "aicc-qa"],
-        "skills": ["test-driven-development", "finishing-a-development-branch", "systematic-debugging"],
-        "gate_agent": "gate-reviewer",
-        "gate_skill": "quality-gates",
+        "gates": ["G4-ENG-D", "G4-ENG-R", "Cross-Slice-IC"],
     },
     "P05 合規審查": {
         "agents": ["aicc-security", "aicc-review"],
@@ -48,30 +54,56 @@ PIPELINE_CONFIG = {
     },
     "P06 部署上線": {
         "agents": ["aicc-devops", "aicc-review"],
-        "skills": ["deep-research", "verification-before-completion"],
+        "skills": ["deep-research", "verification-before-completion",
+                   "info-canary", "info-doc-sync", "quantitative-retro"],
         "gate_agent": "retrospective-facilitator",
         "gate_skill": "retro",
     },
 }
 
 AGENT_SKILL_MAP = {
-    "aicc-interviewer": ["brainstorming", "verification-before-completion"],
-    "aicc-pm":          ["brainstorming", "verification-before-completion"],
+    "aicc-interviewer": ["brainstorming", "forced-thinking", "verification-before-completion"],
+    "aicc-pm":          ["brainstorming", "forced-thinking", "verification-before-completion"],
     "aicc-ux":          ["frontend-design", "brainstorming", "verification-before-completion"],
-    "aicc-architect":   ["deep-research", "brainstorming", "verification-before-completion"],
+    "aicc-architect":   ["deep-research", "brainstorming", "forced-thinking", "verification-before-completion"],
     "aicc-dba":         ["deep-research", "verification-before-completion"],
     "aicc-backend":     ["test-driven-development", "using-git-worktrees",
                          "finishing-a-development-branch", "systematic-debugging",
-                         "verification-before-completion"],
+                         "destructive-guard", "verification-before-completion"],
     "aicc-frontend":    ["test-driven-development", "using-git-worktrees",
                          "finishing-a-development-branch", "frontend-design",
-                         "systematic-debugging", "verification-before-completion"],
+                         "systematic-debugging", "destructive-guard", "verification-before-completion"],
     "aicc-qa":          ["webapp-testing", "test-driven-development",
                          "systematic-debugging", "verification-before-completion"],
     "aicc-security":    ["deep-research", "verification-before-completion"],
-    "aicc-devops":      ["deep-research", "verification-before-completion"],
-    "aicc-review":      ["requesting-code-review", "quality-gates", "verification-before-completion"],
+    "aicc-devops":      ["deep-research", "verification-before-completion",
+                         "info-canary", "info-doc-sync"],
+    "aicc-review":      ["requesting-code-review", "quality-gates", "slice-cycle",
+                         "verification-before-completion"],
 }
+
+# v2.9 新增：必須存在的 skills（框架級）
+FRAMEWORK_SKILLS = [
+    "slice-cycle", "info-ship", "info-canary", "info-doc-sync",
+    "quantitative-retro", "forced-thinking", "destructive-guard",
+    "planning-with-files", "pipeline-orchestrator",
+]
+
+# v2.9 新增：必須存在的模板
+FRAMEWORK_TEMPLATES = [
+    "02_Specifications/TEMPLATE_SRS_Complete.md",
+    "02_Specifications/TEMPLATE_RS_Function_Spec.md",
+    "02_Specifications/TEMPLATE_P00_Product_Vision.md",
+]
+
+FRAMEWORK_DOCS = [
+    ("docs/LITE_MODE.md", "Lite Mode guide"),
+    ("docs/ROADMAP_PRIORITIES.md", "Priority roadmap"),
+    ("docs/INFORMATION_ARCHITECTURE.md", "Information architecture"),
+    ("docs/START_HERE.md", "Start here guide"),
+    ("docs/VALIDATION_REPAIR.md", "Validation repair guide"),
+    ("project-template/START_HERE.md", "Project template start guide"),
+]
 
 SUPPORT_AGENTS = [
     "code-grounder", "data-contract-validator", "gate-reviewer",
@@ -94,8 +126,8 @@ BROWNFIELD_PIPELINE_AGENTS = ["aicc-architect", "aicc-dba", "aicc-pm", "aicc-rev
 
 # Slash commands expected in project-template/.claude/commands/
 EXPECTED_PROJECT_COMMANDS = [
-    "init", "health", "setup-team", "pipeline", "gate",
-    "hotfix", "progress", "pause", "handoff", "complete-milestone", "quick",
+    "info-init", "info-health", "info-setup-team", "info-pipeline", "info-gate",
+    "info-hotfix", "info-progress", "info-pause", "info-handoff", "info-complete-milestone", "info-quick",
 ]
 EXPECTED_GLOBAL_COMMANDS = ["resume"]
 
@@ -106,6 +138,8 @@ COMMANDS_DIR   = TEMPLATE_DIR / ".claude" / "commands"
 GLOBAL_CMDS_DIR = Path.home() / ".claude" / "commands"
 
 PIPELINE_SKILL = "pipeline-orchestrator"
+
+LOCAL_FRAMEWORK_DIR = FRAMEWORK_DIR
 
 # ── 工具函式 ────────────────────────────────────────────────────────
 def read_frontmatter(filepath):
@@ -273,7 +307,7 @@ results["categories"].append(cat5)
 cat6 = {"name": "Pipeline Orchestrator", "icon": "🎯", "tests": []}
 if skill_exists(PIPELINE_SKILL):
     skill_content = (SKILLS_DIR / PIPELINE_SKILL / "SKILL.md").read_text()
-    # 檢查是否有 aicc-* agent 名稱
+    # 檢查是否有 * agent 名稱
     missing_refs = [a for a in AGENT_SKILL_MAP if a not in skill_content]
     if missing_refs:
         cat6["tests"].append(make_test(
@@ -281,7 +315,7 @@ if skill_exists(PIPELINE_SKILL):
             f"未提及: {', '.join(missing_refs)}",
             "更新 pipeline-orchestrator SKILL.md 加入完整 agent 名稱"))
     else:
-        cat6["tests"].append(make_test("agent 名稱引用", "pass", "所有 aicc-* agents 均有引用"))
+        cat6["tests"].append(make_test("agent 名稱引用", "pass", "所有 * agents 均有引用"))
     # 檢查是否有自動觸發規則
     if "自動觸發" in skill_content or "code-grounder" in skill_content:
         cat6["tests"].append(make_test("自動觸發規則", "pass", "含 code-grounder 等自動觸發設定"))
@@ -296,7 +330,7 @@ results["categories"].append(cat6)
 # ── 7. 缺失 Skills ────────────────────────────────────────────────────
 cat7 = {"name": "已知缺失項目", "icon": "⚠️", "tests": []}
 KNOWN_MISSING = {
-    "screenshot-to-code": "aicc-ux, aicc-frontend 有引用此 skill，但尚未安裝",
+    "screenshot-to-code": "ux, frontend 有引用此 skill，但尚未安裝",
 }
 for skill, reason in KNOWN_MISSING.items():
     if skill_exists(skill):
@@ -326,13 +360,13 @@ def check_content(rel_path, keyword, test_name, hint=""):
 
 # FIX-1: Pipeline Wave 並行
 check_content("../skills/pipeline-orchestrator/SKILL.md",
-    "Wave 1: aicc-architect ∥ aicc-dba",
+    "aicc-architect ∥ aicc-dba",
     "FIX-1: P02 Wave 並行格式",
-    "pipeline-orchestrator/SKILL.md 需更新 P02 為 Wave 格式")
+    "pipeline-orchestrator/SKILL.md 需更新 P02 為 Wave 格式（Wave 1: aicc-architect ∥ aicc-dba）")
 check_content("../skills/pipeline-orchestrator/SKILL.md",
-    "Wave 1: aicc-backend ∥ aicc-frontend",
+    "aicc-backend ∥ aicc-frontend",
     "FIX-1: P03/P04 Wave 並行格式",
-    "pipeline-orchestrator/SKILL.md 需更新 P03/P04 為 Wave 格式")
+    "pipeline-orchestrator/SKILL.md 需更新 P03/P04 為 Wave 格式（Wave 1: aicc-backend ∥ aicc-frontend）")
 
 # FIX-2: Performance Testing
 check_content("../skills/quality-gates/SKILL.md",
@@ -347,51 +381,51 @@ check_content("../skills/quality-gates/SKILL.md",
 # FIX-3: DevOps 多環境升級路徑
 check_content("aicc-devops.md",
     "多環境升級路徑",
-    "FIX-3: aicc-devops 多環境升級路徑",
+    "FIX-3: devops 多環境升級路徑",
     "aicc-devops.md 需新增 §10e 多環境升級路徑")
 check_content("aicc-devops.md",
     "Production Runbook",
-    "FIX-3: aicc-devops Production Runbook",
+    "FIX-3: devops Production Runbook",
     "aicc-devops.md 需新增 Production Runbook 格式")
 
 # FIX-4: Security Secrets Management
 check_content("aicc-security.md",
     "Secrets Management 審查",
-    "FIX-4: aicc-security Secrets Management 審查區塊",
+    "FIX-4: security Secrets Management 審查區塊",
     "aicc-security.md 需新增 Secrets Management 審查")
 check_content("aicc-security.md",
     "Rotation 策略確認",
-    "FIX-4: aicc-security Secret Rotation 策略",
+    "FIX-4: security Secret Rotation 策略",
     "aicc-security.md 需新增 Rotation 策略表格")
 
 # FIX-5: Frontend Accessibility WCAG 2.1 AA
 check_content("aicc-frontend.md",
     "WCAG 2.1 AA",
-    "FIX-5: aicc-frontend Accessibility WCAG 2.1 AA",
+    "FIX-5: frontend Accessibility WCAG 2.1 AA",
     "aicc-frontend.md 需新增 Accessibility 強制規則")
 check_content("aicc-frontend.md",
     "axe-core",
-    "FIX-5: aicc-frontend axe-core 自動化掃描",
+    "FIX-5: frontend axe-core 自動化掃描",
     "aicc-frontend.md 需說明 axe-core CI 整合")
 
 # FIX-6: UX Accessibility
 check_content("aicc-ux.md",
     "Accessibility 設計原則",
-    "FIX-6: aicc-ux Accessibility 設計原則",
+    "FIX-6: ux Accessibility 設計原則",
     "aicc-ux.md 需新增 Accessibility 設計原則區塊")
 check_content("aicc-ux.md",
     "prefers-reduced-motion",
-    "FIX-6: aicc-ux 動畫可關閉原則",
+    "FIX-6: ux 動畫可關閉原則",
     "aicc-ux.md 需包含 prefers-reduced-motion 規則")
 
 # FIX-7: Backend Feature Flag
 check_content("aicc-backend.md",
     "Feature Flag 設計規則",
-    "FIX-7: aicc-backend Feature Flag 設計規則",
+    "FIX-7: backend Feature Flag 設計規則",
     "aicc-backend.md 需新增 Feature Flag 設計規則")
 check_content("aicc-backend.md",
     "生命週期",
-    "FIX-7: aicc-backend Feature Flag 生命週期管理",
+    "FIX-7: backend Feature Flag 生命週期管理",
     "aicc-backend.md 需包含 Flag 生命週期（<= 2 Sprint）規則")
 
 # planning-with-files 整合
@@ -402,10 +436,10 @@ else:
     cat8["tests"].append(make_test("planning-with-files skill 已安裝", "fail", "skill 不存在", "/find-skills planning-with-files"))
 
 for agent_file, label in [
-    ("aicc-pm.md", "aicc-pm"),
-    ("aicc-architect.md", "aicc-architect"),
-    ("aicc-qa.md", "aicc-qa"),
-    ("aicc-devops.md", "aicc-devops"),
+    ("aicc-pm.md", "pm"),
+    ("aicc-architect.md", "architect"),
+    ("aicc-qa.md", "qa"),
+    ("aicc-devops.md", "devops"),
 ]:
     check_content(agent_file,
         "planning-with-files",
@@ -572,6 +606,67 @@ else:
         "包含 TASKS.md / STATE.md / 優先排序 / block 等關鍵觸發詞"))
 
 results["categories"].append(cat12)
+
+# ── 13. Framework Productization Docs ─────────────────────────────────
+cat13 = {"name": "Framework Productization Docs", "icon": "🧭", "tests": []}
+for rel, label in FRAMEWORK_DOCS:
+    path = LOCAL_FRAMEWORK_DIR / rel
+    if path.exists():
+        cat13["tests"].append(make_test(label, "pass", rel))
+    else:
+        cat13["tests"].append(make_test(label, "fail", f"缺少 {rel}", f"建立 {rel}"))
+
+readme_path = LOCAL_FRAMEWORK_DIR / "README.md"
+if readme_path.exists():
+    readme_content = readme_path.read_text(encoding="utf-8")
+    for keyword in ("Lite Mode", "validate-framework", "START_HERE"):
+        if keyword in readme_content:
+            cat13["tests"].append(make_test(f"README 引用 {keyword}", "pass"))
+        else:
+            cat13["tests"].append(make_test(f"README 引用 {keyword}", "warn", f"README 未提及 {keyword}"))
+else:
+    cat13["tests"].append(make_test("README.md 存在", "fail", "README.md 不存在"))
+results["categories"].append(cat13)
+
+# ── 14. Information Architecture Boundaries ───────────────────────────
+cat14 = {"name": "Information Architecture Boundaries", "icon": "🗂️", "tests": []}
+boundary_checks = [
+    ("project-template/memory/STATE.md", "resume_command", "STATE resume"),
+    ("project-template/TASKS.md", "交接摘要", "TASKS handoff"),
+    ("project-template/MASTER_INDEX.md", "F-code 分配登記", "MASTER_INDEX f-code"),
+    ("project-template/memory/decisions.md", "ADR", "decisions ADR"),
+]
+for rel, keyword, label in boundary_checks:
+    path = LOCAL_FRAMEWORK_DIR / rel
+    if not path.exists():
+        cat14["tests"].append(make_test(label, "fail", f"缺少 {rel}"))
+        continue
+    content = path.read_text(encoding="utf-8")
+    if keyword in content:
+        cat14["tests"].append(make_test(label, "pass", f"找到關鍵詞 '{keyword}'"))
+    else:
+        cat14["tests"].append(make_test(label, "warn", f"未找到關鍵詞 '{keyword}'", f"檢查 {rel}"))
+results["categories"].append(cat14)
+
+# ── 15. Lite Mode Command Routing ────────────────────────────────────
+cat15 = {"name": "Lite Mode Command Routing", "icon": "⚡", "tests": []}
+lite_command_checks = [
+    ("project-template/.claude/commands/info-init.md", "Lite Mode", "info-init Lite"),
+    ("project-template/.claude/commands/info-pipeline.md", "Lite Mode", "info-pipeline Lite"),
+    ("project-template/.claude/commands/info-task-master.md", "Lite Mode", "info-task-master Lite"),
+    ("project-template/context-skills/pipeline-orchestrator/SKILL.md", "使用 Lite Mode 啟動 F01", "orchestrator Lite trigger"),
+]
+for rel, keyword, label in lite_command_checks:
+    path = LOCAL_FRAMEWORK_DIR / rel
+    if not path.exists():
+        cat15["tests"].append(make_test(label, "fail", f"缺少 {rel}"))
+        continue
+    content = path.read_text(encoding="utf-8")
+    if keyword in content:
+        cat15["tests"].append(make_test(label, "pass", f"找到關鍵詞 '{keyword}'"))
+    else:
+        cat15["tests"].append(make_test(label, "warn", f"未找到關鍵詞 '{keyword}'", f"檢查 {rel}"))
+results["categories"].append(cat15)
 
 # ── 統計 ─────────────────────────────────────────────────────────────
 total = results["summary"]["pass"] + results["summary"]["fail"] + results["summary"]["warn"]
