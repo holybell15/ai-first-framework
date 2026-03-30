@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-First Framework — 工作流品質測試 Master Report</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft JhengHei',sans-serif;background:#0B0E14;color:#E4E7EF;min-height:100vh}
+.topbar{background:#141822;border-bottom:1px solid #1E2535;padding:16px 32px;display:flex;align-items:center;gap:16px}
+.topbar h1{font-size:16px;font-weight:700;color:#E4E7EF}
+.topbar .ver{font-size:12px;color:#6C5CE7;background:#6C5CE720;padding:2px 8px;border-radius:4px}
+.topbar .ts{font-size:11px;color:#8B90A0;margin-left:auto}
+.hero{text-align:center;padding:32px 24px;border-bottom:1px solid #1E2535}
+.hero .overall-label{font-size:12px;color:#8B90A0;margin-bottom:8px}
+.hero .overall-score{font-size:48px;font-weight:900;color:#10B981}
+.hero .tier-badges{display:flex;justify-content:center;gap:24px;margin-top:16px;flex-wrap:wrap}
+.badge{display:flex;flex-direction:column;align-items:center;background:#141822;border:1px solid #1E2535;border-radius:10px;padding:12px 20px;min-width:120px}
+.badge .b-tier{font-size:11px;color:#8B90A0;margin-bottom:4px}
+.badge .b-score{font-size:20px;font-weight:800}
+.badge .b-label{font-size:11px;color:#8B90A0;margin-top:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:24px;padding:24px 32px;max-width:1400px;margin:0 auto}
+.tier-card{background:#141822;border:1px solid #1E2535;border-radius:12px;overflow:hidden}
+.tier-title{padding:14px 18px;background:#0D1117;border-bottom:1px solid #1E2535;display:flex;align-items:center;gap:10px}
+.tier-title .num{font-size:13px;font-weight:700;color:#6C5CE7;background:#6C5CE720;padding:2px 8px;border-radius:4px}
+.tier-title .name{font-size:14px;font-weight:600}
+.tier-body{padding:16px 18px}
+.tier-header{display:flex;gap:16px;align-items:flex-start;margin-bottom:16px}
+.tier-score-ring{width:80px;flex-shrink:0}
+.tier-meta{flex:1}
+.tier-stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.st{font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px}
+.st.pass{background:#10B98120;color:#10B981}
+.st.fail{background:#EF444420;color:#EF4444}
+.st.warn{background:#F59E0B20;color:#F59E0B}
+.st.total{background:#6C5CE720;color:#6C5CE7}
+.tier-ts{font-size:11px;color:#8B90A0}
+.ring-num{font-size:16px;font-weight:800}
+.ring-label{font-size:9px;fill:#8B90A0}
+.cat-list{display:flex;flex-direction:column;gap:6px}
+.cat-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;background:#0D1117}
+.cat-icon{font-size:14px;flex-shrink:0}
+.cat-name{font-size:11px;flex:1;color:#C8CADB}
+.cat-counts{display:flex;gap:6px;font-size:11px;font-weight:600;flex-shrink:0}
+.cnt-p{color:#10B981}.cnt-f{color:#EF4444}.cnt-w{color:#F59E0B}
+.mini-bar{width:60px;height:4px;background:#1E2535;border-radius:2px;overflow:hidden;flex-shrink:0}
+.mini-fill{height:100%;border-radius:2px}
+.tier-empty{color:#8B90A0;font-size:12px;padding:16px;text-align:center}
+.ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.ab-section h4{font-size:12px;color:#8B90A0;margin-bottom:8px}
+.ab-table{width:100%;border-collapse:collapse;font-size:11px}
+.ab-table th{padding:5px 8px;background:#0D1117;color:#8B90A0;font-weight:600;text-align:left;border-bottom:1px solid #1E2535}
+.ab-table td{padding:5px 8px;border-bottom:1px solid #1E253550}
+.sc{text-align:center;font-weight:700}
+.total-sc{color:#6C5CE7;font-size:13px}
+.diff-list h4{font-size:12px;color:#8B90A0;margin-bottom:8px}
+.diff-list ul{padding-left:16px}
+.diff-list li{font-size:11px;line-height:1.7;color:#C8CADB;margin-bottom:4px}
+.footer{text-align:center;padding:24px;font-size:11px;color:#8B90A0;border-top:1px solid #1E2535;margin-top:8px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.ab-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>AI-First Framework</h1>
+  <span class="ver">v2.9</span>
+  <span style="color:#8B90A0;font-size:12px">工作流品質測試 Master Report</span>
+  <span class="ts">Generated 2026-03-30 11:51</span>
+</div>
+
+<div class="hero">
+  <div class="overall-label">Tier 1 + Tier 2 平均分</div>
+  <div class="overall-score">100.0%</div>
+  <div class="tier-badges">
+    <div class="badge">
+      <span class="b-tier">Tier 1</span>
+      <span class="b-score" style="color:#10B981">100.0%</span>
+      <span class="b-label">結構驗證</span>
+    </div>
+    <div class="badge">
+      <span class="b-tier">Tier 2</span>
+      <span class="b-score" style="color:#10B981">100.0%</span>
+      <span class="b-label">流程模擬</span>
+    </div>
+    <div class="badge">
+      <span class="b-tier">Tier 3</span>
+      <span class="b-score" style="color:#10B981">B 勝</span>
+      <span class="b-label">A/B 品質比對</span>
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="tier-card">
+    <div class="tier-title">
+      <span class="num">Tier 1</span>
+      <span class="name">結構驗證 — Agent / Skill / Pipeline 完整性</span>
+    </div>
+    <div class="tier-body">
+    <div class="tier-header">
+      <div class="tier-score-ring">
+        <svg viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#1E2535" stroke-width="6"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#10B981" stroke-width="6"
+            stroke-dasharray="200.99999999999997 201" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+          <text x="40" y="36" text-anchor="middle" class="ring-num" fill="#10B981">100.0%</text>
+          <text x="40" y="48" text-anchor="middle" class="ring-label">PASS</text>
+        </svg>
+      </div>
+      <div class="tier-meta">
+        <div class="tier-stats">
+          <span class="st pass">166 Pass</span>
+          <span class="st fail">0 Fail</span>
+          <span class="st warn">0 Warn</span>
+          <span class="st total">166 Total</span>
+        </div>
+        <div class="tier-ts">2026-03-30T11:39</div>
+      </div>
+    </div>
+    <div class="cat-list">
+        <div class="cat-row">
+          <span class="cat-icon">🤖</span>
+          <span class="cat-name">AICC Agents 存在性</span>
+          <span class="cat-counts">
+            <span class="cnt-p">11✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">📝</span>
+          <span class="cat-name">Agent Description 品質</span>
+          <span class="cat-counts">
+            <span class="cnt-p">11✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🔗</span>
+          <span class="cat-name">Agent ↔ Skill 連結</span>
+          <span class="cat-counts">
+            <span class="cnt-p">42✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🛡️</span>
+          <span class="cat-name">支援型 Agents</span>
+          <span class="cat-counts">
+            <span class="cnt-p">7✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🔄</span>
+          <span class="cat-name">Pipeline 完整性</span>
+          <span class="cat-counts">
+            <span class="cnt-p">16✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🎯</span>
+          <span class="cat-name">Pipeline Orchestrator</span>
+          <span class="cat-counts">
+            <span class="cnt-p">2✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">⚠️</span>
+          <span class="cat-name">已知缺失項目</span>
+          <span class="cat-counts">
+            <span class="cnt-p">1✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🔬</span>
+          <span class="cat-name">專家審查補強項</span>
+          <span class="cat-counts">
+            <span class="cnt-p">20✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">📐</span>
+          <span class="cat-name">10_Standards 規範結構</span>
+          <span class="cat-counts">
+            <span class="cnt-p">9✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">⚡</span>
+          <span class="cat-name">Slash Commands 完整性</span>
+          <span class="cat-counts">
+            <span class="cnt-p">12✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🎯</span>
+          <span class="cat-name">Pipeline 觸發詞一致性</span>
+          <span class="cat-counts">
+            <span class="cnt-p">8✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🏗️</span>
+          <span class="cat-name">Framework Agents 完整性</span>
+          <span class="cat-counts">
+            <span class="cnt-p">10✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🧭</span>
+          <span class="cat-name">Framework Productization Docs</span>
+          <span class="cat-counts">
+            <span class="cnt-p">9✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🗂️</span>
+          <span class="cat-name">Information Architecture Boundaries</span>
+          <span class="cat-counts">
+            <span class="cnt-p">4✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">⚡</span>
+          <span class="cat-name">Lite Mode Command Routing</span>
+          <span class="cat-counts">
+            <span class="cnt-p">4✅</span>
+            
+            
+          </span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div></div></div>
+  </div>
+
+  <div class="tier-card">
+    <div class="tier-title">
+      <span class="num">Tier 2</span>
+      <span class="name">流程模擬 — 模板 / Seed / Skill 內容驗證</span>
+    </div>
+    <div class="tier-body">
+    <div class="tier-header">
+      <div class="tier-score-ring">
+        <svg viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#1E2535" stroke-width="6"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#10B981" stroke-width="6"
+            stroke-dasharray="200.99999999999997 201" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+          <text x="40" y="36" text-anchor="middle" class="ring-num" fill="#10B981">100.0%</text>
+          <text x="40" y="48" text-anchor="middle" class="ring-label">PASS</text>
+        </svg>
+      </div>
+      <div class="tier-meta">
+        <div class="tier-stats">
+          <span class="st pass">106 Pass</span>
+          <span class="st fail">0 Fail</span>
+          <span class="st total">106 Total</span>
+        </div>
+        <div class="tier-ts">2026-03-29T09:18</div>
+      </div>
+    </div>
+    <div class="cat-list">
+        <div class="cat-row">
+          <span class="cat-icon">💡</span>
+          <span class="cat-name">P00 需求建立</span>
+          <span class="cat-counts"><span class="cnt-p">17/17</span></span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">✨</span>
+          <span class="cat-name">P01 精煉+Prototype</span>
+          <span class="cat-counts"><span class="cnt-p">7/7</span></span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🏛️</span>
+          <span class="cat-name">P02 技術設計 + Slice</span>
+          <span class="cat-counts"><span class="cnt-p">6/6</span></span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🔄</span>
+          <span class="cat-name">P03+P04 Slice Cycle</span>
+          <span class="cat-counts"><span class="cnt-p">20/20</span></span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">⚡</span>
+          <span class="cat-name">自動化機制</span>
+          <span class="cat-counts"><span class="cnt-p">12/12</span></span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div>
+        <div class="cat-row">
+          <span class="cat-icon">🧠</span>
+          <span class="cat-name">Agent 思維模式覆蓋</span>
+          <span class="cat-counts"><span class="cnt-p">44/44</span></span>
+          <div class="mini-bar"><div class="mini-fill" style="width:100%;background:#10B981"></div></div>
+        </div></div></div>
+  </div>
+
+  <div class="tier-card" style="grid-column:1/-1">
+    <div class="tier-title">
+      <span class="num">Tier 3</span>
+      <span class="name">A/B 品質比對 — LLM-as-Judge 新舊流程評分</span>
+    </div>
+    <div class="tier-body">
+    <div class="tier-header">
+      <div class="tier-score-ring" style="width:auto;padding:8px 16px;text-align:center">
+        <div style="font-size:28px;font-weight:800;color:#10B981">🏆 B（新流程）</div>
+        <div style="font-size:13px;color:#8B90A0;margin-top:4px">22 vs 25</div>
+      </div>
+      <div class="tier-meta">
+        <div style="font-size:12px;color:#E4E7EF;line-height:1.6">B 在可測試性與邊界覆蓋上顯著優於 A，但缺少 API 規格、錯誤碼和非功能需求；最佳實踐是以 B 的情境測試架構為主體，補入 A 的技術規範章節，合併為一份完整的 RS。</div>
+        <div class="tier-ts">2026-03-30T11:41</div>
+      </div>
+    </div>
+
+    <div class="ab-grid">
+      <div class="ab-section">
+        <h4>評分比對</h4>
+        <table class="ab-table">
+          <thead><tr><th>維度</th><th>A 舊</th><th>B 新</th><th></th></tr></thead>
+          <tbody><tr><td>完整度</td><td class="sc">4</td><td class="sc">4</td><td>=</td></tr><tr><td>一致性</td><td class="sc">4</td><td class="sc">3</td><td>🔴</td></tr><tr><td>可開發性</td><td class="sc">4</td><td class="sc">4</td><td>=</td></tr><tr><td>可測試性</td><td class="sc">3</td><td class="sc">5</td><td>🟢</td></tr><tr><td>Scope控制</td><td class="sc">3</td><td class="sc">4</td><td>🟢</td></tr><tr><td>邊界覆蓋</td><td class="sc">4</td><td class="sc">5</td><td>🟢</td></tr></tbody>
+          <tfoot><tr><td><strong>總分</strong></td><td class="sc total-sc">22</td><td class="sc total-sc">25</td><td></td></tr></tfoot>
+        </table>
+      </div>
+      <div class="ab-section">
+        <h4>基本統計</h4>
+        <table class="ab-table">
+          <thead><tr><th>指標</th><th>A 舊</th><th>B 新</th></tr></thead>
+          <tbody><tr><td>行數</td><td class="sc">242</td><td class="sc">470</td></tr><tr><td>字數</td><td class="sc">6098</td><td class="sc">22748</td></tr><tr><td>AC 數量</td><td class="sc">35</td><td class="sc">12</td></tr><tr><td>情境數</td><td class="sc">0</td><td class="sc">0</td></tr><tr><td>欄位數</td><td class="sc">24</td><td class="sc">128</td></tr><tr><td>模糊用語</td><td class="sc">0</td><td class="sc">1</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="diff-list"><h4>關鍵差異</h4><ul><li>差異 1【角色定義廣度】B 多出「主管」角色並精確定義其權限邊界（限隸屬團隊操作），A 只有三個角色且主管層級完全缺失，在實際客服中心場景下 A 的角色設計不完整。</li><li>差異 2【可測試性格式】B 提供 8 個完整的情境測試（前置條件 / 操作步驟 / 預期結果三段式），QA 可直接轉換為 Test Case；A 的 AC 為條列式規則描述，QA 需自行推導測試情境，增加誤判風險。</li><li>差異 3【Scope 控制】B 明確標注「批量停用/啟用【Phase 2】」，MVP 邊界清晰；A 無任何 Phase 2 標記，所有需求混在同一層，Sprint 規劃困難。</li><li>差異 4【邊界案例深度】B 覆蓋樂觀鎖競態（SIP 綁定時 version 欄位）、停用時強制斷開 Session + 工單重分派、稽核日誌不可竄改性驗證；A 在這三個技術邊界均無對應 AC。</li><li>差異 5【可開發性互補面】A 有完整 API 端點表、Response Envelope 格式、AICC-AG-001~010 錯誤碼、非功能需求指標（P95≤2s、RTO/RPO）和部署規格；B 完全缺少這些後端必要規格，若以 B 為唯一文件開發，API 設計師需額外補充大量決策。</li><li>差異 6【一致性缺陷】B 存在兩處明顯不一致：情境 8 稽核日誌預期結果寫「INACTIVE → INACTIVE」（應為 ACTIVE → INACTIVE），且全文混用「稽核」與「稽審」；A 有「pii_遮罰」錯別字（應為遮罩），但整體命名體系（agent_id / log_audit_*）更統一。</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  AI-First Framework 三層工作流品質測試 — 一鍵執行：<code>bash tools/workflow-test/run-all-tests.sh</code>
+</div>
+
+</body>
+</html>

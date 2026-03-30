@@ -51,7 +51,12 @@ if [ "$TIER" = "--all" ] || [ "$TIER" = "--tier" -a "${2:-}" = "3" ]; then
   echo ""
 fi
 
+# ─── Master Report ───
+echo "━━━ Master Report ━━━"
+python3 "$SCRIPT_DIR/generate-master-report.py" --open
+
 echo "╔══════════════════════════════════════════════════╗"
 echo "║  測試完成                                       ║"
 echo "║  結果目錄：$RESULTS_DIR"
+echo "║  Master Report：$RESULTS_DIR/master-report.html ║"
 echo "╚══════════════════════════════════════════════════╝"
