@@ -15,6 +15,8 @@ AI-First Framework 存在兩套平行的 Agent 系統：
 
 若不明確管理，兩套系統會隨著時間漂移，產生一致性問題。
 
+另外，框架現在同時支援 **完整 Pipeline** 與 **Lite Mode**。若 Global Agent description 沒同步反映 Lite Mode 入口，實際使用時就會出現路由偏差。
+
 ---
 
 ## 設計決策：各有職責，SEED 為 Canonical Source
@@ -34,6 +36,7 @@ Global Agents（~/.claude/agents/）
 - SEED 檔案是 Agent 行為的**唯一真理來源**，包含完整的提示詞、工作流規則、輸出格式
 - Global Agent 檔案是**精煉版**，只需 description 足夠精確讓 Claude 自動選擇正確 Agent
 - 若兩者有衝突，**以 SEED 為準**
+- Lite Mode 的入口與升級條件，也必須以 SEED / framework docs 為準同步到 Global Agent description
 
 ---
 
@@ -47,6 +50,7 @@ Global Agents（~/.claude/agents/）
 | Global Agent 加新 skill | SEED 的「自動化 Skill 套件」表格同步更新 |
 | 工作流規則（workflow_rules.md）更新 | 所有相關 SEED 的 Pre-check 清單審查 |
 | 新增 Agent 角色 | 同時建立 SEED + Global Agent |
+| Lite Mode 路由調整 | Task-Master / PM / Architect / QA / Review 的 description 與說明同步更新 |
 
 ### 同步 Checklist（修改 Agent 後執行）
 
@@ -55,6 +59,7 @@ Global Agents（~/.claude/agents/）
 [ ] Global Agent 的 description 是否仍準確反映 SEED 的行為
 [ ] SEED 的 Skill 套件表格是否和 Global Agent frontmatter 的 skills 一致
 [ ] 修改了多個 Agent 時，確認交接摘要格式仍相容
+[ ] 若涉及 Lite Mode，確認 description 有提到何時先走 Lite、何時升級回完整模式
 ```
 
 ---
@@ -63,17 +68,17 @@ Global Agents（~/.claude/agents/）
 
 | 職責 | SEED 檔案 | Global Agent | 備註 |
 |------|---------|-------------|------|
-| 需求訪談 | `SEED_Interviewer.md` | `aicc-interviewer.md`（或自定名稱）| 雙軌訪談（Functional + UX Track）|
-| 需求規格 | `SEED_PM.md` | `aicc-pm.md` | US + AC + NYQ 驗證提示 |
-| UX 設計 | `SEED_UX.md` | `aicc-ux.md` | Prototype + IA |
-| 技術架構 | `SEED_Architect.md` | `aicc-architect.md` | ADR + Wave 並行 |
-| 資料庫 | `SEED_DBA.md` | `aicc-dba.md` | Schema + ENUM + Field Registry |
-| 後端開發 | `SEED_Backend.md` | `aicc-backend.md` | API Spec + TDD |
-| 前端開發 | `SEED_Frontend.md` | `aicc-frontend.md` | 元件 + Design Token |
-| QA 測試 | `SEED_QA.md` | `aicc-qa.md` | TC + TR + E2E |
-| 資安合規 | `SEED_Security.md` | `aicc-security.md` | OWASP + FSC |
-| 部署維運 | `SEED_DevOps.md` | `aicc-devops.md` | CI/CD + Rollback |
-| 審查關卡 | `SEED_Review.md` | `aicc-review.md` | Gate 1/2/3 + Hotfix |
+| 需求訪談 | `SEED_Interviewer.md` | `interviewer.md`（或自定名稱）| 雙軌訪談（Functional + UX Track）|
+| 需求規格 | `SEED_PM.md` | `pm.md` | US + AC + NYQ 驗證提示 |
+| UX 設計 | `SEED_UX.md` | `ux.md` | Prototype + IA |
+| 技術架構 | `SEED_Architect.md` | `architect.md` | ADR + Wave 並行 |
+| 資料庫 | `SEED_DBA.md` | `dba.md` | Schema + ENUM + Field Registry |
+| 後端開發 | `SEED_Backend.md` | `backend.md` | API Spec + TDD |
+| 前端開發 | `SEED_Frontend.md` | `frontend.md` | 元件 + Design Token |
+| QA 測試 | `SEED_QA.md` | `qa.md` | TC + TR + E2E |
+| 資安合規 | `SEED_Security.md` | `security.md` | OWASP + FSC |
+| 部署維運 | `SEED_DevOps.md` | `devops.md` | CI/CD + Rollback |
+| 審查關卡 | `SEED_Review.md` | `review.md` | Gate 1/2/3 + Hotfix |
 
 ---
 
@@ -82,7 +87,7 @@ Global Agents（~/.claude/agents/）
 新專案使用 AI-First Framework 時，有兩種策略：
 
 ### 策略 A：沿用框架 Global Agents（推薦快速啟動）
-- 直接使用 `~/.claude/agents/aicc-*.md` 的全域 Agent
+- 直接使用 `~/.claude/agents/*.md` 的全域 Agent
 - 優點：零配置，立即可用
 - 限制：所有專案共用同一套 Agent 配置，無法專案客製
 
@@ -98,6 +103,12 @@ cp project-template/context-seeds/SEED_Review.md ~/.claude/agents/[project]-revi
 ### 決策建議
 - **單一產品** → 策略 A，SEED 當備份文件即可
 - **多產品並行 / 不同技術棧** → 策略 B，各自維護
+
+### Lite Mode 同步建議
+
+- `task-master`：description 需能判斷 first feature / small-team → Lite Mode
+- `pm` / `architect` / `qa`：description 需能表達 Lite Mode 的最小產出變體
+- `review`：description 需能區分 Lite Review 與正式 Gate Review
 
 ---
 

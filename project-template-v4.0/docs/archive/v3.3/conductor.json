@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "description": "AI-First Framework 並行工作區配置 — 管理多 Claude Code session 在不同 worktree 並行",
+  "source": "靈感來源：gstack conductor.json",
+
+  "hooks": {
+    "setup": {
+      "description": "Worktree 建立後自動執行",
+      "command": "bash scripts/worktree-setup.sh"
+    },
+    "archive": {
+      "description": "Worktree 完成後自動清理",
+      "command": "bash scripts/worktree-archive.sh"
+    }
+  },
+
+  "defaults": {
+    "base_branch": "main",
+    "worktree_root": "..",
+    "auto_install": true,
+    "auto_baseline": true
+  },
+
+  "parallel_rules": {
+    "max_concurrent": 3,
+    "conflict_detection": true,
+    "shared_files_warning": [
+      "TASKS.md",
+      "memory/STATE.md",
+      "memory/decisions.md",
+      "MASTER_INDEX.md"
+    ]
+  },
+
+  "naming": {
+    "feature": "feature/{F碼}-{名稱}",
+    "hotfix": "fix/{BUG-ID}-{描述}",
+    "gate_fix": "fix/g4eng-{F碼}"
+  }
+}

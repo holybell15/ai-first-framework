@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Dashboard ▸ AI-First Framework v4.0</title>
+<style>
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── DESIGN TOKENS ─── */
+:root {
+  --primary:        #1B5FD6;
+  --primary-light:  #EEF4FF;
+  --primary-dark:   #1348A8;
+  --success:        #10B981;
+  --success-dark:   #059669;
+  --success-bg:     #DCFCE7;
+  --warn:           #D97706;
+  --warn-bg:        #FEF3C7;
+  --danger:         #EF4444;
+  --danger-bg:      #FEE2E2;
+  --text:           #1E293B;
+  --muted:          #64748B;
+  --subtle:         #94A3B8;
+  --border:         #E2E8F0;
+  --bg-page:        #F1F5F9;
+  --bg-card:        #fff;
+  --ease:           .15s ease;
+  --shadow-sm:      0 1px 4px rgba(0,0,0,.06);
+  --shadow:         0 4px 16px rgba(0,0,0,.08);
+  /* Stage colors */
+  --discover:       #7C3AED;
+  --discover-bg:    #F5F3FF;
+  --plan:           #0891B2;
+  --plan-bg:        #ECFEFF;
+  --build:          #059669;
+  --build-bg:       #F0FDF4;
+  --verify:         #1B5FD6;
+  --verify-bg:      #EEF4FF;
+  --ship:           #D97706;
+  --ship-bg:        #FFFBEB;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+  background: var(--bg-page);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ─── PAGE HEADER ─── */
+.page-header {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.ph-logo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: .5px;
+}
+
+.ph-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-left: auto;
+}
+
+.ph-stage {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ─── TAB NAVIGATION ─── */
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  padding: 16px 32px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 6px 6px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  transition: all var(--ease);
+  user-select: none;
+}
+
+.tab-btn:hover {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.tab-btn.active {
+  color: var(--primary);
+  background: var(--primary-light);
+  border-bottom-color: var(--primary);
+}
+
+/* ─── TAB CONTENT ─── */
+.tab-container {
+  padding: 28px 32px;
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+/* ─── COMMON STYLES ─── */
+.sec-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sec-title-dot {
+  width: 4px;
+  height: 24px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+
+.badge-blue {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.badge-green {
+  background: var(--success-bg);
+  color: var(--success-dark);
+}
+
+.badge-amber {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.badge-red {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* ────────────────────────────────────
+   TAB 1: OVERVIEW
+──────────────────────────────────── */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.overview-item {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.overview-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.overview-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.overview-value.stage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stage-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.stage-badge.discover {
+  background: var(--discover-bg);
+  color: var(--discover);
+}
+
+.stage-badge.plan {
+  background: var(--plan-bg);
+  color: var(--plan);
+}
+
+.stage-badge.build {
+  background: var(--build-bg);
+  color: var(--build);
+}
+
+.stage-badge.verify {
+  background: var(--verify-bg);
+  color: var(--verify);
+}
+
+.stage-badge.ship {
+  background: var(--ship-bg);
+  color: var(--ship);
+}
+
+.focus-section {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.focus-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.focus-note {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+  padding: 8px;
+  background: var(--primary-light);
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.team-status {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.team-member {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--bg-page);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.member-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+/* ────────────────────────────────────
+   TAB 2: PIPELINE
+──────────────────────────────────── */
+.pipeline-flow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+.pipeline-stage {
+  flex: 0 0 18%;
+  min-width: 180px;
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+}
+
+.pipeline-stage.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.stage-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stage-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.stage-icon.discover {
+  background: var(--discover-bg);
+  color: var(--discover);
+}
+
+.stage-icon.plan {
+  background: var(--plan-bg);
+  color: var(--plan);
+}
+
+.stage-icon.build {
+  background: var(--build-bg);
+  color: var(--build);
+}
+
+.stage-icon.verify {
+  background: var(--verify-bg);
+  color: var(--verify);
+}
+
+.stage-icon.ship {
+  background: var(--ship-bg);
+  color: var(--ship);
+}
+
+.stage-gates {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 10px;
+  padding: 8px;
+  background: var(--bg-page);
+  border-radius: 4px;
+  border-left: 3px solid var(--border);
+}
+
+.stage-progress {
+  font-size: 12px;
+  color: var(--text);
+  padding: 8px;
+  background: var(--primary-light);
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+.pipeline-channels {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.channels-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.channel-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.channel-item {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--ease);
+}
+
+.channel-item:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.channel-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.channel-note {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ────────────────────────────────────
+   TAB 3: TASK BOARD
+──────────────────────────────────── */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kanban-col {
+  background: var(--bg-page);
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 500px;
+}
+
+.kanban-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  padding: 8px;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kanban-count {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--border);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.kanban-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all var(--ease);
+}
+
+.task-card:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--primary);
+}
+
+.task-id {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .2px;
+  margin-bottom: 4px;
+}
+
+.task-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.task-meta {
+  display: flex;
+  gap: 8px;
+  font-size: 10px;
+  flex-wrap: wrap;
+}
+
+.task-specialist {
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.task-size {
+  background: var(--warn-bg);
+  color: var(--warn);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.gate-readiness {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.gate-readiness-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.readiness-items {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.readiness-item {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.readiness-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.readiness-check.pass {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.readiness-check.fail {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.readiness-label {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ────────────────────────────────────
+   TAB 4: AGENTS
+──────────────────────────────────── */
+.agent-matrix {
+  display: grid;
+  gap: 24px;
+}
+
+.agent-group {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.group-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.group-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.agent-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.agent-card {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all var(--ease);
+}
+
+.agent-card:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.agent-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.agent-skills {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.agent-assignment {
+  font-size: 11px;
+  padding: 6px;
+  background: var(--bg-page);
+  border-radius: 4px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ────────────────────────────────────
+   TAB 5: GATES
+──────────────────────────────────── */
+.gates-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.gate-card {
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.gate-header {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gate-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  font-size: 12px;
+}
+
+.gate-badge.discover {
+  background: var(--discover);
+}
+
+.gate-badge.plan {
+  background: var(--plan);
+}
+
+.gate-badge.build {
+  background: var(--build);
+}
+
+.gate-badge.ship {
+  background: var(--ship);
+}
+
+.gate-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot.pass {
+  background: var(--success);
+}
+
+.status-dot.fail {
+  background: var(--danger);
+}
+
+.gate-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-page);
+}
+
+.checklist-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 1px;
+}
+
+.checklist-check.pass {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.checklist-check.fail {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.checklist-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.checklist-text {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.checklist-evidence {
+  font-size: 10px;
+  color: var(--primary);
+  cursor: pointer;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.checklist-evidence:hover {
+  text-decoration: underline;
+}
+
+/* ─── FOOTER ─── */
+.page-footer {
+  border-top: 1px solid var(--border);
+  padding: 16px 32px;
+  margin-top: 40px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  background: #fff;
+}
+
+/* ─── UTILITIES ─── */
+.text-small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.text-mono {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+}
+
+.empty-state-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.empty-state-text {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="ph-logo">⚡ AI-First Framework</div>
+  <div class="ph-title" id="projectName">[專案名稱]</div>
+  <div class="ph-stage" id="currentStage">
+    <span id="stageName">Discover</span>
+  </div>
+</div>
+
+<!-- TAB NAVIGATION -->
+<div class="tab-nav">
+  <button class="tab-btn active" data-tab="overview">📊 Overview</button>
+  <button class="tab-btn" data-tab="pipeline">🔄 Pipeline</button>
+  <button class="tab-btn" data-tab="board">📋 Task Board</button>
+  <button class="tab-btn" data-tab="agents">👥 Agents</button>
+  <button class="tab-btn" data-tab="gates">🎯 Gates</button>
+</div>
+
+<!-- TAB CONTENT -->
+<div class="tab-container">
+
+  <!-- TAB 1: OVERVIEW -->
+  <div class="tab-panel active" id="overview">
+    <h2 class="sec-title"><span class="sec-title-dot" style="background: var(--primary);"></span>Project Overview</h2>
+
+    <div class="overview-grid">
+      <div class="overview-item">
+        <div class="overview-label">Project Type</div>
+        <div class="overview-value" id="overviewType">[Project Type]</div>
+      </div>
+      <div class="overview-item">
+        <div class="overview-label">Tech Stack</div>
+        <div class="overview-value" id="overviewTech">[Technology Stack]</div>
+      </div>
+      <div class="overview-item">
+        <div class="overview-label">Current Stage</div>
+        <div class="overview-value stage">
+          <span class="stage-badge discover" id="overviewStage">Discover</span>
+        </div>
+      </div>
+      <div class="overview-item">
+        <div class="overview-label">Last Updated</div>
+        <div class="overview-value" id="overviewUpdated">—</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="focus-section">
+        <div class="focus-label">Current Focus</div>
+        <div class="focus-note" id="focusNote">[進行中的工作描述]</div>
+      </div>
+      <div class="focus-section">
+        <div class="focus-label">Team Status</div>
+        <div class="team-status" id="teamStatus">
+          <div class="team-member"><span class="member-dot"></span> Ready</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: PIPELINE -->
+  <div class="tab-panel" id="pipeline">
+    <h2 class="sec-title"><span class="sec-title-dot" style="background: var(--primary);"></span>Pipeline Flow</h2>
+
+    <div class="pipeline-flow" id="pipelineFlow">
+      <!-- Generated dynamically -->
+    </div>
+
+    <div class="pipeline-channels">
+      <div class="channels-title">Special Channels</div>
+      <div class="channel-list">
+        <div class="channel-item">
+          <div class="channel-name">Lite Mode</div>
+          <div class="channel-note">Accelerated track</div>
+        </div>
+        <div class="channel-item">
+          <div class="channel-name">Brownfield</div>
+          <div class="channel-note">Legacy integration</div>
+        </div>
+        <div class="channel-item">
+          <div class="channel-name">Hotfix</div>
+          <div class="channel-note">Emergency patch</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: TASK BOARD -->
+  <div class="tab-panel" id="board">
+    <h2 class="sec-title"><span class="sec-title-dot" style="background: var(--primary);"></span>Task Board</h2>
+
+    <div class="kanban-board" id="kanbanBoard">
+      <!-- Generated dynamically -->
+    </div>
+
+    <div class="gate-readiness">
+      <div class="gate-readiness-title">Gate Readiness Checklist</div>
+      <div class="readiness-items" id="readinessItems">
+        <!-- Generated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: AGENTS -->
+  <div class="tab-panel" id="agents">
+    <h2 class="sec-title"><span class="sec-title-dot" style="background: var(--primary);"></span>Specialist Matrix</h2>
+
+    <div class="agent-matrix" id="agentMatrix">
+      <!-- Generated dynamically -->
+    </div>
+  </div>
+
+  <!-- TAB 5: GATES -->
+  <div class="tab-panel" id="gates">
+    <h2 class="sec-title"><span class="sec-title-dot" style="background: var(--primary);"></span>Quality Gates</h2>
+
+    <div class="gates-grid" id="gatesGrid">
+      <!-- Generated dynamically -->
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  AI-First Framework v4.0 | Discover → Plan → Build → Verify → Ship
+</div>
+
+<script>
+// Load data from external file
+if (typeof window.PROJECT_DASHBOARD_DATA === 'undefined') {
+  console.warn('PROJECT_DASHBOARD.data.js not loaded');
+  window.PROJECT_DASHBOARD_DATA = {
+    overview: { name: "[專案名稱]", type: "[專案類型]", tech: "[技術棧]", stage: "Discover", stageNote: "", updated: "" },
+    pipeline: { current: "Discover", stages: ["Discover","Plan","Build","Verify","Ship"] },
+    tasks: [],
+    gates: {
+      discover: { items: [], passed: false },
+      plan: { items: [], passed: false },
+      build: { items: [], passed: false },
+      ship: { items: [], passed: false }
+    },
+    agents: {
+      active: "",
+      group: ""
+    }
+  };
+}
+
+const DATA = window.PROJECT_DASHBOARD_DATA;
+const STAGE_CONFIG = {
+  'Discover': { icon: '🔍', color: 'discover', gates: 'G1' },
+  'Plan': { icon: '📋', color: 'plan', gates: 'G2' },
+  'Build': { icon: '🔨', color: 'build', gates: 'G4-ENG' },
+  'Verify': { icon: '✓', color: 'verify', gates: 'Testing' },
+  'Ship': { icon: '🚀', color: 'ship', gates: 'G3' }
+};
+
+// Initialize tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tabName = btn.dataset.tab;
+    switchTab(tabName);
+  });
+});
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+  document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+  document.getElementById(tabName).classList.add('active');
+}
+
+// Render functions
+function renderOverview() {
+  const o = DATA.overview;
+  document.getElementById('projectName').textContent = o.name;
+  document.getElementById('stageName').textContent = o.stage;
+  document.getElementById('currentStage').className = `ph-stage`;
+  document.getElementById('currentStage').style.background = `var(--${STAGE_CONFIG[o.stage].color}-bg)`;
+  document.getElementById('currentStage').style.color = `var(--${STAGE_CONFIG[o.stage].color})`;
+
+  document.getElementById('overviewType').textContent = o.type;
+  document.getElementById('overviewTech').textContent = o.tech;
+  document.getElementById('overviewStage').textContent = o.stage;
+  document.getElementById('overviewStage').className = `stage-badge ${STAGE_CONFIG[o.stage].color}`;
+  document.getElementById('overviewUpdated').textContent = o.updated ? new Date(o.updated).toLocaleString('zh-TW') : '—';
+  document.getElementById('focusNote').textContent = o.stageNote || '[進行中的工作描述]';
+}
+
+function renderPipeline() {
+  const container = document.getElementById('pipelineFlow');
+  container.innerHTML = '';
+  const stages = DATA.pipeline.stages || ['Discover', 'Plan', 'Build', 'Verify', 'Ship'];
+  const current = DATA.pipeline.current || 'Discover';
+
+  stages.forEach(stage => {
+    const cfg = STAGE_CONFIG[stage];
+    const isActive = stage === current;
+    const stageEl = document.createElement('div');
+    stageEl.className = `pipeline-stage ${isActive ? 'active' : ''}`;
+    stageEl.innerHTML = `
+      <div class="stage-name">
+        <div class="stage-icon ${cfg.color}">${cfg.icon}</div>
+        <span>${stage}</span>
+      </div>
+      <div class="stage-gates">Gate: ${cfg.gates}</div>
+      <div class="stage-progress">${isActive ? '⏱️ In Progress' : '—'}</div>
+    `;
+    container.appendChild(stageEl);
+  });
+}
+
+function renderTaskBoard() {
+  const container = document.getElementById('kanbanBoard');
+  container.innerHTML = '';
+
+  const statuses = ['Backlog', 'In Progress', 'Blocked', 'Done'];
+  const statusKeys = ['backlog', 'in_progress', 'blocked', 'done'];
+
+  statuses.forEach((status, idx) => {
+    const tasks = DATA.tasks ? DATA.tasks.filter(t => t.status === statusKeys[idx]) : [];
+    const col = document.createElement('div');
+    col.className = 'kanban-col';
+
+    let html = `
+      <div class="kanban-header">
+        <span>${status}</span>
+        <span class="kanban-count">${tasks.length}</span>
+      </div>
+      <div class="kanban-list">
+    `;
+
+    if (tasks.length === 0) {
+      html += '<div class="empty-state text-small">No tasks</div>';
+    } else {
+      tasks.forEach(task => {
+        html += `
+          <div class="task-card">
+            <div class="task-id">${task.id || '—'}</div>
+            <div class="task-title">${task.feature || task.title || '—'}</div>
+            <div class="task-meta">
+              <span class="task-specialist">${task.specialist || '—'}</span>
+              <span class="task-size">${task.size || 'M'}</span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    html += '</div>';
+    col.innerHTML = html;
+    container.appendChild(col);
+  });
+
+  // Render gate readiness
+  const readinessContainer = document.getElementById('readinessItems');
+  readinessContainer.innerHTML = '';
+
+  const readinessChecks = [
+    { name: 'All tasks completed', pass: false },
+    { name: 'No blockers', pass: false },
+    { name: 'Tests passing', pass: false },
+    { name: 'Documentation done', pass: false }
+  ];
+
+  readinessChecks.forEach(check => {
+    const item = document.createElement('div');
+    item.className = 'readiness-item';
+    item.innerHTML = `
+      <div class="readiness-check ${check.pass ? 'pass' : 'fail'}">${check.pass ? '✓' : '✗'}</div>
+      <div>
+        <div class="readiness-label">${check.name}</div>
+      </div>
+    `;
+    readinessContainer.appendChild(item);
+  });
+}
+
+function renderAgents() {
+  const container = document.getElementById('agentMatrix');
+  container.innerHTML = '';
+
+  const groups = [
+    {
+      name: 'Discovery Group',
+      icon: '🔍',
+      specialists: ['PM', 'Interviewer', 'UX Designer']
+    },
+    {
+      name: 'Build Group',
+      icon: '🔨',
+      specialists: ['Architect', 'Backend', 'Frontend', 'DBA']
+    },
+    {
+      name: 'Verify Group',
+      icon: '✓',
+      specialists: ['QA', 'Security']
+    },
+    {
+      name: 'Review',
+      icon: '👁️',
+      specialists: ['Code Reviewer', 'Gate Reviewer']
+    }
+  ];
+
+  groups.forEach(group => {
+    const groupEl = document.createElement('div');
+    groupEl.className = 'agent-group';
+
+    let html = `
+      <div class="group-title">
+        <div class="group-icon">${group.icon}</div>
+        <span>${group.name}</span>
+      </div>
+      <div class="agent-list">
+    `;
+
+    group.specialists.forEach(spec => {
+      html += `
+        <div class="agent-card">
+          <div class="agent-name">${spec}</div>
+          <div class="agent-skills">Required: Problem solving, Communication</div>
+          <div class="agent-assignment">Currently: Available</div>
+        </div>
+      `;
+    });
+
+    html += '</div>';
+    groupEl.innerHTML = html;
+    container.appendChild(groupEl);
+  });
+}
+
+function renderGates() {
+  const container = document.getElementById('gatesGrid');
+  container.innerHTML = '';
+
+  const gates = [
+    { name: 'Discover', key: 'discover', icon: '🔍', stage: 'discover' },
+    { name: 'Plan', key: 'plan', icon: '📋', stage: 'plan' },
+    { name: 'Build', key: 'build', icon: '🔨', stage: 'build' },
+    { name: 'Ship', key: 'ship', icon: '🚀', stage: 'ship' }
+  ];
+
+  gates.forEach(gate => {
+    const gateData = DATA.gates[gate.key] || { items: [], passed: false };
+    const gateEl = document.createElement('div');
+    gateEl.className = 'gate-card';
+
+    let html = `
+      <div class="gate-header">
+        <div class="gate-badge ${gate.stage}">${gate.icon}</div>
+        <span>Gate: ${gate.name}</span>
+      </div>
+      <div class="gate-status">
+        <div class="status-dot ${gateData.passed ? 'pass' : 'fail'}"></div>
+        <span>${gateData.passed ? '✓ Passed' : '⏳ Pending'}</span>
+      </div>
+      <div class="gate-checklist">
+    `;
+
+    if (gateData.items.length === 0) {
+      html += '<div class="empty-state text-small">No items defined</div>';
+    } else {
+      gateData.items.forEach((item, idx) => {
+        const pass = item.pass !== false;
+        html += `
+          <div class="checklist-item">
+            <div class="checklist-check ${pass ? 'pass' : 'fail'}">${pass ? '✓' : '✗'}</div>
+            <div class="checklist-content">
+              <div class="checklist-text">${item.name || '—'}</div>
+              ${item.evidence ? `<div class="checklist-evidence">${item.evidence}</div>` : ''}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    html += '</div>';
+    gateEl.innerHTML = html;
+    container.appendChild(gateEl);
+  });
+}
+
+// Initialize
+renderOverview();
+renderPipeline();
+renderTaskBoard();
+renderAgents();
+renderGates();
+</script>
+</body>
+</html>

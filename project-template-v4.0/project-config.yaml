@@ -1,0 +1,219 @@
+# ============================================================
+# V4 Project Configuration
+# ============================================================
+# 本檔案是專案級設定的 Single Source of Truth。
+# Task-Master 啟動時讀取此檔，決定 Agent 載入哪些 skill。
+# 修改此檔不需要 CIA（它本身不是 artifact，是 infra config）。
+# ============================================================
+
+project:
+  name: "[專案名稱]"
+  type: "[SaaS B2B / SaaS B2C / 內部系統 / API 平台]"
+  tech_stack: "[Vue 3 / Spring Boot / MySQL + MSSQL / GCP]"
+  created: "[YYYY-MM-DD]"
+
+# ---- Domain Skill ----
+domain:
+  name: "[domain-name]"                          # 例: call-center
+  skill_path: "context-skills/[domain-name]"     # Domain Skill 目錄
+  load_for:
+    - Interviewer
+    - PM
+    - UX
+    - Architect
+    - DBA
+    - Backend
+    - Frontend
+    - QA
+    - Review
+  exclude:
+    - Task-Master    # 純 dispatcher，不需業務知識
+    - DevOps         # 純基礎設施
+    - Security       # 通用安全（合規類 domain 可移入 load_for）
+
+# ---- Agent × Skill Matrix ----
+# 每個 Agent 啟動時自動載入的 skill。
+# Task-Master 根據此表組裝 context。
+agents:
+  Task-Master:
+    group: null
+    role_file: null
+    required_skills:
+      - task-master
+      - verification-before-completion
+    optional_skills: []
+    context_files:
+      - memory/STATE.md
+      - TASKS.md
+
+  Interviewer:
+    group: Discovery
+    role_file: context-roles/GROUP_Discovery.md
+    required_skills:
+      - brainstorming
+      - writing-plans
+      - planning-with-tasks
+      - verification-before-completion
+    optional_skills:
+      - deep-research
+      - doc-coauthoring
+    context_files:
+      - context-roles/GROUP_Discovery.md
+
+  PM:
+    group: Discovery
+    role_file: context-roles/GROUP_Discovery.md
+    required_skills:
+      - writing-plans
+      - planning-with-tasks
+      - verification-before-completion
+    optional_skills:
+      - deep-research
+      - doc-coauthoring
+    context_files:
+      - context-roles/GROUP_Discovery.md
+
+  UX:
+    group: Discovery
+    role_file: context-roles/GROUP_Discovery.md
+    required_skills:
+      - brainstorming
+      - frontend-design
+      - planning-with-tasks
+      - verification-before-completion
+    optional_skills:
+      - screenshot-to-code
+    context_files:
+      - context-roles/GROUP_Discovery.md
+      - DESIGN.md
+
+  Architect:
+    group: Discovery
+    role_file: context-roles/GROUP_Discovery.md
+    required_skills:
+      - writing-plans
+      - deep-research
+      - planning-with-tasks
+      - verification-before-completion
+    optional_skills: []
+    context_files:
+      - context-roles/GROUP_Discovery.md
+
+  Backend:
+    group: Build
+    role_file: context-roles/GROUP_Build.md
+    required_skills:
+      - writing-plans
+      - test-driven-development
+      - systematic-debugging
+      - planning-with-tasks
+      - using-git-worktrees
+      - requesting-code-review
+      - verification-before-completion
+    optional_skills:
+      - ground
+      - validate-contract
+    context_files:
+      - context-roles/GROUP_Build.md
+
+  Frontend:
+    group: Build
+    role_file: context-roles/GROUP_Build.md
+    required_skills:
+      - writing-plans
+      - test-driven-development
+      - systematic-debugging
+      - frontend-design
+      - planning-with-tasks
+      - using-git-worktrees
+      - requesting-code-review
+      - verification-before-completion
+    optional_skills:
+      - ground
+      - screenshot-to-code
+    context_files:
+      - context-roles/GROUP_Build.md
+      - DESIGN.md
+
+  DBA:
+    group: Build
+    role_file: context-roles/GROUP_Build.md
+    required_skills:
+      - writing-plans
+      - planning-with-tasks
+      - verification-before-completion
+    optional_skills:
+      - ground
+      - validate-contract
+    context_files:
+      - context-roles/GROUP_Build.md
+
+  QA:
+    group: Verify
+    role_file: context-roles/GROUP_Verify.md
+    required_skills:
+      - webapp-testing
+      - systematic-debugging
+      - planning-with-tasks
+      - verification-before-completion
+    optional_skills: []
+    context_files:
+      - context-roles/GROUP_Verify.md
+
+  Security:
+    group: Verify
+    role_file: context-roles/GROUP_Verify.md
+    required_skills:
+      - deep-research
+      - verification-before-completion
+    optional_skills: []
+    context_files:
+      - context-roles/GROUP_Verify.md
+
+  DevOps:
+    group: Verify
+    role_file: context-roles/GROUP_Verify.md
+    required_skills:
+      - systematic-debugging
+      - verification-before-completion
+    optional_skills: []
+    context_files:
+      - context-roles/GROUP_Verify.md
+
+  Review:
+    group: null   # 跨階段角色
+    role_file: context-roles/ROLE_Review.md
+    required_skills:
+      - gate-check
+      - cia
+      - verification-before-completion
+    optional_skills:
+      - retro
+    context_files:
+      - context-roles/ROLE_Review.md
+
+# ---- Tier 2 Skills (專案級啟用) ----
+tier2_skills:
+  - deep-research
+  - doc-coauthoring
+  - screenshot-to-code
+  - validate-contract
+  - ground
+  - retro
+  # Domain skill 自動從 domain.skill_path 載入，不需列在此
+
+# ---- Execution Modes ----
+modes:
+  execution: "copilot"       # autopilot / copilot / manual
+  gate_weight: "standard"    # standard / lite
+
+# ---- Token Budgets ----
+token_budgets:
+  CLAUDE.md: 5000
+  task-master_SKILL: 2000
+  GROUP_Discovery: 2000
+  GROUP_Build: 2000
+  GROUP_Verify: 2000
+  ROLE_Review: 1000
+  STATE.md: 400
+  LEARNINGS.md: 800

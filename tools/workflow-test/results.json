@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-30T11:39:22.575789",
+  "timestamp": "2026-03-30T14:34:29.246025",
   "summary": {
     "pass": 166,
     "fail": 0,
@@ -813,7 +813,7 @@
         {
           "name": "/info-hotfix",
           "status": "pass",
-          "detail": "project-template/.claude/commands/info-hotfix.md (2154 bytes)",
+          "detail": "project-template/.claude/commands/info-hotfix.md (3477 bytes)",
           "hint": ""
         },
         {

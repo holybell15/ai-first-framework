@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-First Framework — 三人團隊協作流程</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface-2: #242836;
+    --border: #2e3345;
+    --text: #e4e6ed;
+    --text-dim: #8b8fa3;
+    --accent: #6c8cff;
+    --accent-light: #8ba5ff;
+    --green: #4ade80;
+    --green-dim: #1a3a2a;
+    --orange: #fb923c;
+    --orange-dim: #3a2a1a;
+    --purple: #c084fc;
+    --purple-dim: #2a1a3a;
+    --red: #f87171;
+    --cyan: #22d3ee;
+    --yellow: #facc15;
+    --alice: #6c8cff;
+    --bob: #c084fc;
+    --carol: #4ade80;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 0;
+  }
+
+  /* === HERO === */
+  .hero {
+    text-align: center;
+    padding: 64px 24px 48px;
+    background: linear-gradient(180deg, #161927 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* === LAYOUT === */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  /* === TABS === */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-top: 32px;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+    padding: 0 24px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .tab {
+    padding: 14px 24px;
+    cursor: pointer;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .tab-content { display: none; padding: 40px 0; }
+  .tab-content.active { display: block; }
+
+  /* === SECTION === */
+  section { margin-bottom: 48px; }
+  section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  section h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    color: var(--accent-light);
+  }
+
+  /* === ROLE CARDS === */
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .role-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .role-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .role-card.alice::before { background: var(--alice); }
+  .role-card.bob::before { background: var(--bob); }
+  .role-card.carol::before { background: var(--carol); }
+
+  .role-card .avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #fff;
+  }
+  .role-card.alice .avatar { background: linear-gradient(135deg, #4a6cf7, #6c8cff); }
+  .role-card.bob .avatar { background: linear-gradient(135deg, #9b59b6, #c084fc); }
+  .role-card.carol .avatar { background: linear-gradient(135deg, #27ae60, #4ade80); }
+
+  .role-card h4 { font-size: 1.2rem; margin-bottom: 4px; }
+  .role-card .subtitle { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 16px; }
+
+  .role-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    margin: 2px 4px 2px 0;
+  }
+  .role-tag.alice-bg { background: rgba(108,140,255,0.15); color: var(--alice); }
+  .role-tag.bob-bg { background: rgba(192,132,252,0.15); color: var(--bob); }
+  .role-tag.carol-bg { background: rgba(74,222,128,0.15); color: var(--carol); }
+  .role-tag.neutral { background: var(--surface-2); color: var(--text-dim); }
+
+  /* === TIMELINE === */
+  .timeline { position: relative; margin: 24px 0 24px 20px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .tl-item {
+    position: relative;
+    padding: 0 0 32px 36px;
+  }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-dot {
+    position: absolute;
+    left: -7px; top: 4px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+  }
+  .tl-dot.alice { background: var(--alice); }
+  .tl-dot.bob { background: var(--bob); }
+  .tl-dot.carol { background: var(--carol); }
+  .tl-dot.gate { background: var(--yellow); }
+
+  .tl-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .tl-label.alice { color: var(--alice); }
+  .tl-label.bob { color: var(--bob); }
+  .tl-label.carol { color: var(--carol); }
+  .tl-label.gate { color: var(--yellow); }
+
+  .tl-title { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
+  .tl-desc { color: var(--text-dim); font-size: 0.9rem; }
+
+  /* === FLOW DIAGRAM === */
+  .flow-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .flow-row:last-child { margin-bottom: 0; }
+
+  .flow-phase {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    width: 80px;
+    flex-shrink: 0;
+    color: var(--text-dim);
+  }
+  .flow-node {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+    border: 1px solid;
+  }
+  .flow-node.alice { background: rgba(108,140,255,0.1); border-color: rgba(108,140,255,0.3); color: var(--alice); }
+  .flow-node.bob { background: rgba(192,132,252,0.1); border-color: rgba(192,132,252,0.3); color: var(--bob); }
+  .flow-node.carol { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.3); color: var(--carol); }
+  .flow-node.gate { background: rgba(250,204,21,0.1); border-color: rgba(250,204,21,0.3); color: var(--yellow); }
+
+  .flow-arrow { color: var(--text-dim); font-size: 1.1rem; }
+  .flow-parallel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-left: 2px solid var(--border);
+    padding-left: 12px;
+  }
+  .flow-parallel-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* === TABLE === */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--surface);
+  }
+  td { background: var(--surface); }
+  tr:hover td { background: var(--surface-2); }
+
+  /* === STEP CARDS === */
+  .step-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .step-card h4 { font-size: 1rem; margin-bottom: 6px; }
+  .step-card p { color: var(--text-dim); font-size: 0.88rem; }
+  .step-card code {
+    background: var(--surface-2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: var(--cyan);
+  }
+
+  /* === HANDOFF CARD === */
+  .handoff-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: 12px 0;
+  }
+  .handoff-card h4 {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .handoff-step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    align-items: flex-start;
+  }
+  .handoff-step:last-child { margin-bottom: 0; }
+  .handoff-icon {
+    width: 24px; height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.85rem;
+  }
+  .handoff-text { font-size: 0.88rem; color: var(--text-dim); }
+  .handoff-text strong { color: var(--text); }
+
+  /* === CODE BLOCK === */
+  .code-block {
+    background: #0d0f16;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    overflow-x: auto;
+    margin: 12px 0;
+    line-height: 1.7;
+  }
+  .code-block .comment { color: #555b72; }
+  .code-block .cmd { color: var(--cyan); }
+  .code-block .str { color: var(--green); }
+
+  /* === RULE CARDS === */
+  .rule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .rule-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .rule-card .rule-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+  .rule-card h4 { font-size: 0.95rem; margin-bottom: 6px; }
+  .rule-card p { color: var(--text-dim); font-size: 0.85rem; }
+
+  /* === BADGE === */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge.parallel { background: rgba(34,211,238,0.15); color: var(--cyan); }
+  .badge.sequential { background: rgba(251,146,60,0.15); color: var(--orange); }
+  .badge.gate { background: rgba(250,204,21,0.15); color: var(--yellow); }
+
+  /* === INFO BOX === */
+  .info-box {
+    background: rgba(108,140,255,0.08);
+    border: 1px solid rgba(108,140,255,0.2);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 0.9rem;
+  }
+  .info-box.warn {
+    background: rgba(250,204,21,0.08);
+    border-color: rgba(250,204,21,0.2);
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .role-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 1.8rem; }
+    .tabs { overflow-x: auto; }
+    .tab { padding: 12px 16px; font-size: 0.85rem; white-space: nowrap; }
+    .flow-phase { width: 60px; font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1><span>AI-First Framework</span><br>三人團隊協作流程</h1>
+  <p>每人 own 一個 Feature 從頭到尾，Claude 扮演所有 Agent。<br>交接只剩 Gate Review — 三條產線真正並行。</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="overview">分工模式</div>
+  <div class="tab" data-tab="feature">Feature 全程</div>
+  <div class="tab" data-tab="governance">共治層</div>
+  <div class="tab" data-tab="daily">每日工作流</div>
+  <div class="tab" data-tab="notify">通知系統</div>
+  <div class="tab" data-tab="rules">協作鐵規</div>
+</div>
+
+<div class="container">
+
+<!-- ==================== TAB 1: OVERVIEW ==================== -->
+<div class="tab-content active" id="overview">
+
+  <section>
+    <h2>為什麼垂直切？</h2>
+    <p style="color:var(--text-dim); margin-bottom:24px;">一個人 + Claude 就能跑完整條 Pipeline（Claude 扮演所有 12 個 Agent）。三人的價值不是分 Pipeline 階段，而是<strong style="color:var(--text)">三條 Feature 同時推進</strong>。</p>
+
+    <div class="flow-box">
+      <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:32px; align-items:start;">
+        <!-- OLD -->
+        <div>
+          <div style="font-size:0.78rem; color:var(--red); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px; font-weight:600;">水平切（按 Pipeline 分人）</div>
+          <div style="font-size:0.88rem; color:var(--text-dim); line-height:1.8;">
+            Alice 做所有 Feature 的需求<br>
+            Bob 做所有 Feature 的架構<br>
+            Carol 做所有 Feature 的前端<br>
+            <span style="color:var(--red);">交接 8-10 次 / Feature</span><br>
+            <span style="color:var(--red);">大量等待、瓶頸、上下文碎片</span>
+          </div>
+        </div>
+        <div style="color:var(--text-dim); font-size:1.5rem; align-self:center;">vs</div>
+        <!-- NEW -->
+        <div>
+          <div style="font-size:0.78rem; color:var(--green); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px; font-weight:600;">垂直切（按 Feature 分人）</div>
+          <div style="font-size:0.88rem; color:var(--text); line-height:1.8;">
+            Alice own F01 從頭到尾<br>
+            Bob own F02 從頭到尾<br>
+            Carol own F03 從頭到尾<br>
+            <span style="color:var(--green);">交接只剩 3 次（Gate Review）</span><br>
+            <span style="color:var(--green);">三條線真正並行</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>三人分工模式</h2>
+
+    <div class="role-grid">
+      <div class="role-card alice">
+        <div class="avatar">A</div>
+        <h4>Alice</h4>
+        <div class="subtitle">Own F01, F04, F07...</div>
+        <div>
+          <span class="role-tag alice-bg">全部 Agent 角色</span>
+        </div>
+        <div style="margin-top:16px; font-size:0.85rem; color:var(--text-dim);">
+          <strong style="color:var(--text)">自己的 Feature：</strong>P01→P02→P03→P04→P05→P06 全程<br>
+          <strong style="color:var(--text)">幫別人：</strong>審 Bob 的 Gate Review
+        </div>
+      </div>
+
+      <div class="role-card bob">
+        <div class="avatar">B</div>
+        <h4>Bob</h4>
+        <div class="subtitle">Own F02, F05, F08...</div>
+        <div>
+          <span class="role-tag bob-bg">全部 Agent 角色</span>
+        </div>
+        <div style="margin-top:16px; font-size:0.85rem; color:var(--text-dim);">
+          <strong style="color:var(--text)">自己的 Feature：</strong>P01→P02→P03→P04→P05→P06 全程<br>
+          <strong style="color:var(--text)">幫別人：</strong>審 Carol 的 Gate Review
+        </div>
+      </div>
+
+      <div class="role-card carol">
+        <div class="avatar">C</div>
+        <h4>Carol</h4>
+        <div class="subtitle">Own F03, F06, F09...</div>
+        <div>
+          <span class="role-tag carol-bg">全部 Agent 角色</span>
+        </div>
+        <div style="margin-top:16px; font-size:0.85rem; color:var(--text-dim);">
+          <strong style="color:var(--text)">自己的 Feature：</strong>P01→P02→P03→P04→P05→P06 全程<br>
+          <strong style="color:var(--text)">幫別人：</strong>審 Alice 的 Gate Review
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>Gate Review 輪轉：</strong>Alice→Bob 審、Bob→Carol 審、Carol→Alice 審。固定方向，不用每次討論誰審誰。
+    </div>
+  </section>
+
+  <section>
+    <h2>並行效果</h2>
+    <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>時間</th>
+          <th style="color:var(--alice)">Alice (F01)</th>
+          <th style="color:var(--bob)">Bob (F02)</th>
+          <th style="color:var(--carol)">Carol (F03)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Week 1-2</td>
+          <td style="color:var(--alice)">P01 需求+UX</td>
+          <td style="color:var(--bob)">P01 需求+UX</td>
+          <td style="color:var(--carol)">P01 需求+UX</td>
+        </tr>
+        <tr>
+          <td>Week 2</td>
+          <td><span class="badge gate">Gate 1</span> ← Bob 審</td>
+          <td><span class="badge gate">Gate 1</span> ← Carol 審</td>
+          <td><span class="badge gate">Gate 1</span> ← Alice 審</td>
+        </tr>
+        <tr>
+          <td>Week 3-4</td>
+          <td style="color:var(--alice)">P02 架構+DB</td>
+          <td style="color:var(--bob)">P02 架構+DB</td>
+          <td style="color:var(--carol)">P02 架構+DB</td>
+        </tr>
+        <tr>
+          <td>Week 5-6</td>
+          <td style="color:var(--alice)">P03→P04 實作</td>
+          <td style="color:var(--bob)">P03→P04 實作</td>
+          <td style="color:var(--carol)">P03→P04 實作</td>
+        </tr>
+        <tr>
+          <td>Week 6</td>
+          <td><span class="badge gate">Gate 3</span> ← Bob 審</td>
+          <td><span class="badge gate">Gate 3</span> ← Carol 審</td>
+          <td><span class="badge gate">Gate 3</span> ← Alice 審</td>
+        </tr>
+        <tr>
+          <td>Week 7</td>
+          <td style="color:var(--alice)">P05+P06 上線</td>
+          <td style="color:var(--bob)">P05+P06 上線</td>
+          <td style="color:var(--carol)">P05+P06 上線</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="info-box" style="margin-top:16px;">
+      <strong>吞吐量 x3：</strong>水平切 7 週完成 1 個 Feature。垂直切 7 週完成 3 個 Feature。
+    </div>
+  </section>
+</div>
+
+<!-- ==================== TAB 2: FEATURE ==================== -->
+<div class="tab-content" id="feature">
+
+  <section>
+    <h2>一個人跑完整 Feature</h2>
+    <p style="color:var(--text-dim); margin-bottom:20px;">以 Bob 做 F02 Dashboard 為例。同一個人在同一條線上切換 Agent 角色，Claude 幫你扮演每個 Agent。</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot bob"></div>
+        <div class="tl-label bob">P01 — Interviewer Agent</div>
+        <div class="tl-title">需求訪談</div>
+        <div class="tl-desc">Bob 開 Claude → 載入 SEED_Interviewer.md → 跟 stakeholder 或自己做需求訪談 → 產出 IR-20260320.md</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot bob"></div>
+        <div class="tl-label bob">P01 — PM Agent</div>
+        <div class="tl-title">寫 User Story + AC</div>
+        <div class="tl-desc">同一個 session 切換 → 載入 SEED_PM.md → 產出 US_F02_Dashboard.md（含 NYQ 驗證提示）</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot bob"></div>
+        <div class="tl-label bob">P01 — UX Agent</div>
+        <div class="tl-title">設計 Prototype</div>
+        <div class="tl-desc">載入 SEED_UX.md → 產出 F02-UX.md + Dashboard Prototype HTML</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gate"></div>
+        <div class="tl-label gate">Gate 1 — 交給 Carol 審</div>
+        <div class="tl-title">handoff.sh → Teams 通知 Carol</div>
+        <div class="tl-desc">
+          <code style="background:var(--surface-2);padding:2px 6px;border-radius:4px;font-size:0.8rem;color:var(--cyan);">./scripts/handoff.sh UX Review F02 "Prototype done" --gate 1</code><br>
+          Carol 開新 session → Review Agent → Gate 1 ✅ / Block
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot bob"></div>
+        <div class="tl-label bob">P02 — Architect + DBA Agent</div>
+        <div class="tl-title">架構設計 + DB Schema</div>
+        <div class="tl-desc">Gate 1 通過後繼續 → 產出 F02-SW-ARCH.md + F02-DB.md</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gate"></div>
+        <div class="tl-label gate">Gate 2 — 交給 Carol 審</div>
+        <div class="tl-title">技術設計驗收</div>
+        <div class="tl-desc">Carol 開新 session → 審架構 + DB Schema</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot bob"></div>
+        <div class="tl-label bob">P03 — Backend + Frontend + QA Agent</div>
+        <div class="tl-title">API Spec → 元件規劃 → 測試案例</div>
+        <div class="tl-desc">Bob 一人依序切換角色完成所有開發準備文件</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gate"></div>
+        <div class="tl-label gate">G4-ENG — 交給 Carol 審</div>
+        <div class="tl-title">工程設計驗收</div>
+        <div class="tl-desc">Carol 審 API Spec + DB Schema + Prototype 追溯</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot bob"></div>
+        <div class="tl-label bob">P04 — Backend → Frontend → QA Agent</div>
+        <div class="tl-title">實作 + 測試</div>
+        <div class="tl-desc">寫 code → 寫前端 → 跑測試。Claude 幫你在每個角色間無縫切換。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gate"></div>
+        <div class="tl-label gate">Gate 3 — 交給 Carol 審</div>
+        <div class="tl-title">交付前驗收</div>
+        <div class="tl-desc">Carol 審 code + 測試報告</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot bob"></div>
+        <div class="tl-label bob">P05+P06 — Security + DevOps Agent</div>
+        <div class="tl-title">合規 + 部署上線</div>
+        <div class="tl-desc">Bob 自己完成資安自檢 + 部署。F02 上線。</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>交接次數：4 次</strong>（Gate 1 + Gate 2 + G4-ENG + Gate 3），全部是請別人開新 session 做 Review。Feature 內的角色切換不需要交接。
+    </div>
+  </section>
+
+  <section>
+    <h2>Git 分支</h2>
+    <p style="color:var(--text-dim); margin-bottom:16px;">垂直切模式下，每個人用自己的 Feature 分支，不會互相干擾。</p>
+    <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr><th>情境</th><th>分支格式</th><th>範例</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Feature 全程（規格+程式碼）</td><td><code>feature/F##-[功能]-[人名]</code></td><td><code>feature/F02-dashboard-bob</code></td></tr>
+        <tr><td>Gate Review</td><td><code>review/Gate[N]-F##-[reviewer]</code></td><td><code>review/Gate1-F02-carol</code></td></tr>
+        <tr><td>Hotfix</td><td><code>hotfix/HF-YYYY-NNN</code></td><td><code>hotfix/HF-2026-001</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== TAB 3: GOVERNANCE ==================== -->
+<div class="tab-content" id="governance">
+
+  <section>
+    <h2>共治層</h2>
+    <p style="color:var(--text-dim); margin-bottom:24px;">每人各跑各的 Feature，但以下四件事必須三人共同決定。透過 PR review，不是一個人說了算。</p>
+
+    <div class="flow-box" style="text-align:center; padding:40px;">
+      <div style="display:inline-block; text-align:left;">
+        <div style="background:rgba(250,204,21,0.08); border:2px solid rgba(250,204,21,0.25); border-radius:12px; padding:20px 32px; margin-bottom:24px;">
+          <div style="font-size:0.78rem; color:var(--yellow); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px; font-weight:600;">共治層（三人 PR Review）</div>
+          <div style="display:flex; gap:20px; flex-wrap:wrap;">
+            <div class="flow-node gate" style="border-width:2px;">架構決策 ADR</div>
+            <div class="flow-node gate" style="border-width:2px;">DB Schema</div>
+            <div class="flow-node gate" style="border-width:2px;">Design System</div>
+            <div class="flow-node gate" style="border-width:2px;">Sprint Planning</div>
+          </div>
+        </div>
+        <div style="text-align:center; color:var(--text-dim); margin-bottom:16px;">↓ 各自執行 ↓</div>
+        <div style="display:flex; gap:16px; justify-content:center;">
+          <div style="padding:16px 24px; border-radius:10px; background:rgba(108,140,255,0.1); border:1px solid rgba(108,140,255,0.3); text-align:center;">
+            <div style="color:var(--alice); font-weight:600;">Alice</div>
+            <div style="color:var(--text-dim); font-size:0.82rem;">F01 全程</div>
+          </div>
+          <div style="padding:16px 24px; border-radius:10px; background:rgba(192,132,252,0.1); border:1px solid rgba(192,132,252,0.3); text-align:center;">
+            <div style="color:var(--bob); font-weight:600;">Bob</div>
+            <div style="color:var(--text-dim); font-size:0.82rem;">F02 全程</div>
+          </div>
+          <div style="padding:16px 24px; border-radius:10px; background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); text-align:center;">
+            <div style="color:var(--carol); font-weight:600;">Carol</div>
+            <div style="color:var(--text-dim); font-size:0.82rem;">F03 全程</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>共治項目細則</h2>
+    <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr><th>項目</th><th>檔案位置</th><th>修改機制</th><th>頻率</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>架構決策 (ADR)</strong></td>
+          <td><code>memory/decisions.md</code></td>
+          <td>透過 PR，另外兩人 approve</td>
+          <td>有新技術決策時</td>
+        </tr>
+        <tr>
+          <td><strong>DB Schema</strong></td>
+          <td><code>contracts/field_registry_F##.yaml</code></td>
+          <td>新增欄位必須 PR，防止三人各改各的衝突</td>
+          <td>有新欄位/表時</td>
+        </tr>
+        <tr>
+          <td><strong>Design System</strong></td>
+          <td><code>comp_design_system.html</code></td>
+          <td>初期三人定好，之後鎖定（新增元件走 PR）</td>
+          <td>Month 1 定一次</td>
+        </tr>
+        <tr>
+          <td><strong>Feature 優先級</strong></td>
+          <td><code>TASKS.md</code></td>
+          <td>雙週 Sprint Planning（15 分鐘站會）</td>
+          <td>每兩週</td>
+        </tr>
+        <tr>
+          <td><strong>Gate Review</strong></td>
+          <td>各 <code>F##-*-RVW.md</code></td>
+          <td>固定輪轉：Alice→Bob審 / Bob→Carol審 / Carol→Alice審</td>
+          <td>每個 Gate</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>兩年節奏</h2>
+    <div class="step-grid">
+      <div class="step-card" style="border-color:rgba(250,204,21,0.3);">
+        <div class="step-num" style="background:var(--yellow); color:#000;">1</div>
+        <h4>Month 1-2：共治層建立</h4>
+        <p>三人一起做前 2-3 個核心 Feature。建立 ADR、DB Schema 基礎、Design System。<strong style="color:var(--text)">這段時間是水平切</strong>，因為要對齊標準。</p>
+      </div>
+      <div class="step-card" style="border-color:rgba(74,222,128,0.3);">
+        <div class="step-num" style="background:var(--green); color:#000;">2</div>
+        <h4>Month 3-24：各自認領 Feature</h4>
+        <p>共治層穩定後，切換為垂直切。每人認領 Feature，並行推進。每兩週 Sprint Planning 對齊優先級。Gate Review 交叉做。</p>
+      </div>
+    </div>
+
+    <div class="info-box warn" style="margin-top:20px;">
+      <strong>重要：</strong>前兩個月不要急著分開跑。共治層（架構、DB、設計系統）沒對齊就分開，後面三個人的產出會不一致，整合時代價更大。
+    </div>
+  </section>
+
+  <section>
+    <h2>共用檔案寫入權限</h2>
+    <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr><th>檔案</th><th>寫入規則</th><th>衝突處理</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>TASKS.md</code></td><td>只 append 自己的行</td><td>時間較晚者為準</td></tr>
+        <tr><td><code>memory/STATE.md</code></td><td>只寫自己 Feature 的狀態</td><td>用 Feature section 隔離</td></tr>
+        <tr><td><code>memory/decisions.md</code></td><td>透過 PR</td><td>三人 Review</td></tr>
+        <tr><td><code>contracts/field_registry_*.yaml</code></td><td>透過 PR</td><td>DBA Agent 自動檢查衝突</td></tr>
+        <tr><td>自己 Feature 的所有文件</td><td>自由寫入</td><td>不會衝突（各自分支）</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== TAB 4: DAILY ==================== -->
+<div class="tab-content" id="daily">
+
+  <section>
+    <h2>每日開工流程</h2>
+    <p style="color:var(--text-dim); margin-bottom:24px;">垂直切模式下更簡單 — 大部分時間你只需要繼續自己的 Feature。</p>
+
+    <div class="step-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h4>拉最新 + 看有沒有 Review 請求</h4>
+        <div class="code-block">
+<span class="cmd">git pull</span>
+<span class="comment"># 檢查 Teams 有沒有別人的 Gate Review 請求</span>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h4>先做別人的 Review（如果有）</h4>
+        <div class="code-block">
+<span class="comment"># 開新 Claude session（不能用自己 Feature 的 session）</span>
+<span class="str">你是 Review Agent。執行 Gate 2 驗收。</span>
+<span class="str">讀取 TASKS.md + quality-gates SKILL.md</span>
+        </div>
+        <p>Gate Review 通常 30 分鐘內完成。做完通知對方。</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h4>繼續自己的 Feature</h4>
+        <div class="code-block">
+<span class="comment"># 回到自己的 Claude session</span>
+<span class="str">讀取 CLAUDE.md 和 memory/STATE.md</span>
+<span class="str">載入 SEED_[你目前的角色].md</span>
+<span class="str">繼續 F02 的 [目前 Pipeline 階段]</span>
+        </div>
+        <p>Claude 記得上次做到哪，直接接續。</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h4>到 Gate 了？通知 Reviewer</h4>
+        <div class="code-block">
+<span class="cmd">./scripts/handoff.sh</span> <span class="str">UX Review F02 "Prototype done" --gate 1</span>
+        </div>
+        <p>Teams 自動通知你的 Reviewer。繼續做下一個事或等 Review 結果。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>三人一天的典型時間線</h2>
+    <p style="color:var(--text-dim); margin-bottom:20px;">三條線各自推進，只在 Gate Review 時短暫交集。</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot alice"></div>
+        <div class="tl-label alice">09:00 — Alice</div>
+        <div class="tl-title">F01 繼續 P04 Backend 實作</div>
+        <div class="tl-desc">git pull → 回到昨天的 session → 載入 Backend Agent → 繼續寫 API</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot bob"></div>
+        <div class="tl-label bob">09:00 — Bob</div>
+        <div class="tl-title">F02 開始 P02 架構設計</div>
+        <div class="tl-desc">Gate 1 昨天通過了 → 載入 Architect Agent → 寫 F02-SW-ARCH.md</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot carol"></div>
+        <div class="tl-label carol">09:00 — Carol</div>
+        <div class="tl-title">先做 Bob 的 Gate 2 Review（30min）</div>
+        <div class="tl-desc">昨晚 Bob 發了 Gate 2 Review 請求 → 開新 session → Review Agent → 通過 ✅</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot carol"></div>
+        <div class="tl-label carol">09:30 — Carol</div>
+        <div class="tl-title">F03 繼續 P01 UX 設計</div>
+        <div class="tl-desc">Review 做完 → 切回自己的 Feature → 載入 UX Agent</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot alice"></div>
+        <div class="tl-label alice">14:00 — Alice</div>
+        <div class="tl-title">F01 P04 完成 → 請 Bob 做 Gate 3</div>
+        <div class="tl-desc">
+          <code style="background:var(--surface-2);padding:2px 6px;border-radius:4px;font-size:0.8rem;color:var(--cyan);">./scripts/handoff.sh QA Review F01 "Tests pass" --gate 3</code>
+          → Bob 的 Teams 收到通知
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot bob"></div>
+        <div class="tl-label bob">14:15 — Bob</div>
+        <div class="tl-title">暫停 F02 → 審 Alice 的 Gate 3（30min）</div>
+        <div class="tl-desc">開新 session → Review Agent → 審 F01 code + 測試報告 → 通過 ✅ → 回到 F02</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot alice"></div>
+        <div class="tl-label alice">15:00 — Alice</div>
+        <div class="tl-title">F01 P05+P06 合規+部署</div>
+        <div class="tl-desc">Gate 3 通過 → Security Agent 自檢 → DevOps Agent 部署 → F01 上線</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>注意節奏：</strong>Gate Review 請求盡量在下班前發出，讓 Reviewer 隔天早上第一件事做。避免白天打斷別人的 Feature 工作流。
+    </div>
+  </section>
+</div>
+
+<!-- ==================== TAB 5: NOTIFY ==================== -->
+<div class="tab-content" id="notify">
+
+  <section>
+    <h2>通知系統架構</h2>
+    <p style="color:var(--text-dim); margin-bottom:24px;">兩層通知：本地 CLI 腳本（即時）+ GitHub Actions（備援）。commit 的瞬間自動發到 Teams，不需要手動貼訊息。</p>
+
+    <div class="flow-box">
+      <div style="text-align:center; margin-bottom:24px;">
+        <div style="display:inline-flex; align-items:center; gap:16px; flex-wrap:wrap; justify-content:center;">
+          <div class="flow-node alice" style="font-size:0.9rem;">handoff.sh</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node bob" style="font-size:0.9rem;">git commit + push</div>
+          <div class="flow-arrow">→</div>
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-start;">
+            <div style="padding:8px 18px; border-radius:8px; font-size:0.9rem; font-weight:600; background:rgba(108,140,255,0.15); border:2px solid rgba(108,140,255,0.4); color:var(--accent);">Microsoft Teams</div>
+            <div style="padding:5px 14px; border-radius:8px; font-size:0.78rem; background:var(--surface-2); border:1px solid var(--border); color:var(--text-dim);">+ Slack / Discord / LINE（可選）</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div>
+          <div style="font-size:0.78rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">Layer 1 — 本地 CLI（即時）</div>
+          <div style="font-size:0.88rem; color:var(--text);">
+            <code style="background:var(--surface-2);padding:2px 6px;border-radius:4px;font-size:0.82rem;color:var(--cyan);">handoff.sh</code> 一個指令完成 commit + push + Teams 通知。離線時自動複製到剪貼簿。
+          </div>
+        </div>
+        <div>
+          <div style="font-size:0.78rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">Layer 2 — GitHub Actions（備援）</div>
+          <div style="font-size:0.88rem; color:var(--text);">
+            偵測 <code style="background:var(--surface-2);padding:2px 6px;border-radius:4px;font-size:0.82rem;color:var(--cyan);">handoff(</code> commit message → 自動觸發 Teams 通知。即使忘記用 CLI，push 後也會通知。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Teams Webhook 設定（5 分鐘）</h2>
+    <p style="color:var(--text-dim); margin-bottom:20px;">只需要做一次，之後所有交接自動通知。</p>
+
+    <div class="step-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h4>在 Teams 建立 Incoming Webhook</h4>
+        <p>Teams 頻道 → <strong>...</strong> → <strong>Connectors</strong>（或 <strong>Workflows</strong>）→ 搜尋 <strong>Incoming Webhook</strong> → Configure → 命名為 <code>AI-First Handoff</code> → 複製 Webhook URL</p>
+        <div class="info-box" style="margin-top:12px; font-size:0.82rem;">
+          <strong>Teams 新版（Workflows）：</strong>如果看不到 Connectors，改用 Workflows → <strong>Post to a channel when a webhook request is received</strong> → 選頻道 → 複製 URL
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h4>貼到 .env</h4>
+        <div class="code-block">
+<span class="comment"># ── Teams 交接通知（主要管道）────────────────</span>
+<span class="cmd">HANDOFF_TEAMS_WEBHOOK</span>=<span class="str">https://xxx.webhook.office.com/webhookb2/...</span>
+        </div>
+        <p>放在專案根目錄的 <code>.env</code> 檔案裡。<strong>不要 commit .env</strong>。</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h4>設定 GitHub Actions 備援</h4>
+        <div style="font-size:0.88rem; color:var(--text-dim); margin-top:8px;">
+          <p>GitHub repo → <strong>Settings</strong> → <strong>Secrets</strong> → New secret → Name: <code>HANDOFF_TEAMS_WEBHOOK</code> → 貼上同一個 URL</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">!</div>
+        <h4>測試</h4>
+        <div class="code-block">
+<span class="cmd">./scripts/handoff.sh</span> <span class="str">Test Test F00 "Webhook 測試"</span>
+        </div>
+        <p>如果 Teams 頻道收到通知 → 設定完成。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>handoff.sh 使用方式</h2>
+
+    <div class="step-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h4>基本交接</h4>
+        <div class="code-block">
+<span class="cmd">./scripts/handoff.sh</span> <span class="str">PM UX F01 "Login US 完成，12 條 AC"</span>
+        </div>
+        <p>自動：<code>git add</code> → <code>commit</code> → <code>push</code> → Teams 通知</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h4>Gate Review 交接</h4>
+        <div class="code-block">
+<span class="cmd">./scripts/handoff.sh</span> <span class="str">QA Review F01 "全部測試通過"</span> <span class="cmd">--gate</span> <span class="str">3</span>
+        </div>
+        <p>附帶 Gate 標記，Teams 卡片會顯示「Gate 3 Review」。</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h4>指定檔案</h4>
+        <div class="code-block">
+<span class="cmd">./scripts/handoff.sh</span> <span class="str">Backend Frontend F01 "API Spec"</span> \
+  <span class="cmd">--add</span> <span class="str">02_Specifications/F01-API.md</span>
+        </div>
+        <p>明確指定要 stage 的產出檔案。</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">!</div>
+        <h4>沒設定 Webhook？</h4>
+        <div style="font-size:0.88rem; color:var(--text-dim); margin-top:8px;">
+          <p>通知內容自動複製到<strong style="color:var(--text);">剪貼簿</strong>，直接 Cmd+V 貼到 Teams 聊天室。零設定也能用。</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Terminal 輸出範例</h3>
+    <div class="code-block" style="line-height:1.8;">
+<span style="color:var(--text);font-weight:700;">╔══════════════════════════════════════════════════╗</span>
+<span style="color:var(--text);font-weight:700;">║              HANDOFF — 交接通知                  ║</span>
+<span style="color:var(--text);font-weight:700;">╚══════════════════════════════════════════════════╝</span>
+
+  <span style="color:var(--cyan);">Feature：</span>F01
+  <span style="color:var(--cyan);">Pipeline：</span>P03/P04
+  <span style="color:var(--cyan);">從：</span>Bob (Backend)
+  <span style="color:var(--cyan);">到：</span>Carol (Frontend)
+  <span style="color:var(--cyan);">摘要：</span>API Spec 8 個 endpoint，已對齊 DB Schema
+
+  <span style="color:var(--yellow);">確認交接？</span> [Y/n] y
+
+  <span style="color:var(--accent);">[1/3]</span> Git commit + push...
+  <span style="color:var(--green);">✓</span> Committed: handoff(Backend→Frontend): F01 API Spec 8 個 endpoint
+  <span style="color:var(--green);">✓</span> Pushed to docs/P03-be-f01
+
+  <span style="color:var(--accent);">[2/3]</span> Building notification...
+  <span style="color:var(--accent);">[3/3]</span> Sending notifications...
+  <span style="color:var(--green);">✓</span> Teams notification sent
+
+<span style="color:var(--green);font-weight:700;">✅ 交接完成</span>
+<span style="color:var(--text-dim);">Carol 收到通知後：git pull → TASKS.md → 啟動 Frontend Agent</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Teams 通知效果預覽</h2>
+    <p style="color:var(--text-dim); margin-bottom:20px;">使用 Adaptive Card 格式，在 Teams 中顯示為結構化卡片。</p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:20px;">
+      <!-- Teams Adaptive Card Preview -->
+      <div style="background:#1a1d27; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;">
+        <div style="padding:12px 16px; background:#464775; font-size:0.78rem; font-weight:600; color:#fff; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="white"><path d="M8.5 3.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 1a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM6.5 7A2.5 2.5 0 0 0 4 9.5v.5h5v-.5A2.5 2.5 0 0 0 6.5 7zm4.5 3v-.5a3 3 0 0 0-.57-1.76A1.5 1.5 0 0 1 12 8.5v.5h-1z"/></svg>
+          Microsoft Teams — #dev-handoff
+        </div>
+        <div style="padding:20px;">
+          <!-- Adaptive Card simulation -->
+          <div style="background:#2d2f3a; border-radius:8px; padding:20px; border-left:4px solid #464775;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+              <div style="font-size:1.5rem;">🔀</div>
+              <div>
+                <div style="font-size:1.15rem; font-weight:700;">交接通知</div>
+                <div style="font-size:0.85rem; color:var(--text-dim);">Bob(Backend) → Carol(Frontend)</div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:100px 1fr; gap:6px 16px; margin-bottom:16px; font-size:0.9rem;">
+              <div style="color:var(--text-dim); font-weight:600;">Feature</div>
+              <div>F01</div>
+              <div style="color:var(--text-dim); font-weight:600;">Pipeline</div>
+              <div>P03/P04</div>
+              <div style="color:var(--text-dim); font-weight:600;">完成</div>
+              <div>API Spec 8 個 endpoint，已對齊 DB Schema</div>
+              <div style="color:var(--text-dim); font-weight:600;">時間</div>
+              <div>2026-03-17 14:30</div>
+            </div>
+
+            <div style="border-top:1px solid var(--border); padding-top:12px; font-size:0.85rem; color:var(--text-dim);">
+              📋 <strong style="color:var(--text);">下一步：</strong> <code style="background:rgba(0,0,0,0.3);padding:1px 4px;border-radius:3px;font-size:0.78rem;">git pull</code> → 確認 TASKS.md → 啟動 Frontend Agent
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Teams Preview -->
+      <div style="background:#1a1d27; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;">
+        <div style="padding:12px 16px; background:#464775; font-size:0.78rem; font-weight:600; color:#fff; text-transform:uppercase; letter-spacing:0.05em;">Teams Mobile 通知</div>
+        <div style="padding:20px;">
+          <div style="max-width:300px; margin:0 auto;">
+            <!-- Mobile notification simulation -->
+            <div style="background:#2d2f3a; border-radius:12px; padding:16px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <div style="width:32px; height:32px; background:#464775; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#fff; font-weight:700;">H</div>
+                <div>
+                  <div style="font-size:0.82rem; font-weight:600;">AI-First Handoff</div>
+                  <div style="font-size:0.72rem; color:var(--text-dim);">#dev-handoff</div>
+                </div>
+              </div>
+              <div style="font-size:0.88rem; line-height:1.6;">
+                <div style="font-weight:600; margin-bottom:4px;">🔀 交接通知</div>
+                <div style="color:var(--text-dim);">Bob → <span style="color:var(--accent);">@Carol</span></div>
+                <div>F01 API Spec 8 個 endpoint</div>
+                <div style="color:var(--text-dim); font-size:0.8rem; margin-top:8px;">📋 git pull → TASKS.md → Frontend Agent</div>
+              </div>
+            </div>
+            <div style="text-align:center; margin-top:12px; font-size:0.78rem; color:var(--text-dim);">
+              Carol 的手機會收到 push notification
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>所有支援管道</h2>
+    <p style="color:var(--text-dim); margin-bottom:20px;">Teams 為主要管道，其他可選。支援同時多管道。</p>
+
+    <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>管道</th>
+          <th>.env 變數</th>
+          <th>格式</th>
+          <th>狀態</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:rgba(108,140,255,0.05);">
+          <td><strong style="color:var(--accent);">Microsoft Teams</strong></td>
+          <td><code>HANDOFF_TEAMS_WEBHOOK</code></td>
+          <td>Adaptive Card（結構化卡片）</td>
+          <td><span class="badge" style="background:rgba(108,140,255,0.2); color:var(--accent);">主要</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text-dim);">Slack</strong></td>
+          <td><code>HANDOFF_SLACK_WEBHOOK</code></td>
+          <td>Block Kit</td>
+          <td><span class="badge" style="background:var(--surface-2); color:var(--text-dim);">可選</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text-dim);">Discord</strong></td>
+          <td><code>HANDOFF_DISCORD_WEBHOOK</code></td>
+          <td>Embed</td>
+          <td><span class="badge" style="background:var(--surface-2); color:var(--text-dim);">可選</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text-dim);">LINE Notify</strong></td>
+          <td><code>HANDOFF_LINE_TOKEN</code></td>
+          <td>純文字</td>
+          <td><span class="badge" style="background:var(--surface-2); color:var(--text-dim);">可選</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text-dim);">GitHub Issue</strong></td>
+          <td><code>HANDOFF_GITHUB_ISSUE=true</code></td>
+          <td>Markdown Issue</td>
+          <td><span class="badge" style="background:var(--surface-2); color:var(--text-dim);">可選</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text-dim);">剪貼簿</strong></td>
+          <td><span style="color:var(--text-dim);">（自動 fallback）</span></td>
+          <td>純文字 → Cmd+V</td>
+          <td><span class="badge" style="background:var(--surface-2); color:var(--text-dim);">備援</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>.env 完整範例</h3>
+    <div class="code-block">
+<span class="comment"># ── 交接通知管道 ──────────────────────────────</span>
+
+<span class="comment"># Microsoft Teams（主要 — Adaptive Card 格式）</span>
+<span class="cmd">HANDOFF_TEAMS_WEBHOOK</span>=<span class="str">https://xxx.webhook.office.com/webhookb2/...</span>
+
+<span class="comment"># 以下為可選，可同時啟用多管道</span>
+<span class="comment"># HANDOFF_SLACK_WEBHOOK=https://hooks.slack.com/services/...</span>
+<span class="comment"># HANDOFF_LINE_TOKEN=your-line-notify-token</span>
+<span class="comment"># HANDOFF_GITHUB_ISSUE=true</span>
+    </div>
+
+    <div class="info-box warn" style="margin-top:16px;">
+      <strong>GitHub Actions 雙重保險：</strong>即使團隊成員忘記用 <code>handoff.sh</code>，只要 commit message 包含 <code>handoff(</code>，GitHub Actions 也會自動發到 Teams。需在 Repository Settings → Secrets 設定 <code>HANDOFF_TEAMS_WEBHOOK</code>。
+    </div>
+  </section>
+
+  <section>
+    <h2>推薦設定</h2>
+    <div class="rule-grid">
+      <div class="rule-card" style="border-color:rgba(108,140,255,0.3);">
+        <div class="rule-icon">🏆</div>
+        <h4>你的團隊推薦</h4>
+        <p><strong>handoff.sh + Teams Webhook + GitHub Actions</strong><br>CLI 即時發 Adaptive Card 到 Teams 頻道。GitHub Actions 作為備援。Carol 手機收到 push notification，立刻知道該接手。</p>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon">⚡</div>
+        <h4>最速起步（零設定）</h4>
+        <p><strong>handoff.sh + 剪貼簿</strong><br>不設 Webhook 也能用。通知自動複製，Cmd+V 直接貼到 Teams 聊天。30 秒內開始使用。</p>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon">🔔</div>
+        <h4>進階：Teams + @mention</h4>
+        <p>在 TEAM.md 角色表填入 Teams email，handoff.sh 可在 Adaptive Card 中 <code>&lt;at&gt;</code> tag 對方。收到 push notification + badge 提醒。</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== TAB 6: RULES ==================== -->
+<div class="tab-content" id="rules">
+
+  <section>
+    <h2>協作鐵規</h2>
+    <p style="color:var(--text-dim); margin-bottom:24px;">違反任何一條都會造成混亂或品質問題。</p>
+
+    <div class="rule-grid">
+      <div class="rule-card">
+        <div class="rule-icon">🔒</div>
+        <h4>Gate Review 必須開新 Session</h4>
+        <p>寫 code / 寫規格的 session 不做 Review。新 session = 新鮮眼睛，避免確認偏誤。</p>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">🔀</div>
+        <h4>Gate Review 交叉執行</h4>
+        <p>寫的人不審自己。Alice 寫的 → Bob 或 Carol 審。三人交叉確保獨立性。</p>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">📋</div>
+        <h4>TASKS.md 只 Append</h4>
+        <p>不修改他人已寫的行。衝突以時間較晚者為準。這是防止覆蓋他人進度的保險。</p>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">📝</div>
+        <h4>STATE.md 單人寫入</h4>
+        <p>只有 active_member 有寫入權。其他人唯讀。避免狀態互相覆蓋。</p>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">🔗</div>
+        <h4>每次交接必 Commit + 通知</h4>
+        <p>沒有 commit 就沒有交接。下一個人 git pull 看不到你的產出 = 等同沒做。</p>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">🚫</div>
+        <h4>decisions.md 不直接 Push</h4>
+        <p>技術決策透過 PR 修改。三人都要看到變更，不能一個人偷偷改架構決策。</p>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">⚡</div>
+        <h4>G4-ENG 必須通過才能 P04</h4>
+        <p>沒有通過工程設計驗收，不允許開始寫 code。先驗證設計，再動手實作。</p>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">🌊</div>
+        <h4>Wave 並行寫入前先讀最新版</h4>
+        <p>兩人並行時（如 Architect ∥ DBA），寫入共享文件前先讀取最新版，防止覆蓋。</p>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">📐</div>
+        <h4>修改程式碼前必做 Grounding</h4>
+        <p>執行 /ground 讓 code-grounder agent 先理解現況。禁止假設、禁止猜測。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>共用檔案寫入權限</h2>
+    <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr><th>檔案</th><th>寫入規則</th><th>衝突處理</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>TASKS.md</code></td><td>只 append</td><td>時間較晚者為準</td></tr>
+        <tr><td><code>memory/STATE.md</code></td><td>active_member 才能寫</td><td>其他人唯讀</td></tr>
+        <tr><td><code>memory/decisions.md</code></td><td>透過 PR</td><td>三人 Review</td></tr>
+        <tr><td>規格文件（US / API / DB）</td><td>負責 Agent 的人 owns</td><td>他人開 PR</td></tr>
+        <tr><td><code>01_Product_Prototype/</code></td><td>Alice (UX) owns</td><td>Carol 修改需 PR</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>新成員加入清單</h2>
+    <div class="step-grid" style="grid-template-columns: 1fr;">
+      <div class="step-card" style="max-width:600px;">
+        <div class="code-block">
+<span class="comment"># 1. Clone 專案</span>
+<span class="cmd">git clone</span> <span class="str">[repo-url]</span>
+
+<span class="comment"># 2. 讀文件（依序）</span>
+<span class="str">README.md</span>     <span class="comment">← 框架概念</span>
+<span class="str">CLAUDE.md</span>     <span class="comment">← 專案結構 + Pipeline</span>
+<span class="str">TEAM.md</span>       <span class="comment">← 角色認領（填上你的名字）</span>
+<span class="str">memory/STATE.md</span> <span class="comment">← 目前進度</span>
+<span class="str">TASKS.md</span>      <span class="comment">← 待辦任務</span>
+
+<span class="comment"># 3. 與 PM 確認第一個任務</span>
+
+<span class="comment"># 4. 啟動 Claude → 載入對應 Seed → 開始工作</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+</div><!-- /container -->
+
+<div style="text-align:center; padding:48px 24px; color:var(--text-dim); font-size:0.82rem; border-top:1px solid var(--border); margin-top:48px;">
+  AI-First Framework v2.4.0 — 三人團隊協作流程總結<br>
+  協調中樞：git + TASKS.md + 團隊頻道通知
+</div>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

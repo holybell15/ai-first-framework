@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V4 Workflow Blueprint v1.0</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3348;
+    --text: #e2e8f0;
+    --text-muted: #7c8699;
+    --text-dim: #4a5568;
+    --accent: #6c8ef5;
+    --accent-soft: rgba(108,142,245,0.12);
+    --green: #48bb78;
+    --green-soft: rgba(72,187,120,0.12);
+    --amber: #f6ad55;
+    --amber-soft: rgba(246,173,85,0.12);
+    --red: #fc8181;
+    --red-soft: rgba(252,129,129,0.12);
+    --purple: #b794f4;
+    --purple-soft: rgba(183,148,244,0.12);
+    --teal: #4fd1c5;
+    --teal-soft: rgba(79,209,197,0.12);
+    --pink: #f687b3;
+    --pink-soft: rgba(246,135,179,0.12);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15,17,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 2px;
+    height: 52px;
+  }
+  .nav-logo {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    margin-right: 20px;
+    white-space: nowrap;
+  }
+  .nav-badge {
+    background: var(--green-soft);
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-left: 8px;
+    letter-spacing: 0.5px;
+  }
+  .nav-tab {
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-muted);
+    transition: all .15s;
+    white-space: nowrap;
+    border: none;
+    background: none;
+  }
+  .nav-tab:hover { color: var(--text); background: var(--surface); }
+  .nav-tab.active { color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+
+  /* LAYOUT */
+  .page { display: none; padding: 28px 24px; max-width: 1200px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* TYPOGRAPHY */
+  h1 { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  h2 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+  h3 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+  .subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-row { display: grid; gap: 14px; }
+  .col-2 { grid-template-columns: 1fr 1fr; }
+  .col-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .col-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  /* BADGE */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .badge-blue { background: var(--accent-soft); color: var(--accent); }
+  .badge-green { background: var(--green-soft); color: var(--green); }
+  .badge-amber { background: var(--amber-soft); color: var(--amber); }
+  .badge-red { background: var(--red-soft); color: var(--red); }
+  .badge-purple { background: var(--purple-soft); color: var(--purple); }
+  .badge-teal { background: var(--teal-soft); color: var(--teal); }
+  .badge-pink { background: var(--pink-soft); color: var(--pink); }
+
+  /* PIPELINE FLOW */
+  .pipeline-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .stage-block {
+    flex: 1;
+    min-width: 160px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 14px;
+    position: relative;
+    transition: border-color .2s;
+  }
+  .stage-block:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+  .stage-block:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+  .stage-block:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid var(--border);
+    z-index: 2;
+  }
+  .stage-block:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 9px solid transparent;
+    border-bottom: 9px solid transparent;
+    border-left: 9px solid var(--surface);
+    z-index: 3;
+  }
+  .stage-block:hover { border-color: var(--accent); }
+  .stage-num { font-size: 10px; color: var(--text-dim); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .stage-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .stage-gate { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-bottom: 10px; }
+  .stage-outputs { font-size: 11px; color: var(--text-muted); line-height: 1.8; }
+  .stage-outputs span { display: block; }
+  .stage-outputs span::before { content: '→ '; color: var(--text-dim); }
+
+  .s-discover { border-top: 3px solid #6c8ef5; }
+  .s-discover .stage-name { color: #6c8ef5; }
+  .s-discover .stage-gate { background: rgba(108,142,245,0.15); color: #6c8ef5; }
+  .s-plan { border-top: 3px solid #b794f4; }
+  .s-plan .stage-name { color: #b794f4; }
+  .s-plan .stage-gate { background: rgba(183,148,244,0.15); color: #b794f4; }
+  .s-build { border-top: 3px solid #f6ad55; }
+  .s-build .stage-name { color: #f6ad55; }
+  .s-build .stage-gate { background: rgba(246,173,85,0.15); color: #f6ad55; }
+  .s-verify { border-top: 3px solid #fc8181; }
+  .s-verify .stage-name { color: #fc8181; }
+  .s-verify .stage-gate { background: rgba(252,129,129,0.15); color: #fc8181; }
+  .s-ship { border-top: 3px solid #48bb78; }
+  .s-ship .stage-name { color: #48bb78; }
+  .s-ship .stage-gate { background: rgba(72,187,120,0.15); color: #48bb78; }
+
+  /* SPECIAL TRACKS */
+  .track-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .track-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; }
+  .track-card .track-name { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+  .track-card .track-trigger { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+  .track-card .track-steps { font-size: 11px; color: var(--text-muted); }
+  .track-card .track-steps span { display: inline-flex; align-items: center; gap: 3px; }
+  .track-card .track-steps span::after { content: '→'; color: var(--text-dim); margin: 0 3px; }
+  .track-card .track-steps span:last-child::after { display: none; }
+
+  /* GATE DETAILS */
+  .gate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .gate-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }
+  .gate-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .gate-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .gate-title { font-size: 13px; font-weight: 700; }
+  .gate-loc { font-size: 11px; color: var(--text-muted); }
+  .gate-items { list-style: none; }
+  .gate-items li { font-size: 12px; color: var(--text-muted); padding: 3px 0; border-bottom: 1px solid var(--border); display: flex; gap: 6px; }
+  .gate-items li:last-child { border-bottom: none; }
+  .gate-items li::before { content: '✓'; color: var(--green); font-size: 11px; margin-top: 1px; flex-shrink: 0; }
+  .gate-reviewer { margin-top: 10px; display: flex; align-items: center; gap: 6px; font-size: 11px; }
+  .gate-reviewer-label { color: var(--text-dim); }
+
+  /* AGENT ARCHITECTURE */
+  .agent-arch { display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start; }
+  .task-master-box {
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+    position: relative;
+  }
+  .task-master-box::after {
+    content: '';
+    position: absolute;
+    right: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 8px solid var(--accent);
+  }
+  .tm-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 6px; }
+  .tm-name { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .tm-duties { list-style: none; text-align: left; }
+  .tm-duties li { font-size: 11px; color: var(--text-muted); padding: 3px 0; border-bottom: 1px solid var(--border); }
+  .tm-duties li:last-child { border-bottom: none; }
+  .tm-duties li::before { content: '◆ '; color: var(--accent); font-size: 8px; }
+  .tm-context { margin-top: 10px; background: var(--accent-soft); border-radius: var(--radius-sm); padding: 8px; font-size: 10px; color: var(--accent); }
+
+  .groups-panel { display: flex; flex-direction: column; gap: 10px; }
+  .group-row { display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: stretch; }
+  .group-label {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .group-label .g-stages { font-size: 10px; color: var(--text-muted); font-weight: 400; }
+  .specialists-row { display: flex; gap: 8px; }
+  .specialist-card {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .specialist-card:hover { border-color: currentColor; }
+  .specialist-card .sp-name { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .specialist-card .sp-skills { font-size: 10px; color: var(--text-muted); line-height: 1.6; }
+
+  .review-specialist-row {
+    background: var(--surface2);
+    border: 1px solid var(--purple);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 4px;
+  }
+  .rs-badge { background: var(--purple-soft); color: var(--purple); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+  .rs-desc { font-size: 12px; color: var(--text-muted); }
+  .rs-gates { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* DRIFT SIGNAL */
+  .drift-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--amber);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-top: 16px;
+  }
+  .drift-title { font-size: 12px; font-weight: 700; color: var(--amber); margin-bottom: 8px; }
+  .drift-flow { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-wrap: wrap; }
+  .drift-node { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 12px; }
+  .drift-arrow { color: var(--amber); font-size: 16px; }
+  .drift-code {
+    background: #0d0f18;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    line-height: 1.8;
+  }
+  .drift-key { color: var(--accent); }
+  .drift-val { color: var(--green); }
+
+  /* SKILL TIERS */
+  .tier-section { margin-bottom: 20px; }
+  .tier-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 10px;
+  }
+  .tier1-header { background: rgba(108,142,245,0.1); border: 1px solid rgba(108,142,245,0.3); }
+  .tier2-header { background: rgba(72,187,120,0.08); border: 1px solid rgba(72,187,120,0.25); }
+  .tier3-header { background: rgba(124,134,153,0.08); border: 1px solid rgba(124,134,153,0.2); }
+  .tier-num { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 20px; }
+  .tier1-num { background: var(--accent-soft); color: var(--accent); }
+  .tier2-num { background: var(--green-soft); color: var(--green); }
+  .tier3-num { background: rgba(124,134,153,0.12); color: var(--text-muted); }
+  .tier-title { font-size: 13px; font-weight: 700; }
+  .tier-rule { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+
+  .skill-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .15s;
+  }
+  .skill-chip:hover { border-color: var(--accent); }
+  .skill-chip .trigger { font-size: 10px; color: var(--text-dim); }
+  .skill-chip.mandatory { border-left: 3px solid var(--accent); }
+  .skill-chip.renamed { border-left: 3px solid var(--amber); }
+  .skill-chip.new-skill { border-left: 3px solid var(--green); }
+
+  .skill-table { width: 100%; border-collapse: collapse; }
+  .skill-table th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); padding: 8px 12px; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.5px; }
+  .skill-table td { padding: 8px 12px; font-size: 12px; border-bottom: 1px solid rgba(46,51,72,0.5); vertical-align: top; }
+  .skill-table tr:last-child td { border-bottom: none; }
+  .skill-table tr:hover td { background: var(--surface2); }
+
+  /* MEMORY */
+  .memory-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+  .memory-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .mem-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .mem-icon { width: 28px; height: 28px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .mem-title { font-size: 13px; font-weight: 700; }
+  .mem-subtitle { font-size: 11px; color: var(--text-muted); }
+  .mem-size { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); margin-left: auto; }
+  .mem-schema {
+    background: #0d0f18;
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 10px;
+    color: #7c8699;
+    line-height: 2;
+    overflow-x: auto;
+  }
+  .mem-key { color: var(--accent); }
+  .mem-val { color: var(--green); }
+  .mem-comment { color: #4a5568; }
+
+  .memory-principles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .mem-principle { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; font-size: 12px; }
+  .mem-principle strong { color: var(--accent); display: block; margin-bottom: 2px; }
+
+  /* FINDINGS/PROGRESS */
+  .findings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .finding-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; }
+  .finding-card .fc-file { font-family: monospace; font-size: 11px; color: var(--amber); margin-bottom: 4px; font-weight: 700; }
+  .finding-card .fc-desc { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+  .finding-card .fc-examples { font-size: 10px; color: var(--text-dim); }
+  .finding-card .fc-examples span { display: block; }
+  .finding-card .fc-examples span::before { content: '• '; }
+
+  /* DESIGN TENETS */
+  .tenet-list { display: flex; flex-direction: column; gap: 10px; }
+  .tenet-item { display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: start; }
+  .tenet-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; }
+  .t1 { background: rgba(108,142,245,0.2); color: var(--accent); }
+  .t2 { background: rgba(72,187,120,0.2); color: var(--green); }
+  .t3 { background: rgba(246,173,85,0.2); color: var(--amber); }
+  .t4 { background: rgba(252,129,129,0.2); color: var(--red); }
+  .t5 { background: rgba(183,148,244,0.2); color: var(--purple); }
+  .tenet-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .tenet-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+  /* FILE STRUCTURE */
+  .file-tree {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    background: #0d0f18;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    line-height: 2;
+    overflow-x: auto;
+  }
+  .ft-dir { color: var(--accent); }
+  .ft-file { color: var(--text-muted); }
+  .ft-file.highlight { color: var(--green); }
+  .ft-file.new { color: var(--amber); }
+  .ft-comment { color: #4a5568; font-size: 11px; }
+
+  /* TOKEN BUDGET */
+  .budget-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .budget-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; }
+  .budget-file { font-family: monospace; font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+  .budget-bar-wrap { background: var(--border); border-radius: 4px; height: 6px; margin-bottom: 6px; overflow: hidden; }
+  .budget-bar { height: 100%; border-radius: 4px; }
+  .budget-nums { display: flex; justify-content: space-between; font-size: 11px; }
+  .budget-limit { font-weight: 700; }
+
+  /* RESIDUAL RISKS */
+  .risk-list { display: flex; flex-direction: column; gap: 10px; }
+  .risk-item { background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: var(--radius-sm); padding: 14px; }
+  .risk-item.resolved { border-left: 3px solid var(--green); background: rgba(72,187,120,0.04); }
+  .risk-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .risk-id { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; background: var(--amber-soft); color: var(--amber); }
+  .risk-id.resolved { background: var(--green-soft); color: var(--green); }
+  .risk-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: var(--green-soft); color: var(--green); margin-left: auto; }
+  .risk-title { font-size: 13px; font-weight: 700; }
+  .risk-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+  .risk-fix { font-size: 12px; color: var(--green); margin-bottom: 8px; }
+  .risk-fix::before { content: '→ 原計畫: '; color: var(--text-dim); }
+  .risk-deliverable { font-size: 12px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; padding: 10px; background: var(--surface); border-radius: var(--radius-sm); border: 1px solid var(--border); margin-top: 6px; }
+  .risk-deliverable-title { font-size: 11px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+  .risk-deliverable-row { display: flex; gap: 8px; align-items: baseline; }
+  .risk-deliverable-label { font-size: 10px; color: var(--text-dim); min-width: 56px; }
+  .risk-resolved-banner { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--green-soft); border-radius: var(--radius-sm); margin-bottom: 16px; border: 1px solid rgba(72,187,120,0.25); }
+  .risk-resolved-banner-icon { font-size: 18px; }
+  .risk-resolved-banner-text { font-size: 13px; font-weight: 700; color: var(--green); }
+  .risk-resolved-banner-sub { font-size: 11px; color: var(--text-muted); }
+
+  /* MIGRATION */
+  .migration-table { width: 100%; border-collapse: collapse; }
+  .migration-table th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); padding: 8px 12px; border-bottom: 1px solid var(--border); text-transform: uppercase; }
+  .migration-table td { padding: 8px 12px; font-size: 12px; border-bottom: 1px solid rgba(46,51,72,0.5); vertical-align: middle; }
+  .migration-table tr:hover td { background: var(--surface2); }
+  .del-text { text-decoration: line-through; color: var(--text-dim); }
+  .new-text { color: var(--green); }
+  .arrow-cell { color: var(--text-dim); text-align: center; }
+
+  /* SECTION DIVIDER */
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    margin-top: 8px;
+  }
+  .section-title h2 { margin-bottom: 0; }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* COWORK/CLAUDE CODE SPLIT */
+  .platform-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .platform-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .platform-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .platform-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .platform-name { font-size: 14px; font-weight: 700; }
+  .platform-stages { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .platform-cap { display: grid; grid-template-columns: 1fr auto; gap: 4px; font-size: 12px; align-items: center; }
+  .platform-cap .cap-name { color: var(--text-muted); }
+  .cap-yes { color: var(--green); }
+  .cap-no { color: var(--red); }
+
+  /* FOOTER */
+  .page-footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .footer-left { font-size: 11px; color: var(--text-dim); }
+  .footer-right { font-size: 11px; color: var(--text-dim); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    .col-2, .col-3, .col-4 { grid-template-columns: 1fr; }
+    .gate-grid { grid-template-columns: 1fr; }
+    .memory-grid { grid-template-columns: 1fr; }
+    .agent-arch { grid-template-columns: 1fr; }
+    .budget-grid { grid-template-columns: 1fr; }
+    .platform-split { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">V4 Blueprint <span class="nav-badge">v1.1</span></div>
+  <button class="nav-tab active" onclick="showPage('overview')">Overview</button>
+  <button class="nav-tab" onclick="showPage('pipeline')">Pipeline</button>
+  <button class="nav-tab" onclick="showPage('agents')">Agents</button>
+  <button class="nav-tab" onclick="showPage('skills')">Skills</button>
+  <button class="nav-tab" onclick="showPage('memory')">Memory</button>
+  <button class="nav-tab" onclick="showPage('files')">Files</button>
+  <button class="nav-tab" onclick="showPage('supplement')">Supplement</button>
+  <button class="nav-tab" onclick="showPage('v3migration')">v3→v4</button>
+  <button class="nav-tab" onclick="showPage('risks')">Risks</button>
+</nav>
+
+<!-- ===== OVERVIEW ===== -->
+<div id="page-overview" class="page active">
+  <h1>V4 Workflow Blueprint</h1>
+  <p class="subtitle">Approved by 凱子 + Codex (2 rounds) · 2026-03-31 · 取代 v3.3 框架</p>
+
+  <div class="section-title"><h2>設計原則</h2><div class="section-line"></div></div>
+  <div class="card">
+    <div class="tenet-list">
+      <div class="tenet-item">
+        <div class="tenet-num t1">T1</div>
+        <div>
+          <div class="tenet-name">Evidence over Assertion</div>
+          <div class="tenet-desc">所有宣稱必須附帶可驗證的證據。不是 checklist 打勾，而是跑實際指令、看實際 output。</div>
+        </div>
+      </div>
+      <div class="tenet-item">
+        <div class="tenet-num t2">T2</div>
+        <div>
+          <div class="tenet-name">Scope is Sacred</div>
+          <div class="tenet-desc">Discover Gate 通過後，需求文件是唯一範圍基準。No silent scope change / redesign / requirement rewrite。</div>
+        </div>
+      </div>
+      <div class="tenet-item">
+        <div class="tenet-num t3">T3</div>
+        <div>
+          <div class="tenet-name">Context is Currency</div>
+          <div class="tenet-desc">每多載入 1K tokens 的 context 就是在花錢。Agent 只載入當前任務需要的最小 context；subagent 不繼承 controller 的 session history。</div>
+        </div>
+      </div>
+      <div class="tenet-item">
+        <div class="tenet-num t4">T4</div>
+        <div>
+          <div class="tenet-name">Fix Upstream, Not Downstream</div>
+          <div class="tenet-desc">若發現需求/設計有誤，回上游文件修正後再重新往下執行。不在下游硬修、不靠 patch 掩蓋。</div>
+        </div>
+      </div>
+      <div class="tenet-item">
+        <div class="tenet-num t5">T5</div>
+        <div>
+          <div class="tenet-name">Process over Guessing</div>
+          <div class="tenet-desc">遇到問題用結構化流程解決，不用直覺猜。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:24px"><h2>快速數字</h2><div class="section-line"></div></div>
+  <div class="card-row col-4">
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;font-weight:800;color:var(--accent)">5</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">主流程階段</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;font-weight:800;color:var(--purple)">11</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Specialist 角色</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;font-weight:800;color:var(--green)">11</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Tier 1 Core Skills</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;font-weight:800;color:var(--amber)">4</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Memory 檔案</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:8px"><h2>vs v3.3 對比</h2><div class="section-line"></div></div>
+  <div class="card-row col-2">
+    <div class="card" style="border-color:#fc8181">
+      <h3 style="color:var(--red)">v3.3 問題</h3>
+      <ul style="list-style:none;font-size:12px;color:var(--text-muted);">
+        <li style="padding:4px 0;border-bottom:1px solid var(--border)">❌ CLAUDE.md 25,000 tokens</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border)">❌ 17 個記憶體檔案</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border)">❌ 39+ skills 無層級區分</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border)">❌ 13 個 SEED 角色定義</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border)">❌ pipeline-orchestrator 吃全局 context</li>
+        <li style="padding:4px 0">❌ workflow_rules.md 105KB 規則檔</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--green)">
+      <h3 style="color:var(--green)">v4.0 改善</h3>
+      <ul style="list-style:none;font-size:12px;color:var(--text-muted);">
+        <li style="padding:4px 0;border-bottom:1px solid var(--border)">✅ CLAUDE.md &lt; 5,000 tokens</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border)">✅ 4 個核心記憶體檔案</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border)">✅ Tier 1/2/3 三層分類</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border)">✅ 3 個 GROUP + 1 個 ROLE_Review</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border)">✅ Task-Master 輕量 dispatcher</li>
+        <li style="padding:4px 0">✅ 規則分散至各 skill</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PIPELINE ===== -->
+<div id="page-pipeline" class="page">
+  <h1>Pipeline</h1>
+  <p class="subtitle">主流程 + 3 個特殊通道 + 4 個品質關卡</p>
+
+  <div class="section-title"><h2>主流程</h2><div class="section-line"></div></div>
+  <div class="pipeline-flow">
+    <div class="stage-block s-discover">
+      <div class="stage-num">Stage 01</div>
+      <div class="stage-name">Discover</div>
+      <div class="stage-gate">🔵 Discover Gate</div>
+      <div class="stage-outputs">
+        <span>SRS</span>
+        <span>AC (Acceptance Criteria)</span>
+        <span>WBS</span>
+        <span>Scope Baseline</span>
+      </div>
+    </div>
+    <div class="stage-block s-plan">
+      <div class="stage-num">Stage 02</div>
+      <div class="stage-name">Plan</div>
+      <div class="stage-gate">🟣 Plan Gate</div>
+      <div class="stage-outputs">
+        <span>System Design</span>
+        <span>Slice Backlog</span>
+        <span>Design Baseline</span>
+        <span>API / DB Spec</span>
+      </div>
+    </div>
+    <div class="stage-block s-build">
+      <div class="stage-num">Stage 03</div>
+      <div class="stage-name">Build</div>
+      <div class="stage-gate">🟠 Build Gate</div>
+      <div class="stage-outputs">
+        <span>Working code</span>
+        <span>Test suites</span>
+        <span>PR (Code Review)</span>
+        <span>垂直切片完成</span>
+      </div>
+    </div>
+    <div class="stage-block s-verify">
+      <div class="stage-num">Stage 04</div>
+      <div class="stage-name">Verify</div>
+      <div class="stage-gate">🔴 Ship Gate</div>
+      <div class="stage-outputs">
+        <span>Test Reports</span>
+        <span>Security Audit</span>
+        <span>Release Evidence</span>
+      </div>
+    </div>
+    <div class="stage-block s-ship">
+      <div class="stage-num">Stage 05</div>
+      <div class="stage-name">Ship</div>
+      <div class="stage-gate" style="background:rgba(72,187,120,0.15);color:#48bb78">✓ Done</div>
+      <div class="stage-outputs">
+        <span>Release Notes</span>
+        <span>Deployment Record</span>
+        <span>Retro Report</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><h2>特殊通道</h2><div class="section-line"></div></div>
+  <div class="track-row">
+    <div class="track-card" style="border-top:3px solid var(--teal)">
+      <div class="track-name" style="color:var(--teal)">⚡ Lite Mode</div>
+      <div class="track-trigger">適用：PoC / 小型需求 / 個人專案</div>
+      <div class="track-steps">
+        <span>Discover (簡)</span>
+        <span>Plan (簡)</span>
+        <span>Build</span>
+        <span>Ship</span>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-dim)">跳過 Verify 的合規部分，Gate 採 Checklist pass</div>
+    </div>
+    <div class="track-card" style="border-top:3px solid var(--amber)">
+      <div class="track-name" style="color:var(--amber)">🏗 Brownfield</div>
+      <div class="track-trigger">適用：接手既有程式碼</div>
+      <div class="track-steps">
+        <span>Baseline</span>
+        <span>Snapshot</span>
+        <span>Gap Report</span>
+        <span>First Change</span>
+        <span>主流程</span>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-dim)">先建 snapshot 再動手，Gap Report 必須產出</div>
+    </div>
+    <div class="track-card" style="border-top:3px solid var(--red)">
+      <div class="track-name" style="color:var(--red)">🚨 Hotfix</div>
+      <div class="track-trigger">適用：線上 Critical/High 事件</div>
+      <div class="track-steps">
+        <span>Incident</span>
+        <span>Root Cause</span>
+        <span>Minimal Fix</span>
+        <span>Rollback</span>
+        <span>Smoke</span>
+        <span>Follow-up</span>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-dim)">不可偷渡新功能；限直接相關 code</div>
+    </div>
+  </div>
+
+  <div class="section-title"><h2>品質關卡 (Quality Gates)</h2><div class="section-line"></div></div>
+  <div class="gate-grid">
+    <div class="gate-card" style="border-top:3px solid #6c8ef5">
+      <div class="gate-header">
+        <div class="gate-dot" style="background:#6c8ef5"></div>
+        <div>
+          <div class="gate-title">Discover Gate</div>
+          <div class="gate-loc">Discover → Plan</div>
+        </div>
+      </div>
+      <ul class="gate-items">
+        <li>SRS 完整</li>
+        <li>AC 可測試</li>
+        <li>WBS 已拆</li>
+        <li>MVP 邊界已確認</li>
+        <li>Stakeholder 已簽核</li>
+      </ul>
+      <div class="gate-reviewer">
+        <span class="gate-reviewer-label">審查：</span>
+        <span class="badge badge-purple">Review specialist</span>
+        <span class="badge badge-teal">Checklist (Lite)</span>
+      </div>
+    </div>
+    <div class="gate-card" style="border-top:3px solid #b794f4">
+      <div class="gate-header">
+        <div class="gate-dot" style="background:#b794f4"></div>
+        <div>
+          <div class="gate-title">Plan Gate</div>
+          <div class="gate-loc">Plan → Build</div>
+        </div>
+      </div>
+      <ul class="gate-items">
+        <li>架構完整、模組邊界清楚</li>
+        <li>API / DB spec 已定義</li>
+        <li>UI Design Baseline locked</li>
+        <li>Slice Backlog 已建立</li>
+        <li>測試策略已定義</li>
+      </ul>
+      <div class="gate-reviewer">
+        <span class="gate-reviewer-label">審查：</span>
+        <span class="badge badge-purple">Review specialist</span>
+        <span class="badge badge-teal">Checklist (Lite)</span>
+      </div>
+    </div>
+    <div class="gate-card" style="border-top:3px solid #f6ad55">
+      <div class="gate-header">
+        <div class="gate-dot" style="background:#f6ad55"></div>
+        <div>
+          <div class="gate-title">Build Gate</div>
+          <div class="gate-loc">Build → Verify</div>
+        </div>
+      </div>
+      <ul class="gate-items">
+        <li>所有 Slice 實作完成</li>
+        <li>Unit test ≥ 80% coverage</li>
+        <li>Integration 關鍵路徑 100%</li>
+        <li>無 scope drift（對照 SRS）</li>
+        <li>Code Review 已通過</li>
+      </ul>
+      <div class="gate-reviewer">
+        <span class="gate-reviewer-label">審查：</span>
+        <span class="badge badge-purple">Review specialist</span>
+        <span class="badge badge-green">自動化測試報告</span>
+      </div>
+    </div>
+    <div class="gate-card" style="border-top:3px solid #fc8181">
+      <div class="gate-header">
+        <div class="gate-dot" style="background:#fc8181"></div>
+        <div>
+          <div class="gate-title">Ship Gate</div>
+          <div class="gate-loc">Verify → Ship</div>
+        </div>
+      </div>
+      <ul class="gate-items">
+        <li>E2E / Smoke test 通過</li>
+        <li>合規審查完成（如適用）</li>
+        <li>Rollback plan 已準備</li>
+        <li>Release evidence 齊全</li>
+      </ul>
+      <div class="gate-reviewer">
+        <span class="gate-reviewer-label">審查：</span>
+        <span class="badge badge-purple">Review specialist</span>
+        <span class="badge badge-amber">部署前 checklist</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;border-left:3px solid var(--red)">
+    <h3 style="color:var(--red);margin-bottom:8px">Gate 失敗處理（T4 原則）</h3>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;">
+      <div style="background:var(--surface2);padding:8px 14px;border-radius:var(--radius-sm)">列出未達標項目（附證據）</div>
+      <div style="color:var(--text-dim)">→</div>
+      <div style="background:var(--surface2);padding:8px 14px;border-radius:var(--radius-sm)">判斷問題層（需求？設計？實作？）</div>
+      <div style="color:var(--text-dim)">→</div>
+      <div style="background:var(--red-soft);border:1px solid var(--red);padding:8px 14px;border-radius:var(--radius-sm);color:var(--red)">退回上游修正</div>
+      <div style="color:var(--text-dim)">→</div>
+      <div style="background:var(--surface2);padding:8px 14px;border-radius:var(--radius-sm)">重新執行 Gate</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== AGENTS ===== -->
+<div id="page-agents" class="page">
+  <h1>Agent Architecture</h1>
+  <p class="subtitle">Task-Master dispatcher + 3 Groups + 10 Specialists + Review (跨階段)</p>
+
+  <div class="section-title"><h2>整體架構</h2><div class="section-line"></div></div>
+  <div class="agent-arch card">
+    <div class="task-master-box">
+      <div class="tm-label">Dispatcher</div>
+      <div class="tm-name">Task-Master</div>
+      <ul class="tm-duties">
+        <li>Route — 判斷下一個 specialist</li>
+        <li>Signal Routing — 接收 drift signal</li>
+        <li>Handoff — 管理角色交接</li>
+      </ul>
+      <div class="tm-context">
+        必載: STATE + TASKS<br>
+        drift 時: + ARTIFACTS
+      </div>
+    </div>
+    <div class="groups-panel">
+      <div class="group-row">
+        <div class="group-label" style="border-color:#6c8ef5;color:#6c8ef5">
+          Discovery<br>Group
+          <span class="g-stages">Discover + Plan</span>
+        </div>
+        <div class="specialists-row">
+          <div class="specialist-card" style="color:#6c8ef5">
+            <div class="sp-name">Interviewer / PM</div>
+            <div class="sp-skills">brainstorming · planning-with-tasks · verification-before-completion</div>
+          </div>
+          <div class="specialist-card" style="color:#6c8ef5">
+            <div class="sp-name">UX</div>
+            <div class="sp-skills">brainstorming · frontend-design · verification-before-completion</div>
+          </div>
+          <div class="specialist-card" style="color:#6c8ef5">
+            <div class="sp-name">Architect</div>
+            <div class="sp-skills">brainstorming · writing-plans · deep-research · verification-before-completion</div>
+          </div>
+        </div>
+      </div>
+      <div class="group-row">
+        <div class="group-label" style="border-color:#f6ad55;color:#f6ad55">
+          Build<br>Group
+          <span class="g-stages">Build</span>
+        </div>
+        <div class="specialists-row">
+          <div class="specialist-card" style="color:#f6ad55">
+            <div class="sp-name">Backend</div>
+            <div class="sp-skills">writing-plans · TDD · debugging · git-worktrees · code-review · verification</div>
+          </div>
+          <div class="specialist-card" style="color:#f6ad55">
+            <div class="sp-name">Frontend</div>
+            <div class="sp-skills">writing-plans · TDD · debugging · frontend-design · git-worktrees · code-review</div>
+          </div>
+          <div class="specialist-card" style="color:#f6ad55">
+            <div class="sp-name">DBA</div>
+            <div class="sp-skills">verification-before-completion · validate-contract · ground</div>
+          </div>
+        </div>
+      </div>
+      <div class="group-row">
+        <div class="group-label" style="border-color:#fc8181;color:#fc8181">
+          Verify<br>Group
+          <span class="g-stages">Verify + Ship</span>
+        </div>
+        <div class="specialists-row">
+          <div class="specialist-card" style="color:#fc8181">
+            <div class="sp-name">QA</div>
+            <div class="sp-skills">webapp-testing · systematic-debugging · verification-before-completion</div>
+          </div>
+          <div class="specialist-card" style="color:#fc8181">
+            <div class="sp-name">Security</div>
+            <div class="sp-skills">verification-before-completion · deep-research</div>
+          </div>
+          <div class="specialist-card" style="color:#fc8181">
+            <div class="sp-name">DevOps</div>
+            <div class="sp-skills">verification-before-completion</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="review-specialist-row">
+    <div class="rs-badge">⭐ 跨階段角色</div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:4px">Review specialist</div>
+      <div class="rs-desc">可被 Task-Master 在任何 stage 調度。負責所有 Gate 的正式審查 + Build 中途 Code Review。不可修改被審查的 artifact。</div>
+    </div>
+    <div class="rs-gates">
+      <span class="badge badge-blue">Discover Gate</span>
+      <span class="badge badge-purple">Plan Gate</span>
+      <span class="badge badge-amber">Build Gate</span>
+      <span class="badge badge-red">Ship Gate</span>
+      <span class="badge badge-teal">Code Review</span>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:24px"><h2>Drift Signal 機制</h2><div class="section-line"></div></div>
+  <div class="drift-box">
+    <div class="drift-title">▲ Task-Master 對 drift 是「接收 signal 後路由」，不是主動偵測</div>
+    <div class="drift-flow">
+      <div class="drift-node">Specialist 發現 drift</div>
+      <div class="drift-arrow">→</div>
+      <div class="drift-node" style="border-color:var(--amber);color:var(--amber)">發出 DRIFT_SIGNAL</div>
+      <div class="drift-arrow">→</div>
+      <div class="drift-node">Task-Master 讀 ARTIFACTS.md</div>
+      <div class="drift-arrow">→</div>
+      <div class="drift-node" style="border-color:var(--red);color:var(--red)">判斷回退層級</div>
+    </div>
+    <div class="drift-code">
+<span class="drift-key">DRIFT_SIGNAL:</span><br>
+&nbsp;&nbsp;<span class="drift-key">type:</span> <span class="drift-val">scope_drift</span> | <span class="drift-val">design_drift</span> | <span class="drift-val">test_escalation</span><br>
+&nbsp;&nbsp;<span class="drift-key">source_specialist:</span> <span class="drift-val">"[誰發現的]"</span><br>
+&nbsp;&nbsp;<span class="drift-key">evidence:</span> <span class="drift-val">"[具體描述 + 對照的 baseline 文件]"</span><br>
+&nbsp;&nbsp;<span class="drift-key">suggested_action:</span> <span class="drift-val">"[specialist 建議的處理方式]"</span>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:16px;flex-wrap:wrap;font-size:12px;">
+      <span><span style="color:var(--text-dim)">scope drift →</span> <span style="color:var(--red)">退回 Discover</span></span>
+      <span><span style="color:var(--text-dim)">design drift →</span> <span style="color:var(--purple)">退回 Plan</span></span>
+      <span><span style="color:var(--text-dim)">test escalation →</span> <span style="color:var(--amber)">判斷是 code bug 或上游問題</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SKILLS ===== -->
+<div id="page-skills" class="page">
+  <h1>Skill Architecture</h1>
+  <p class="subtitle">三層分類 · Tier 1 強制 11 個 · Tier 2 按需 14 個 · Tier 3 移出框架</p>
+
+  <div class="tier-section">
+    <div class="tier-header tier1-header">
+      <span class="tier-num tier1-num">TIER 1</span>
+      <span class="tier-title">Core Disciplines — 行為約束型，符合條件時強制載入</span>
+      <span class="tier-rule">11 個 · 全專案通用</span>
+    </div>
+    <div class="card">
+      <table class="skill-table">
+        <thead>
+          <tr>
+            <th>Skill</th>
+            <th>觸發條件</th>
+            <th>狀態</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>task-master</strong></td><td>session 開始 / handoff / blocked</td><td><span class="badge badge-green">新增</span></td></tr>
+          <tr><td><strong>test-driven-development</strong></td><td>寫任何新 code</td><td><span class="badge badge-blue">保留</span></td></tr>
+          <tr><td><strong>systematic-debugging</strong></td><td>遇到 bug / 非預期行為</td><td><span class="badge badge-blue">保留</span></td></tr>
+          <tr><td><strong>verification-before-completion</strong></td><td>任何 specialist 完成任務前</td><td><span class="badge badge-amber">強化 + 合併 forced-thinking</span></td></tr>
+          <tr><td><strong>brainstorming</strong></td><td>探索新功能 / 不確定方向</td><td><span class="badge badge-blue">保留</span></td></tr>
+          <tr><td><strong>writing-plans</strong></td><td>開始實作前的計畫拆解</td><td><span class="badge badge-green">新增（Superpowers 引入）</span></td></tr>
+          <tr><td><strong>planning-with-tasks</strong></td><td>執行過程中的進度追蹤 + findings</td><td><span class="badge badge-amber">重命名 + 擴充自 planning-with-files</span></td></tr>
+          <tr><td><strong>requesting-code-review</strong></td><td>提交 code review</td><td><span class="badge badge-blue">保留</span></td></tr>
+          <tr><td><strong>using-git-worktrees</strong></td><td>開始 feature 開發</td><td><span class="badge badge-blue">保留</span></td></tr>
+          <tr><td><strong>gate-check</strong></td><td>階段結束，準備過 Gate</td><td><span class="badge badge-amber">重構自 quality-gates</span></td></tr>
+          <tr><td><strong>ground</strong></td><td>AI 修改既有程式碼前</td><td><span class="badge badge-blue">保留</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tier-section">
+    <div class="tier-header tier2-header">
+      <span class="tier-num tier2-num">TIER 2</span>
+      <span class="tier-title">Domain & Governance — 專案特定，由 project-config.yaml 定義</span>
+      <span class="tier-rule">14 個 · 按需啟用</span>
+    </div>
+    <div class="card">
+      <div class="skill-chips">
+        <div class="skill-chip"><span>call-center-domain</span><span class="trigger">Domain</span></div>
+        <div class="skill-chip"><span>frontend-design</span><span class="trigger">UI 實作</span></div>
+        <div class="skill-chip"><span>deep-research</span><span class="trigger">技術選型</span></div>
+        <div class="skill-chip"><span>webapp-testing</span><span class="trigger">測試 Prototype</span></div>
+        <div class="skill-chip"><span>doc-coauthoring</span><span class="trigger">撰寫正式文件</span></div>
+        <div class="skill-chip"><span>screenshot-to-code</span><span class="trigger">設計稿還原</span></div>
+        <div class="skill-chip"><span>validate-contract</span><span class="trigger">API/Schema 變更</span></div>
+        <div class="skill-chip"><span>cia</span><span class="trigger">變更 Baselined 文件</span></div>
+        <div class="skill-chip"><span>ssot-guardian</span><span class="trigger">文件不同步</span></div>
+        <div class="skill-chip"><span>retro</span><span class="trigger">完成 milestone</span></div>
+        <div class="skill-chip"><span>finishing-a-development-branch</span><span class="trigger">準備 merge</span></div>
+        <div class="skill-chip"><span>subagent-driven-development</span><span class="trigger">多 Agent 並行</span></div>
+        <div class="skill-chip"><span>new-doc</span><span class="trigger">建立正式文件</span></div>
+        <div class="skill-chip"><span>project-init</span><span class="trigger">初始化新專案</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tier-section">
+    <div class="tier-header tier3-header">
+      <span class="tier-num tier3-num">TIER 3</span>
+      <span class="tier-title">Platform Tools — 移出框架，由 Cowork / Claude Code 平台自帶</span>
+      <span class="tier-rule">不計入框架</span>
+    </div>
+    <div class="card">
+      <div class="skill-chips">
+        <div class="skill-chip" style="opacity:0.5"><span>docx / pptx / xlsx / pdf</span></div>
+        <div class="skill-chip" style="opacity:0.5"><span>algorithmic-art</span></div>
+        <div class="skill-chip" style="opacity:0.5"><span>theme-factory</span></div>
+        <div class="skill-chip" style="opacity:0.5"><span>web-artifacts-builder</span></div>
+        <div class="skill-chip" style="opacity:0.5"><span>mcp-builder</span></div>
+        <div class="skill-chip" style="opacity:0.5"><span>schedule</span></div>
+        <div class="skill-chip" style="opacity:0.5"><span>internal-comms</span></div>
+        <div class="skill-chip" style="opacity:0.5"><span>gemini-designer</span></div>
+        <div class="skill-chip" style="opacity:0.5"><span>codex</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><h2>writing-plans vs planning-with-tasks</h2><div class="section-line"></div></div>
+  <div class="card-row col-2">
+    <div class="card" style="border-color:var(--accent)">
+      <h3 style="color:var(--accent)">writing-plans</h3>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">任務開始前 · 思考如何做</div>
+      <ul style="list-style:none;font-size:12px;color:var(--text-muted)">
+        <li style="padding:3px 0">把 Feature 拆成 2-5 分鐘原子任務</li>
+        <li style="padding:3px 0">寫出具體 code / 指令 / 路徑</li>
+        <li style="padding:3px 0">不可有 placeholder 或 TBD</li>
+      </ul>
+      <div style="margin-top:8px;font-size:11px;font-weight:700;color:var(--accent)">產出：可執行的實作計畫</div>
+    </div>
+    <div class="card" style="border-color:var(--amber)">
+      <h3 style="color:var(--amber)">planning-with-tasks</h3>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">任務執行中 · 記錄做到哪 + 學到什麼</div>
+      <div class="findings-grid">
+        <div class="finding-card">
+          <div class="fc-file">TASKS.md</div>
+          <div class="fc-desc">狀態追蹤</div>
+          <div class="fc-examples">
+            <span>task status 更新</span>
+            <span>dependency 標記</span>
+            <span>blocker 記錄</span>
+          </div>
+        </div>
+        <div class="finding-card">
+          <div class="fc-file">findings.md</div>
+          <div class="fc-desc">過程發現</div>
+          <div class="fc-examples">
+            <span>root cause 分析</span>
+            <span>比較結果</span>
+            <span>失敗嘗試記錄</span>
+          </div>
+        </div>
+        <div class="finding-card">
+          <div class="fc-file">progress.md</div>
+          <div class="fc-desc">進度總結</div>
+          <div class="fc-examples">
+            <span>目前完成 N/M 個</span>
+            <span>發現 schema 問題</span>
+            <span>已發 drift signal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MEMORY ===== -->
+<div id="page-memory" class="page">
+  <h1>Memory System</h1>
+  <p class="subtitle">4 個核心記憶體檔案 + 靜態 context 參考 (從 17 個壓縮)</p>
+
+  <div class="memory-grid">
+    <div class="memory-card" style="border-top:3px solid var(--accent)">
+      <div class="mem-header">
+        <div class="mem-icon" style="background:var(--accent-soft)">📍</div>
+        <div>
+          <div class="mem-title">STATE.md</div>
+          <div class="mem-subtitle">現在在哪</div>
+        </div>
+        <div class="mem-size">≤ 400 tokens</div>
+      </div>
+      <div class="mem-schema">
+<span class="mem-key">stage:</span> <span class="mem-val">"Build"</span> <span class="mem-comment"># Discover|Plan|Build|Verify|Ship</span><br>
+<span class="mem-key">task_current:</span> <span class="mem-val">"F01-API-users"</span><br>
+<span class="mem-key">task_status:</span> <span class="mem-val">"in_progress"</span><br>
+<span class="mem-key">blocked_by:</span> <span class="mem-val">null</span><br>
+<span class="mem-key">dispatcher:</span><br>
+&nbsp;&nbsp;<span class="mem-key">active_specialist:</span> <span class="mem-val">"Backend"</span><br>
+&nbsp;&nbsp;<span class="mem-key">skills_loaded:</span> [tdd, git-worktrees]<br>
+<span class="mem-key">next_action:</span> <span class="mem-val">"寫 unit test"</span><br>
+<span class="mem-key">resume_command:</span> <span class="mem-val">"繼續 Backend, F01"</span>
+      </div>
+    </div>
+
+    <div class="memory-card" style="border-top:3px solid var(--amber)">
+      <div class="mem-header">
+        <div class="mem-icon" style="background:var(--amber-soft)">📋</div>
+        <div>
+          <div class="mem-title">TASKS.md</div>
+          <div class="mem-subtitle">要做什麼（唯一任務真相）</div>
+        </div>
+        <div class="mem-size">動態成長</div>
+      </div>
+      <div class="mem-schema">
+<span class="mem-comment">## WBS: F01</span><br>
+<span class="mem-key">Task ID</span> | Desc | Status | Specialist | Evidence<br>
+F01-001 | GET /users | <span class="mem-val">done</span> | Backend | PR #12<br>
+F01-002 | GET /users/:id | <span class="mem-val">in_progress</span> | Backend | —<br>
+F01-003 | 列表頁面 | <span class="mem-val">blocked</span> | Frontend | —<br><br>
+<span class="mem-comment">## Handoff Log</span><br>
+<span class="mem-key">Time</span> | From | To | Summary | Frozen<br>
+14:00 | Discovery | Build | Gate 通過 | SRS,SD
+      </div>
+    </div>
+
+    <div class="memory-card" style="border-top:3px solid var(--green)">
+      <div class="mem-header">
+        <div class="mem-icon" style="background:var(--green-soft)">📚</div>
+        <div>
+          <div class="mem-title">ARTIFACTS.md</div>
+          <div class="mem-subtitle">正式產出登記簿</div>
+        </div>
+        <div class="mem-size">依專案規模</div>
+      </div>
+      <div class="mem-schema">
+<span class="mem-key">doc_id</span> | Name | Maturity | Gate Locked<br>
+SRS.F01 | 需求規格 | <span class="mem-val">Baselined</span> | Discover Gate<br>
+SD.F01  | 系統設計 | <span class="mem-val">Baselined</span> | Plan Gate<br>
+API.F01 | API 規格 | <span class="mem-val">Baselined</span> | Plan Gate<br>
+TR.F01  | 測試報告 | <span class="mem-val">Draft</span>     | —<br><br>
+<span class="mem-comment">Maturity:</span><br>
+Draft → In Review → Approved → <span class="mem-val">Baselined</span> → Deprecated
+      </div>
+    </div>
+
+    <div class="memory-card" style="border-top:3px solid var(--purple)">
+      <div class="mem-header">
+        <div class="mem-icon" style="background:var(--purple-soft)">💡</div>
+        <div>
+          <div class="mem-title">DECISIONS.md</div>
+          <div class="mem-subtitle">為什麼這樣做（Append-only ADR）</div>
+        </div>
+        <div class="mem-size">只增不改</div>
+      </div>
+      <div class="mem-schema">
+<span class="mem-key">## ADR-001: PostgreSQL vs MongoDB</span><br>
+<span class="mem-key">Date:</span> 2026-03-28 | <span class="mem-key">Status:</span> <span class="mem-val">Accepted</span><br>
+<span class="mem-key">Context:</span> 需要 ACID transaction<br>
+<span class="mem-key">Decision:</span> PostgreSQL 15+<br>
+<span class="mem-key">Consequences:</span> 需要 Prisma migration<br><br>
+<span class="mem-comment"># 決策可被新 ADR supersede，但不刪除</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><h2>記憶體原則</h2><div class="section-line"></div></div>
+  <div class="card">
+    <div class="memory-principles">
+      <div class="mem-principle"><strong>STATE 只記現在</strong>不記歷史，只記「在哪、下一步、誰在做」</div>
+      <div class="mem-principle"><strong>TASKS 是唯一任務真相</strong>Dashboard 從 TASKS 衍生，不另維護</div>
+      <div class="mem-principle"><strong>ARTIFACTS 只記正式文件</strong>草稿不登記；每次 Gate 更新 maturity</div>
+      <div class="mem-principle"><strong>DECISIONS 只增不改</strong>決策可 supersede，但不刪除舊紀錄</div>
+      <div class="mem-principle"><strong>Subagent 不繼承記憶</strong>Controller 手動傳入最小資訊（T3）</div>
+      <div class="mem-principle"><strong>Context &gt; 60% 時存檔</strong>自動寫入 STATE.md，確保跨 session 恢復</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FILES ===== -->
+<div id="page-files" class="page">
+  <h1>File Structure</h1>
+  <p class="subtitle">v4 Template 目錄結構</p>
+
+  <div class="card-row col-2">
+    <div class="card">
+      <h2 style="margin-bottom:14px">v4 完整結構</h2>
+      <div class="file-tree">
+<span class="ft-dir">[project-root]/</span><br>
+├── <span class="ft-file highlight">CLAUDE.md</span> <span class="ft-comment">&lt;5K tokens</span><br>
+├── <span class="ft-file new">project-config.yaml</span><br>
+│<br>
+├── <span class="ft-dir">memory/</span><br>
+│   ├── <span class="ft-file">STATE.md</span> <span class="ft-comment">&lt;400 tokens</span><br>
+│   ├── <span class="ft-file">TASKS.md</span><br>
+│   ├── <span class="ft-file new">ARTIFACTS.md</span><br>
+│   └── <span class="ft-file">DECISIONS.md</span><br>
+│<br>
+├── <span class="ft-dir">context/</span><br>
+│   ├── <span class="ft-file">product.md</span><br>
+│   ├── <span class="ft-dir">domain/</span><br>
+│   ├── <span class="ft-dir">standards/</span><br>
+│   └── <span class="ft-dir">people/</span><br>
+│<br>
+├── <span class="ft-dir">context-roles/</span><br>
+│   ├── <span class="ft-file">GROUP_Discovery.md</span><br>
+│   ├── <span class="ft-file">GROUP_Build.md</span><br>
+│   ├── <span class="ft-file">GROUP_Verify.md</span><br>
+│   └── <span class="ft-file new">ROLE_Review.md</span> <span class="ft-comment">跨階段</span><br>
+│<br>
+├── <span class="ft-dir">context-skills/</span><br>
+│   ├── <span class="ft-file new">task-master/</span><br>
+│   ├── <span class="ft-file">test-driven-development/</span><br>
+│   ├── <span class="ft-file">systematic-debugging/</span><br>
+│   ├── <span class="ft-file">verification-before-completion/</span><br>
+│   ├── <span class="ft-file">brainstorming/</span><br>
+│   ├── <span class="ft-file new">writing-plans/</span><br>
+│   ├── <span class="ft-file highlight">planning-with-tasks/</span><br>
+│   ├── <span class="ft-file">requesting-code-review/</span><br>
+│   ├── <span class="ft-file">using-git-worktrees/</span><br>
+│   ├── <span class="ft-file highlight">gate-check/</span><br>
+│   ├── <span class="ft-file">ground/</span><br>
+│   └── <span class="ft-dir">[tier-2-skills]/</span><br>
+│<br>
+├── <span class="ft-dir">docs/</span><br>
+│   ├── <span class="ft-dir">specifications/</span><br>
+│   ├── <span class="ft-dir">design/</span><br>
+│   ├── <span class="ft-dir">test-reports/</span><br>
+│   └── <span class="ft-dir">releases/</span><br>
+│<br>
+├── <span class="ft-dir">prototypes/</span><br>
+│   ├── <span class="ft-dir">exploration/</span><br>
+│   └── <span class="ft-dir">approved/</span><br>
+│<br>
+└── <span class="ft-dir">src/</span>
+      </div>
+    </div>
+    <div>
+      <div class="section-title"><h2>Token Budget</h2><div class="section-line"></div></div>
+      <div class="budget-grid" style="margin-bottom:16px">
+        <div class="budget-card">
+          <div class="budget-file">CLAUDE.md</div>
+          <div class="budget-bar-wrap"><div class="budget-bar" style="width:100%;background:var(--accent)"></div></div>
+          <div class="budget-nums"><span class="budget-limit" style="color:var(--accent)">≤ 5,000</span><span style="color:var(--text-dim)">tokens</span></div>
+        </div>
+        <div class="budget-card">
+          <div class="budget-file">task-master/SKILL.md</div>
+          <div class="budget-bar-wrap"><div class="budget-bar" style="width:40%;background:var(--green)"></div></div>
+          <div class="budget-nums"><span class="budget-limit" style="color:var(--green)">≤ 2,000</span><span style="color:var(--text-dim)">tokens</span></div>
+        </div>
+        <div class="budget-card">
+          <div class="budget-file">ROLE_Review.md</div>
+          <div class="budget-bar-wrap"><div class="budget-bar" style="width:20%;background:var(--purple)"></div></div>
+          <div class="budget-nums"><span class="budget-limit" style="color:var(--purple)">≤ 1,000</span><span style="color:var(--text-dim)">tokens</span></div>
+        </div>
+        <div class="budget-card">
+          <div class="budget-file">GROUP_Discovery.md</div>
+          <div class="budget-bar-wrap"><div class="budget-bar" style="width:40%;background:var(--accent)"></div></div>
+          <div class="budget-nums"><span class="budget-limit" style="color:var(--accent)">≤ 2,000</span><span style="color:var(--text-dim)">tokens</span></div>
+        </div>
+        <div class="budget-card">
+          <div class="budget-file">GROUP_Build.md</div>
+          <div class="budget-bar-wrap"><div class="budget-bar" style="width:40%;background:var(--amber)"></div></div>
+          <div class="budget-nums"><span class="budget-limit" style="color:var(--amber)">≤ 2,000</span><span style="color:var(--text-dim)">tokens</span></div>
+        </div>
+        <div class="budget-card">
+          <div class="budget-file">GROUP_Verify.md</div>
+          <div class="budget-bar-wrap"><div class="budget-bar" style="width:30%;background:var(--red)"></div></div>
+          <div class="budget-nums"><span class="budget-limit" style="color:var(--red)">≤ 1,500</span><span style="color:var(--text-dim)">tokens</span></div>
+        </div>
+        <div class="budget-card">
+          <div class="budget-file">memory/STATE.md</div>
+          <div class="budget-bar-wrap"><div class="budget-bar" style="width:8%;background:var(--teal)"></div></div>
+          <div class="budget-nums"><span class="budget-limit" style="color:var(--teal)">≤ 400</span><span style="color:var(--text-dim)">tokens</span></div>
+        </div>
+      </div>
+
+      <div class="section-title"><h2>Cowork vs Claude Code</h2><div class="section-line"></div></div>
+      <div class="platform-split">
+        <div class="platform-card">
+          <div class="platform-header">
+            <div class="platform-icon" style="background:var(--accent-soft)">🖥</div>
+            <div class="platform-name">Cowork</div>
+          </div>
+          <div class="platform-stages">
+            <span class="badge badge-blue">Discover</span>
+            <span class="badge badge-purple">Plan</span>
+          </div>
+          <div class="platform-cap">
+            <span class="cap-name">Computer Use</span><span class="cap-yes">✓</span>
+            <span class="cap-name">Chrome MCP</span><span class="cap-yes">✓</span>
+            <span class="cap-name">Git 操作</span><span class="cap-no">✗</span>
+            <span class="cap-name">Local Shell</span><span class="cap-no">✗</span>
+          </div>
+        </div>
+        <div class="platform-card">
+          <div class="platform-header">
+            <div class="platform-icon" style="background:var(--green-soft)">⌨️</div>
+            <div class="platform-name">Claude Code</div>
+          </div>
+          <div class="platform-stages">
+            <span class="badge badge-amber">Build</span>
+            <span class="badge badge-red">Verify</span>
+            <span class="badge badge-green">Ship</span>
+          </div>
+          <div class="platform-cap">
+            <span class="cap-name">Computer Use</span><span class="cap-no">✗</span>
+            <span class="cap-name">Git 操作</span><span class="cap-yes">✓</span>
+            <span class="cap-name">Local Shell</span><span class="cap-yes">✓</span>
+            <span class="cap-name">完整測試套件</span><span class="cap-yes">✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MIGRATION ===== -->
+<!-- ===== SUPPLEMENT v1.1 ===== -->
+<div id="page-supplement" class="page">
+  <h1>Supplement v1.1</h1>
+  <p class="subtitle">10 個痛點解法 + GStack 借鏡 · 確認後併入 Blueprint</p>
+
+  <!-- GStack 借鏡 -->
+  <div class="section-title"><h2>GStack 借鏡亮點</h2><div class="section-line"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" class="col-3">
+    <div class="card" style="border-left:3px solid var(--teal)">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:4px">DESIGN.md 鎖定</div>
+      <div style="font-size:12px;color:var(--text-muted)">Design Token Baselined 後改顏色/字體需走 CIA。防止 AI 每次改風格。</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--teal)">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:4px">Agent×Skill Matrix</div>
+      <div style="font-size:12px;color:var(--text-muted)">每個 Agent 啟動時帶哪些 skill，在 project-config.yaml 事先定義。</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--teal)">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:4px">Artifact Handoff</div>
+      <div style="font-size:12px;color:var(--text-muted)">Agent 不直接溝通，全透過 Handoff 文件 + Task-Master 中轉。</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--teal)">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:4px">Architecture Lock-in</div>
+      <div style="font-size:12px;color:var(--text-muted)">Plan Gate 前產出完整 SD（架構圖+資料流+DB+狀態機+錯誤處理+測試矩陣），鎖定後改需 CIA。</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--teal)">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:4px">Test Pyramid 5 層</div>
+      <div style="font-size:12px;color:var(--text-muted)">L1 Unit → L2 Integration → L3 E2E → L4 Security → L5 Smoke，每層有覆蓋率目標。</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--teal)">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:4px">LEARNINGS.md</div>
+      <div style="font-size:12px;color:var(--text-muted)">第 5 個 memory 文件：技術模式 / 踩坑記錄 / 凱子偏好 / 工具備忘。跨 session 累積。</div>
+    </div>
+  </div>
+
+  <!-- 12 個 Supplement 項目 -->
+  <div class="section-title" style="margin-top:28px"><h2>12 個變更項目</h2><div class="section-line"></div></div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <!-- S-01 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--amber)">
+      <code style="font-size:11px;font-weight:700;color:var(--amber)">S-01</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--amber-soft);color:var(--amber);font-weight:700;text-align:center">P1</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">WBS 結構化</div>
+        <div style="font-size:11px;color:var(--text-muted)">3 層分解（Epic→Feature→Task）+ Size 估算（S/M/L/XL）+ 依賴圖</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">WBS Template + TASKS.md YAML</div>
+    </div>
+    <!-- S-02 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--amber)">
+      <code style="font-size:11px;font-weight:700;color:var(--amber)">S-02</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--amber-soft);color:var(--amber);font-weight:700;text-align:center">P1</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">架構設計深化</div>
+        <div style="font-size:11px;color:var(--text-muted)">SD Checklist 7 項（架構圖+資料流+DB+狀態機+錯誤處理+測試矩陣+ADR）+ Architecture Lock-in</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">SD_Checklist + Plan Gate 條件</div>
+    </div>
+    <!-- S-03 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--amber)">
+      <code style="font-size:11px;font-weight:700;color:var(--amber)">S-03</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--amber-soft);color:var(--amber);font-weight:700;text-align:center">P1</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">Task Board 監控</div>
+        <div style="font-size:11px;color:var(--text-muted)">Dashboard 新增看板（Backlog/In Progress/Blocked/Done）+ Gate Readiness Panel</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">Dashboard Tab + TASKS.md 結構化</div>
+    </div>
+    <!-- S-04 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--purple)">
+      <code style="font-size:11px;font-weight:700;color:var(--purple)">S-04</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--purple-soft);color:var(--purple);font-weight:700;text-align:center">P2</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">SD 確認流程</div>
+        <div style="font-size:11px;color:var(--text-muted)">Architect → Review → SD_CONFIRM 文件 → 凱子簽核 → Baselined</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">SD_Confirm Session + 簽核模板</div>
+    </div>
+    <!-- S-05 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--amber)">
+      <code style="font-size:11px;font-weight:700;color:var(--amber)">S-05</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--amber-soft);color:var(--amber);font-weight:700;text-align:center">P1</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">測試治理</div>
+        <div style="font-size:11px;color:var(--text-muted)">Test Pyramid 5 層（Unit→Integration→E2E→Security→Smoke）+ Test Matrix + Bug=Regression Test</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">Test Matrix Template + Gate 條件</div>
+    </div>
+    <!-- S-06 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--purple)">
+      <code style="font-size:11px;font-weight:700;color:var(--purple)">S-06</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--purple-soft);color:var(--purple);font-weight:700;text-align:center">P2</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">Brownfield / Hotfix 增強</div>
+        <div style="font-size:11px;color:var(--text-muted)">Brownfield 4 步上車（Snapshot→Baseline→Gap→Safe Change）+ Hotfix Freeze 機制</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">brownfield-onboard skill + Hotfix 增強</div>
+    </div>
+    <!-- S-07 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--red)">
+      <code style="font-size:11px;font-weight:700;color:var(--red)">S-07</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--red-soft);color:var(--red);font-weight:700;text-align:center">P0</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">UI/UX 範圍控制</div>
+        <div style="font-size:11px;color:var(--text-muted)">DESIGN.md 鎖定 + 修改分 4 級（Free/Review/CIA/禁止）+ Design Variant 3 方案選擇</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">DESIGN.md + frontend-design 增強</div>
+    </div>
+    <!-- S-08 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--red)">
+      <code style="font-size:11px;font-weight:700;color:var(--red)">S-08</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--red-soft);color:var(--red);font-weight:700;text-align:center">P0</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">Agent×Skill Matrix + Domain Skill</div>
+        <div style="font-size:11px;color:var(--text-muted)">每個 Agent 必載/可選 skill 完整對照表 + project-config.yaml 管理 Domain Skill 載入</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">project-config.yaml + Matrix 定義</div>
+    </div>
+    <!-- S-09 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--red)">
+      <code style="font-size:11px;font-weight:700;color:var(--red)">S-09</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--red-soft);color:var(--red);font-weight:700;text-align:center">P0</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">Agent 通訊 / 交接協議</div>
+        <div style="font-size:11px;color:var(--text-muted)">Handoff Protocol 標準格式 + memory/handoffs/ 存放 + Task-Master 路由邏輯</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">Handoff Template + 路由流程</div>
+    </div>
+    <!-- S-10 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--purple)">
+      <code style="font-size:11px;font-weight:700;color:var(--purple)">S-10</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--purple-soft);color:var(--purple);font-weight:700;text-align:center">P2</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">記憶管理增強</div>
+        <div style="font-size:11px;color:var(--text-muted)">新增 LEARNINGS.md（技術模式/踩坑/偏好/工具）≤800 tokens + Gate 時 prune</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">LEARNINGS.md + prune 規則</div>
+    </div>
+    <!-- S-11 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--text-dim)">
+      <code style="font-size:11px;font-weight:700;color:var(--text-dim)">S-11</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--surface);color:var(--text-dim);font-weight:700;text-align:center">Later</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">Agent Teams（Phase 2）</div>
+        <div style="font-size:11px;color:var(--text-muted)">暫不採用。啟用條件：> 5 Feature 並行 / 多人團隊 / CI 穩定</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">Phase 2 預留設計</div>
+    </div>
+    <!-- S-12 -->
+    <div style="display:grid;grid-template-columns:60px 40px 1fr 180px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--red)">
+      <code style="font-size:11px;font-weight:700;color:var(--red)">S-12</code>
+      <span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--red-soft);color:var(--red);font-weight:700;text-align:center">P0</span>
+      <div>
+        <div style="font-size:12px;font-weight:700">舊專案遷移策略</div>
+        <div style="font-size:11px;color:var(--text-muted)">v3.3 → v4 八階段遷移：Memory 整併 → 角色轉換 → CLAUDE.md 瘦身 → Skill 分層 → 驗證</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim)">8 Phase + Migration Checklist</div>
+    </div>
+  </div>
+
+  <!-- 優先級圖例 -->
+  <div style="margin-top:16px;display:flex;gap:16px;padding:10px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border)">
+    <div style="font-size:10px;color:var(--text-dim)">優先級圖例：</div>
+    <div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--red-soft);color:var(--red);font-weight:700">P0</span><span style="font-size:10px;color:var(--text-muted)">立即實作</span></div>
+    <div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--amber-soft);color:var(--amber);font-weight:700">P1</span><span style="font-size:10px;color:var(--text-muted)">第二批</span></div>
+    <div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--purple-soft);color:var(--purple);font-weight:700">P2</span><span style="font-size:10px;color:var(--text-muted)">穩定後再加</span></div>
+    <div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--surface);color:var(--text-dim);font-weight:700">Later</span><span style="font-size:10px;color:var(--text-muted)">Phase 2</span></div>
+  </div>
+
+  <!-- Agent×Skill Matrix 摘要 -->
+  <div class="section-title" style="margin-top:28px"><h2>Agent × Skill Matrix</h2><div class="section-line"></div></div>
+  <div class="card" style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:11px">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border)">
+          <th style="text-align:left;padding:6px 8px;color:var(--text-muted)">Agent</th>
+          <th style="text-align:left;padding:6px 8px;color:var(--text-muted)">Group</th>
+          <th style="text-align:left;padding:6px 8px;color:var(--text-muted)">必載 Tier 1 Skills</th>
+          <th style="text-align:left;padding:6px 8px;color:var(--text-muted)">Domain</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--accent)">Task-Master</td><td style="padding:6px 8px;color:var(--text-dim)">—</td><td style="padding:6px 8px"><code style="font-size:10px">task-master</code> <code style="font-size:10px">verification</code></td><td style="padding:6px 8px;color:var(--text-dim)">—</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--green)">Interviewer/PM</td><td style="padding:6px 8px;color:var(--green)">Discovery</td><td style="padding:6px 8px"><code style="font-size:10px">brainstorm</code> <code style="font-size:10px">writing-plans</code> <code style="font-size:10px">planning-tasks</code></td><td style="padding:6px 8px;color:var(--teal)">✓</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--green)">UX</td><td style="padding:6px 8px;color:var(--green)">Discovery</td><td style="padding:6px 8px"><code style="font-size:10px">brainstorm</code> <code style="font-size:10px">frontend-design</code> <code style="font-size:10px">planning-tasks</code></td><td style="padding:6px 8px;color:var(--teal)">✓</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--green)">Architect</td><td style="padding:6px 8px;color:var(--green)">Discovery</td><td style="padding:6px 8px"><code style="font-size:10px">writing-plans</code> <code style="font-size:10px">deep-research</code> <code style="font-size:10px">planning-tasks</code></td><td style="padding:6px 8px;color:var(--teal)">✓</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--accent)">Backend</td><td style="padding:6px 8px;color:var(--accent)">Build</td><td style="padding:6px 8px"><code style="font-size:10px">TDD</code> <code style="font-size:10px">debug</code> <code style="font-size:10px">worktree</code> <code style="font-size:10px">code-review</code></td><td style="padding:6px 8px;color:var(--teal)">✓</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--accent)">Frontend</td><td style="padding:6px 8px;color:var(--accent)">Build</td><td style="padding:6px 8px"><code style="font-size:10px">TDD</code> <code style="font-size:10px">debug</code> <code style="font-size:10px">frontend-design</code> <code style="font-size:10px">worktree</code></td><td style="padding:6px 8px;color:var(--teal)">✓</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--accent)">DBA</td><td style="padding:6px 8px;color:var(--accent)">Build</td><td style="padding:6px 8px"><code style="font-size:10px">writing-plans</code> <code style="font-size:10px">planning-tasks</code> <code style="font-size:10px">verification</code></td><td style="padding:6px 8px;color:var(--teal)">✓</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--amber)">QA</td><td style="padding:6px 8px;color:var(--amber)">Verify</td><td style="padding:6px 8px"><code style="font-size:10px">webapp-test</code> <code style="font-size:10px">debug</code> <code style="font-size:10px">planning-tasks</code></td><td style="padding:6px 8px;color:var(--teal)">✓</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--amber)">Security</td><td style="padding:6px 8px;color:var(--amber)">Verify</td><td style="padding:6px 8px"><code style="font-size:10px">deep-research</code> <code style="font-size:10px">verification</code></td><td style="padding:6px 8px;color:var(--text-dim)">—</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--amber)">DevOps</td><td style="padding:6px 8px;color:var(--amber)">Verify</td><td style="padding:6px 8px"><code style="font-size:10px">debug</code> <code style="font-size:10px">verification</code></td><td style="padding:6px 8px;color:var(--text-dim)">—</td></tr>
+        <tr><td style="padding:6px 8px;font-weight:700;color:var(--pink)">Review</td><td style="padding:6px 8px;color:var(--pink)">跨階段</td><td style="padding:6px 8px"><code style="font-size:10px">gate-check</code> <code style="font-size:10px">cia</code> <code style="font-size:10px">quality-gates</code></td><td style="padding:6px 8px;color:var(--teal)">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Design Token 控制 -->
+  <div class="section-title" style="margin-top:28px"><h2>UI/UX 修改分級（S-07）</h2><div class="section-line"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px" class="col-4">
+    <div class="card" style="border-left:3px solid var(--green);text-align:center">
+      <div style="font-size:18px;margin-bottom:4px">✅</div>
+      <div style="font-size:11px;font-weight:700;color:var(--green)">Free</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:4px">文字/圖片/內部微調</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--amber);text-align:center">
+      <div style="font-size:18px;margin-bottom:4px">👁️</div>
+      <div style="font-size:11px;font-weight:700;color:var(--amber)">Review</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:4px">新增/刪除元件 改佈局</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--red);text-align:center">
+      <div style="font-size:18px;margin-bottom:4px">🔒</div>
+      <div style="font-size:11px;font-weight:700;color:var(--red)">CIA</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:4px">改顏色/字體/間距</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--text-dim);text-align:center">
+      <div style="font-size:18px;margin-bottom:4px">🚫</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text-dim)">禁止</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:4px">新框架/改 nav 結構</div>
+    </div>
+  </div>
+
+  <!-- Test Pyramid -->
+  <div class="section-title" style="margin-top:28px"><h2>Test Pyramid（S-05）</h2><div class="section-line"></div></div>
+  <div style="display:flex;flex-direction:column;gap:4px;max-width:600px">
+    <div style="padding:8px 12px;background:var(--green-soft);border-radius:var(--radius-sm);display:flex;justify-content:space-between;width:30%;min-width:200px;margin:0 auto">
+      <span style="font-size:11px;font-weight:700;color:var(--green)">L5 Smoke</span>
+      <span style="font-size:10px;color:var(--text-muted)">DevOps</span>
+    </div>
+    <div style="padding:8px 12px;background:var(--red-soft);border-radius:var(--radius-sm);display:flex;justify-content:space-between;width:45%;min-width:200px;margin:0 auto">
+      <span style="font-size:11px;font-weight:700;color:var(--red)">L4 Security</span>
+      <span style="font-size:10px;color:var(--text-muted)">Security · OWASP+STRIDE</span>
+    </div>
+    <div style="padding:8px 12px;background:var(--amber-soft);border-radius:var(--radius-sm);display:flex;justify-content:space-between;width:60%;min-width:200px;margin:0 auto">
+      <span style="font-size:11px;font-weight:700;color:var(--amber)">L3 E2E</span>
+      <span style="font-size:10px;color:var(--text-muted)">QA · Playwright</span>
+    </div>
+    <div style="padding:8px 12px;background:var(--purple-soft);border-radius:var(--radius-sm);display:flex;justify-content:space-between;width:78%;min-width:200px;margin:0 auto">
+      <span style="font-size:11px;font-weight:700;color:var(--purple)">L2 Integration</span>
+      <span style="font-size:10px;color:var(--text-muted)">Backend · API+DB</span>
+    </div>
+    <div style="padding:8px 12px;background:var(--accent-soft);border-radius:var(--radius-sm);display:flex;justify-content:space-between;width:100%;min-width:200px;margin:0 auto">
+      <span style="font-size:11px;font-weight:700;color:var(--accent)">L1 Unit</span>
+      <span style="font-size:10px;color:var(--text-muted)">Backend+Frontend · ≥80%</span>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-left">V4 Blueprint Supplement v1.1 · Draft 2026-03-31</div>
+    <div class="footer-right">Sourced from: GStack (garrytan/gstack) + Superpowers (obra/superpowers)</div>
+  </div>
+</div>
+
+<!-- ===== v3→v4 MIGRATION ===== -->
+<div id="page-v3migration" class="page">
+  <h1>v3.3 → v4 Migration</h1>
+  <p class="subtitle">8 Phase 漸進式遷移 · 預估 ~2 小時 · 非破壞性 · 可回滾</p>
+
+  <!-- Migration Flow -->
+  <div class="section-title"><h2>遷移流程</h2><div class="section-line"></div></div>
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <div style="display:grid;grid-template-columns:80px 1fr 100px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--text-dim)">
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted)">Phase 0</div>
+      <div><div style="font-size:12px;font-weight:700">準備</div><div style="font-size:11px;color:var(--text-muted)">git tag v3.3-pre-migration → checkout migration branch</div></div>
+      <div style="font-size:10px;color:var(--text-dim);text-align:right">5 min</div>
+    </div>
+    <div style="display:grid;grid-template-columns:80px 1fr 100px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--accent)">
+      <div style="font-size:11px;font-weight:700;color:var(--accent)">Phase 1</div>
+      <div><div style="font-size:12px;font-weight:700">Memory 整併</div><div style="font-size:11px;color:var(--text-muted)">17 個 memory 文件 → 5 個（STATE + TASKS + ARTIFACTS + DECISIONS + LEARNINGS）</div></div>
+      <div style="font-size:10px;color:var(--text-dim);text-align:right">15 min</div>
+    </div>
+    <div style="display:grid;grid-template-columns:80px 1fr 100px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--green)">
+      <div style="font-size:11px;font-weight:700;color:var(--green)">Phase 2</div>
+      <div><div style="font-size:12px;font-weight:700">角色轉換</div><div style="font-size:11px;color:var(--text-muted)">11 SEED_*.md → 3 GROUP + 1 ROLE_Review</div></div>
+      <div style="font-size:10px;color:var(--text-dim);text-align:right">20 min</div>
+    </div>
+    <div style="display:grid;grid-template-columns:80px 1fr 100px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--red)">
+      <div style="font-size:11px;font-weight:700;color:var(--red)">Phase 3</div>
+      <div><div style="font-size:12px;font-weight:700">CLAUDE.md 瘦身</div><div style="font-size:11px;color:var(--text-muted)">61KB (~15K tokens) → ≤5K tokens · 內容搬至 skill/GROUP/config</div></div>
+      <div style="font-size:10px;color:var(--text-dim);text-align:right">30 min ⚠️</div>
+    </div>
+    <div style="display:grid;grid-template-columns:80px 1fr 100px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--amber)">
+      <div style="font-size:11px;font-weight:700;color:var(--amber)">Phase 4</div>
+      <div><div style="font-size:12px;font-weight:700">Skill 分層</div><div style="font-size:11px;color:var(--text-muted)">40+ skill → Tier 1（核心）/ Tier 2（專案配置）/ Tier 3（平台工具）</div></div>
+      <div style="font-size:10px;color:var(--text-dim);text-align:right">15 min</div>
+    </div>
+    <div style="display:grid;grid-template-columns:80px 1fr 100px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--purple)">
+      <div style="font-size:11px;font-weight:700;color:var(--purple)">Phase 5</div>
+      <div><div style="font-size:12px;font-weight:700">新文件</div><div style="font-size:11px;color:var(--text-muted)">DESIGN.md + project-config.yaml + ARTIFACTS.md + handoffs/ 目錄</div></div>
+      <div style="font-size:10px;color:var(--text-dim);text-align:right">10 min</div>
+    </div>
+    <div style="display:grid;grid-template-columns:80px 1fr 100px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--teal)">
+      <div style="font-size:11px;font-weight:700;color:var(--teal)">Phase 6</div>
+      <div><div style="font-size:12px;font-weight:700">Dashboard 升級</div><div style="font-size:11px;color:var(--text-muted)">新增 Task Board tab + Gate Readiness panel</div></div>
+      <div style="font-size:10px;color:var(--text-dim);text-align:right">15 min</div>
+    </div>
+    <div style="display:grid;grid-template-columns:80px 1fr 100px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--green)">
+      <div style="font-size:11px;font-weight:700;color:var(--green)">Phase 7</div>
+      <div><div style="font-size:12px;font-weight:700">驗證</div><div style="font-size:11px;color:var(--text-muted)">Token Budget 全 PASS + 核心文件存在 + CLAUDE.md ≤ 5K</div></div>
+      <div style="font-size:10px;color:var(--text-dim);text-align:right">5 min</div>
+    </div>
+    <div style="display:grid;grid-template-columns:80px 1fr 100px;gap:12px;align-items:center;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--text-dim)">
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted)">Phase 8</div>
+      <div><div style="font-size:12px;font-weight:700">清理</div><div style="font-size:11px;color:var(--text-muted)">v3.3 遺留歸檔到 docs/archive/v3.3/ → git commit</div></div>
+      <div style="font-size:10px;color:var(--text-dim);text-align:right">2 min</div>
+    </div>
+  </div>
+
+  <!-- 核心差異 -->
+  <div class="section-title" style="margin-top:28px"><h2>核心結構差異</h2><div class="section-line"></div></div>
+  <div class="card" style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:11px">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border)">
+          <th style="text-align:left;padding:6px 8px;color:var(--text-muted)">面向</th>
+          <th style="text-align:left;padding:6px 8px;color:var(--red)">v3.3</th>
+          <th style="text-align:left;padding:6px 8px;color:var(--green)">v4</th>
+          <th style="text-align:left;padding:6px 8px;color:var(--text-muted)">動作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px">CLAUDE.md</td><td style="padding:6px 8px;color:var(--red)">61KB ~15K tokens</td><td style="padding:6px 8px;color:var(--green)">≤5K tokens</td><td style="padding:6px 8px">重寫</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px">角色定義</td><td style="padding:6px 8px;color:var(--red)">11 SEED 檔案</td><td style="padding:6px 8px;color:var(--green)">3 GROUP + 1 ROLE</td><td style="padding:6px 8px">合併</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px">Memory</td><td style="padding:6px 8px;color:var(--red)">17+ 文件</td><td style="padding:6px 8px;color:var(--green)">5 文件</td><td style="padding:6px 8px">整併</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px">Pipeline</td><td style="padding:6px 8px;color:var(--red)">P00-P06 (7 段)</td><td style="padding:6px 8px;color:var(--green)">5 段 + 3 通道</td><td style="padding:6px 8px">對映</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px">文件登記</td><td style="padding:6px 8px;color:var(--red)">MASTER_INDEX</td><td style="padding:6px 8px;color:var(--green)">ARTIFACTS.md</td><td style="padding:6px 8px">轉化</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px">設計系統</td><td style="padding:6px 8px;color:var(--red)">無</td><td style="padding:6px 8px;color:var(--green)">DESIGN.md</td><td style="padding:6px 8px">新建</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px">Skill 管理</td><td style="padding:6px 8px;color:var(--red)">40+ 平坦</td><td style="padding:6px 8px;color:var(--green)">Tier 1/2/3</td><td style="padding:6px 8px">分類</td></tr>
+        <tr><td style="padding:6px 8px">團隊設定</td><td style="padding:6px 8px;color:var(--red)">TEAM.md</td><td style="padding:6px 8px;color:var(--green)">project-config.yaml</td><td style="padding:6px 8px">拆分</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 進行中專案處理 -->
+  <div class="section-title" style="margin-top:28px"><h2>進行中專案處理</h2><div class="section-line"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" class="col-3">
+    <div class="card" style="border-left:3px solid var(--red)">
+      <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:4px">P04 實作中</div>
+      <div style="font-size:11px;color:var(--text-muted)">等 Feature 完成 + Gate 3 通過後再遷移。不中斷進行中的工作。</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--amber)">
+      <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:4px">P01/P02 設計中</div>
+      <div style="font-size:11px;color:var(--text-muted)">可以先遷移框架，文件內容不受影響。新產出直接用 v4 格式。</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--green)">
+      <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px">專案剛開始</div>
+      <div style="font-size:11px;color:var(--text-muted)">直接用 v4 template 開新專案（project-init skill），不需遷移。</div>
+    </div>
+  </div>
+
+  <!-- Pipeline 對映 -->
+  <div class="section-title" style="margin-top:28px"><h2>Pipeline 階段對映</h2><div class="section-line"></div></div>
+  <div class="card">
+    <div style="display:flex;gap:4px;align-items:stretch">
+      <!-- v3.3 -->
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:10px;font-weight:700;color:var(--text-dim);text-align:center;margin-bottom:4px">v3.3</div>
+        <div style="padding:6px;background:var(--red-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--red)">P00 需求建立</div>
+        <div style="padding:6px;background:var(--red-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--red)">P01 需求細化</div>
+        <div style="padding:6px;background:var(--red-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--red)">P02 技術設計</div>
+        <div style="padding:6px;background:var(--red-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--red)">G4-ENG</div>
+        <div style="padding:6px;background:var(--red-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--red)">P03 開發準備</div>
+        <div style="padding:6px;background:var(--red-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--red)">P04 實作開發</div>
+        <div style="padding:6px;background:var(--red-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--red)">P05 合規安全</div>
+        <div style="padding:6px;background:var(--red-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--red)">P06 部署發佈</div>
+      </div>
+      <!-- Arrow -->
+      <div style="display:flex;align-items:center;font-size:16px;color:var(--text-dim);padding:0 8px">→</div>
+      <!-- v4 -->
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:10px;font-weight:700;color:var(--text-dim);text-align:center;margin-bottom:4px">v4</div>
+        <div style="padding:12px 6px;background:var(--green-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--green);flex:2">Discover<br><span style="font-size:9px;color:var(--text-dim)">P00+P01 合併</span></div>
+        <div style="padding:12px 6px;background:var(--green-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--green);flex:3">Plan<br><span style="font-size:9px;color:var(--text-dim)">P02+G4+P03 合併</span></div>
+        <div style="padding:6px;background:var(--green-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--green);flex:1">Build<br><span style="font-size:9px;color:var(--text-dim)">= P04</span></div>
+        <div style="padding:6px;background:var(--green-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--green);flex:1">Verify<br><span style="font-size:9px;color:var(--text-dim)">= P05</span></div>
+        <div style="padding:6px;background:var(--green-soft);border-radius:4px;font-size:10px;text-align:center;color:var(--green);flex:1">Ship<br><span style="font-size:9px;color:var(--text-dim)">= P06</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-left">V4 Migration Strategy · Draft 2026-03-31</div>
+    <div class="footer-right">Total estimated: ~2 hours per project</div>
+  </div>
+</div>
+
+<!-- ===== RISKS ===== -->
+<div id="page-risks" class="page">
+  <h1>Residual Risks</h1>
+  <p class="subtitle">Appendix D — v1.0 定稿後需優先處理的 3 個風險項</p>
+
+  <div class="risk-resolved-banner">
+    <span class="risk-resolved-banner-icon">✅</span>
+    <div>
+      <div class="risk-resolved-banner-text">全部 3 個風險已解決 — 2026-03-31</div>
+      <div class="risk-resolved-banner-sub">已建立對應 skill 檔案，各風險均有 template、自動觸發或驗證腳本落地</div>
+    </div>
+  </div>
+
+  <div class="risk-list">
+
+    <!-- RR-1 -->
+    <div class="risk-item resolved">
+      <div class="risk-header">
+        <span class="risk-id resolved">RR-1</span>
+        <span class="risk-title">findings.md / progress.md 路徑與生命週期未固定</span>
+        <span class="risk-badge">✓ Resolved</span>
+      </div>
+      <div class="risk-desc">不同專案可能各自放法，導致 planning-with-tasks skill 找不到或重複建立。</div>
+      <div class="risk-fix">建立 planning-with-tasks skill，固定路徑規範與 feature 生命週期。</div>
+      <div class="risk-deliverable">
+        <div class="risk-deliverable-title">📦 交付物</div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">Skill 檔案</span>
+          <code style="font-size:11px;color:var(--teal)">context-skills/planning-with-tasks/SKILL.md</code>
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">路徑規範</span>
+          <span style="font-size:11px"><code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">src/[feature-id]/findings.md</code> &nbsp;+&nbsp; <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">src/[feature-id]/progress.md</code></span>
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">Feature ID</span>
+          <span style="font-size:11px">格式：<code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">F-[三位數]-[描述]</code>，例如 F-001-user-auth</span>
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">生命週期</span>
+          <span style="font-size:11px">Feature 完成 → <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">mv</code> 到 <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">docs/archive/[feature-id]/</code>，加封存標記</span>
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">含</span>
+          <span style="font-size:11px">findings.md / progress.md 初始化 template、DRIFT_SIGNAL 格式參考、anti-patterns</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RR-2 -->
+    <div class="risk-item resolved">
+      <div class="risk-header">
+        <span class="risk-id resolved">RR-2</span>
+        <span class="risk-title">CIA 流程概念清楚，但 skill / checklist / artifact format 尚未落地</span>
+        <span class="risk-badge">✓ Resolved</span>
+      </div>
+      <div class="risk-desc">變更 Baselined 文件時需要 CIA 流程，但目前只有概念定義，沒有可執行的 template 和自動觸發。</div>
+      <div class="risk-fix">建立 cia skill，含完整 checklist template、ARTIFACTS.md 記錄格式、CIA-GUARD hook 自動攔截。</div>
+      <div class="risk-deliverable">
+        <div class="risk-deliverable-title">📦 交付物</div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">Skill 檔案</span>
+          <code style="font-size:11px;color:var(--teal)">context-skills/cia/SKILL.md</code>
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">Checklist</span>
+          <span style="font-size:11px">8 區塊 CIA template：變更描述 / 受影響文件 ID / 影響範圍 / 需重跑 Gate / 風險評估 / 決策 / 執行計畫 / 完成確認</span>
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">ARTIFACTS格式</span>
+          <span style="font-size:11px">YAML CIA record，含 maturity_before / maturity_after / gates_to_rerun</span>
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">Auto-Trigger</span>
+          <span style="font-size:11px">CIA-GUARD PreToolUse hook：偵測修改 Baselined 文件 → 攔截並要求先完成 CIA</span>
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">降級規則</span>
+          <span style="font-size:11px">Baselined → Draft（必須重走 Gate）；Approved → Draft（需要重新 Review）</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RR-3 -->
+    <div class="risk-item resolved">
+      <div class="risk-header">
+        <span class="risk-id resolved">RR-3</span>
+        <span class="risk-title">Task-Master、GROUP 檔案容易在實作中再次膨脹</span>
+        <span class="risk-badge">✓ Resolved</span>
+      </div>
+      <div class="risk-desc">一旦開始實作角色定義，最容易把 v3.3 的規則重新搬回來，導致 token 預算超標。</div>
+      <div class="risk-fix">在 project-init skill 加入 Token Budget 驗證（Step 5），建立可執行的驗證腳本。</div>
+      <div class="risk-deliverable">
+        <div class="risk-deliverable-title">📦 交付物</div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">更新檔案</span>
+          <code style="font-size:11px;color:var(--teal)">context-skills/project-init/SKILL.md</code>（新增 Step 5）
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">驗證腳本</span>
+          <code style="font-size:11px;color:var(--teal)">context-skills/project-init/scripts/validate-token-budget.sh</code>
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">驗證項目</span>
+          <span style="font-size:11px">CLAUDE.md ≤5K · task-master ≤2K · GROUP×3 ≤2K each · ROLE_Review ≤1K · STATE.md ≤400 tokens</span>
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">行為</span>
+          <span style="font-size:11px">❌ FAIL 時 exit code 1，初始化無法繼續；Checklist 加入必要項「Token Budget 全部 PASS」</span>
+        </div>
+        <div class="risk-deliverable-row">
+          <span class="risk-deliverable-label">估算方式</span>
+          <span style="font-size:11px">1 token ≈ 4 chars（保守估算），顯示使用率 %</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title" style="margin-top:28px"><h2>實作優先順序</h2><div class="section-line"></div></div>
+  <div class="card">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:grid;grid-template-columns:28px 160px 1fr;gap:12px;align-items:center;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--accent)">
+        <div style="font-weight:800;color:var(--accent)">1</div>
+        <div style="font-size:12px;font-weight:700">CLAUDE.md template</div>
+        <div style="font-size:11px;color:var(--text-muted)">整個框架的入口，最先定稿才能讓其他東西對齊</div>
+      </div>
+      <div style="display:grid;grid-template-columns:28px 160px 1fr;gap:12px;align-items:center;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--purple)">
+        <div style="font-weight:800;color:var(--purple)">2</div>
+        <div style="font-size:12px;font-weight:700">project-config.yaml</div>
+        <div style="font-size:11px;color:var(--text-muted)">專案設定的 schema，控制 Tier 2 skill 啟用清單</div>
+      </div>
+      <div style="display:grid;grid-template-columns:28px 160px 1fr;gap:12px;align-items:center;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--amber)">
+        <div style="font-weight:800;color:var(--amber)">3</div>
+        <div style="font-size:12px;font-weight:700">task-master skill</div>
+        <div style="font-size:11px;color:var(--text-muted)">分派規則、drift signal routing、交接模板</div>
+      </div>
+      <div style="display:grid;grid-template-columns:28px 160px 1fr;gap:12px;align-items:center;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--green)">
+        <div style="font-weight:800;color:var(--green)">4</div>
+        <div style="font-size:12px;font-weight:700">GROUP files + ROLE_Review</div>
+        <div style="font-size:11px;color:var(--text-muted)">角色定義，嚴格守住 token budget 上限</div>
+      </div>
+      <div style="display:grid;grid-template-columns:28px 160px 1fr;gap:12px;align-items:center;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--teal)">
+        <div style="font-weight:800;color:var(--teal)">5</div>
+        <div style="font-size:12px;font-weight:700">Memory templates</div>
+        <div style="font-size:11px;color:var(--text-muted)">STATE / TASKS / ARTIFACTS / DECISIONS 的格式規範</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-left">V4 Workflow Blueprint v1.0 · Approved 2026-03-31</div>
+    <div class="footer-right">Authored: Opus draft + Codex review ×2 + 凱子 direction</div>
+  </div>
+</div>
+
+<script>
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

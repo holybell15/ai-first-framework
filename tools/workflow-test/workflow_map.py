@@ -20,17 +20,17 @@ PIPELINES = [
         "id": "P01", "name": "需求訪談", "color": "#6366f1",
         "agents": [
             {
-                "id": "aicc-interviewer", "name": "Interviewer", "label": "需求訪談師",
+                "id": "interviewer", "name": "Interviewer", "label": "需求訪談師",
                 "skills": ["brainstorming", "verification-before-completion"],
                 "output": "IR 文件 + Seed Scope Map"
             },
             {
-                "id": "aicc-pm", "name": "PM", "label": "產品經理",
+                "id": "pm", "name": "PM", "label": "產品經理",
                 "skills": ["brainstorming", "verification-before-completion"],
                 "output": "RS 規格 + User Story + AC"
             },
             {
-                "id": "aicc-ux", "name": "UX", "label": "UX 設計師",
+                "id": "ux", "name": "UX", "label": "UX 設計師",
                 "skills": ["frontend-design", "screenshot-to-code", "brainstorming", "verification-before-completion"],
                 "output": "Prototype HTML + USL 風格鎖定"
             },
@@ -42,17 +42,17 @@ PIPELINES = [
         "id": "P02", "name": "技術設計", "color": "#0ea5e9",
         "agents": [
             {
-                "id": "aicc-architect", "name": "Architect", "label": "系統架構師",
+                "id": "architect", "name": "Architect", "label": "系統架構師",
                 "skills": ["deep-research", "brainstorming", "verification-before-completion"],
                 "output": "SA 架構文件 + ADR"
             },
             {
-                "id": "aicc-dba", "name": "DBA", "label": "資料庫管理師",
+                "id": "dba", "name": "DBA", "label": "資料庫管理師",
                 "skills": ["deep-research", "verification-before-completion"],
                 "output": "DB Schema + Field Registry"
             },
             {
-                "id": "aicc-review", "name": "Review", "label": "總審查官",
+                "id": "review", "name": "Review", "label": "總審查官",
                 "skills": ["requesting-code-review", "quality-gates", "verification-before-completion"],
                 "output": "架構 Review 報告"
             },
@@ -64,19 +64,19 @@ PIPELINES = [
         "id": "P03", "name": "開發準備", "color": "#10b981",
         "agents": [
             {
-                "id": "aicc-backend", "name": "Backend", "label": "後端工程師",
+                "id": "backend", "name": "Backend", "label": "後端工程師",
                 "skills": ["test-driven-development", "using-git-worktrees", "systematic-debugging", "verification-before-completion"],
                 "output": "API Spec 文件",
                 "pre_trigger": "code-grounder"
             },
             {
-                "id": "aicc-frontend", "name": "Frontend", "label": "前端工程師",
+                "id": "frontend", "name": "Frontend", "label": "前端工程師",
                 "skills": ["test-driven-development", "frontend-design", "screenshot-to-code", "verification-before-completion"],
                 "output": "FE 元件規劃",
                 "pre_trigger": "code-grounder"
             },
             {
-                "id": "aicc-qa", "name": "QA", "label": "QA 工程師",
+                "id": "qa", "name": "QA", "label": "QA 工程師",
                 "skills": ["webapp-testing", "test-driven-development", "systematic-debugging", "verification-before-completion"],
                 "output": "測試案例設計 TC"
             },
@@ -88,19 +88,19 @@ PIPELINES = [
         "id": "P04", "name": "實作開發", "color": "#f59e0b",
         "agents": [
             {
-                "id": "aicc-backend", "name": "Backend", "label": "後端工程師",
+                "id": "backend", "name": "Backend", "label": "後端工程師",
                 "skills": ["test-driven-development", "using-git-worktrees", "finishing-a-development-branch", "systematic-debugging"],
                 "output": "後端實作 src/",
                 "pre_trigger": "code-grounder"
             },
             {
-                "id": "aicc-frontend", "name": "Frontend", "label": "前端工程師",
+                "id": "frontend", "name": "Frontend", "label": "前端工程師",
                 "skills": ["test-driven-development", "using-git-worktrees", "finishing-a-development-branch", "frontend-design"],
                 "output": "前端元件 src/",
                 "pre_trigger": "code-grounder"
             },
             {
-                "id": "aicc-qa", "name": "QA", "label": "QA 工程師",
+                "id": "qa", "name": "QA", "label": "QA 工程師",
                 "skills": ["webapp-testing", "systematic-debugging", "verification-before-completion"],
                 "output": "測試報告 TR"
             },
@@ -112,12 +112,12 @@ PIPELINES = [
         "id": "P05", "name": "合規審查", "color": "#ef4444",
         "agents": [
             {
-                "id": "aicc-security", "name": "Security", "label": "資安合規專家",
+                "id": "security", "name": "Security", "label": "資安合規專家",
                 "skills": ["deep-research", "verification-before-completion"],
                 "output": "SEC 資安報告"
             },
             {
-                "id": "aicc-review", "name": "Review", "label": "總審查官",
+                "id": "review", "name": "Review", "label": "總審查官",
                 "skills": ["quality-gates", "verification-before-completion"],
                 "output": "合規 Review 報告"
             },
@@ -129,12 +129,12 @@ PIPELINES = [
         "id": "P06", "name": "部署上線", "color": "#8b5cf6",
         "agents": [
             {
-                "id": "aicc-devops", "name": "DevOps", "label": "DevOps 工程師",
+                "id": "devops", "name": "DevOps", "label": "DevOps 工程師",
                 "skills": ["deep-research", "verification-before-completion"],
                 "output": "CI/CD + 部署計畫"
             },
             {
-                "id": "aicc-review", "name": "Review", "label": "總審查官",
+                "id": "review", "name": "Review", "label": "總審查官",
                 "skills": ["quality-gates", "verification-before-completion"],
                 "output": "部署驗收報告"
             },
@@ -349,10 +349,10 @@ const SKILL_EXISTS = {{}};
 {chr(10).join(f'SKILL_EXISTS["{s}"] = {"true" if skill_ok(s) else "false"};' for s in sorted(all_skills))}
 
 const AGENT_ICONS = {{
-  'aicc-interviewer':'🎙️','aicc-pm':'📋','aicc-ux':'🎨',
-  'aicc-architect':'🏛️','aicc-dba':'🗄️','aicc-backend':'⚙️',
-  'aicc-frontend':'💻','aicc-qa':'🔍','aicc-security':'🔒',
-  'aicc-devops':'🚀','aicc-review':'👁️',
+  'interviewer':'🎙️','pm':'📋','ux':'🎨',
+  'architect':'🏛️','dba':'🗄️','backend':'⚙️',
+  'frontend':'💻','qa':'🔍','security':'🔒',
+  'devops':'🚀','review':'👁️',
 }};
 const SUPPORT_ICONS = {{
   'code-grounder':'🧲','gate-reviewer':'🚦','data-contract-validator':'📐',

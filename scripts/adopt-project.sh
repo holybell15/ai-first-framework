@@ -64,18 +64,32 @@ copy_if_missing() {
   fi
 }
 
-# ── Helper: copy directory, skipping existing files ────────────
-copy_dir_if_missing() {
+# ── Helper: copy only missing files from a directory tree ─────
+copy_tree_missing_files() {
   local src_dir="$1"
   local dst_dir="$2"
   local label="$3"
+  local added=0
+  local skipped=0
 
-  if [ -d "$dst_dir" ]; then
-    echo "   ⏭️  Skip dir (already exists): $label"
-  else
-    cp -r "$src_dir" "$dst_dir"
-    echo "   ✅ Added dir: $label"
-  fi
+  mkdir -p "$dst_dir"
+
+  while IFS= read -r -d '' src_file; do
+    local rel_path="${src_file#$src_dir/}"
+    local dst_file="$dst_dir/$rel_path"
+
+    mkdir -p "$(dirname "$dst_file")"
+
+    if [ -e "$dst_file" ]; then
+      skipped=$((skipped + 1))
+    else
+      cp "$src_file" "$dst_file"
+      replace_placeholders "$dst_file"
+      added=$((added + 1))
+    fi
+  done < <(find "$src_dir" -type f -print0)
+
+  echo "   ✅ Synced: $label (added $added, skipped $skipped existing files)"
 }
 
 # ── Replace placeholders in a file ────────────────────────────
@@ -148,16 +162,8 @@ copy_if_missing "$TEMPLATE_DIR/memory/knowledge_base/KB-AH_hallucination_pattern
 echo ""
 echo "📐 Step 2 — 10_Standards/ (三域技術標準)..."
 
-if [ ! -d "$PROJECT_PATH/10_Standards" ]; then
-  cp -r "$TEMPLATE_DIR/10_Standards" "$PROJECT_PATH/10_Standards"
-  # Replace placeholders in all standards files
-  while IFS= read -r -d '' file; do
-    replace_placeholders "$file"
-  done < <(find "$PROJECT_PATH/10_Standards" -type f \( -name "*.md" -o -name "*.yaml" \) -print0)
-  echo "   ✅ Added: 10_Standards/ (API / DB / UI 三域標準)"
-else
-  echo "   ⏭️  Skip (exists): 10_Standards/"
-fi
+copy_tree_missing_files "$TEMPLATE_DIR/10_Standards" \
+  "$PROJECT_PATH/10_Standards" "10_Standards/"
 
 # ──────────────────────────────────────────────────────────────
 # Step 3: context-seeds/ 和 context-skills/
@@ -165,11 +171,14 @@ fi
 echo ""
 echo "🌱 Step 3 — context-seeds/ + context-skills/..."
 
-copy_dir_if_missing "$TEMPLATE_DIR/context-seeds" \
+copy_tree_missing_files "$TEMPLATE_DIR/context-seeds" \
   "$PROJECT_PATH/context-seeds" "context-seeds/"
 
-copy_dir_if_missing "$TEMPLATE_DIR/context-skills" \
+copy_tree_missing_files "$TEMPLATE_DIR/context-skills" \
   "$PROJECT_PATH/context-skills" "context-skills/"
+
+copy_tree_missing_files "$TEMPLATE_DIR/scripts" \
+  "$PROJECT_PATH/scripts" "scripts/"
 
 # ──────────────────────────────────────────────────────────────
 # Step 4: contracts/, CLAUDE.md, TASKS.md, MASTER_INDEX.md
@@ -177,26 +186,30 @@ copy_dir_if_missing "$TEMPLATE_DIR/context-skills" \
 echo ""
 echo "📋 Step 4 — contracts/ + root files..."
 
-if [ ! -d "$PROJECT_PATH/contracts" ]; then
-  mkdir -p "$PROJECT_PATH/contracts"
-  cp "$TEMPLATE_DIR/contracts/README.md" "$PROJECT_PATH/contracts/README.md"
-  replace_placeholders "$PROJECT_PATH/contracts/README.md"
-  echo "   ✅ Added: contracts/"
-else
-  echo "   ⏭️  Skip (exists): contracts/"
-fi
+copy_tree_missing_files "$TEMPLATE_DIR/contracts" \
+  "$PROJECT_PATH/contracts" "contracts/"
 
 copy_if_missing "$TEMPLATE_DIR/CLAUDE.md" "$PROJECT_PATH/CLAUDE.md" "CLAUDE.md"
 if [ -f "$PROJECT_PATH/CLAUDE.md" ]; then
   replace_placeholders "$PROJECT_PATH/CLAUDE.md"
 fi
 
+copy_if_missing "$TEMPLATE_DIR/PROJECT_DASHBOARD.html" "$PROJECT_PATH/PROJECT_DASHBOARD.html" "PROJECT_DASHBOARD.html"
+copy_if_missing "$TEMPLATE_DIR/PROJECT_DASHBOARD.data.js" "$PROJECT_PATH/PROJECT_DASHBOARD.data.js" "PROJECT_DASHBOARD.data.js"
+
 copy_if_missing "$TEMPLATE_DIR/TASKS.md" "$PROJECT_PATH/TASKS.md" "TASKS.md"
 copy_if_missing "$TEMPLATE_DIR/MASTER_INDEX.md" "$PROJECT_PATH/MASTER_INDEX.md" "MASTER_INDEX.md"
 copy_if_missing "$TEMPLATE_DIR/TEAM.md" "$PROJECT_PATH/TEAM.md" "TEAM.md"
+copy_if_missing "$TEMPLATE_DIR/START_HERE.md" "$PROJECT_PATH/START_HERE.md" "START_HERE.md"
 
 if [ -f "$PROJECT_PATH/MASTER_INDEX.md" ]; then
   replace_placeholders "$PROJECT_PATH/MASTER_INDEX.md"
+fi
+if [ -f "$PROJECT_PATH/PROJECT_DASHBOARD.html" ]; then
+  replace_placeholders "$PROJECT_PATH/PROJECT_DASHBOARD.html"
+fi
+if [ -f "$PROJECT_PATH/PROJECT_DASHBOARD.data.js" ]; then
+  replace_placeholders "$PROJECT_PATH/PROJECT_DASHBOARD.data.js"
 fi
 
 # ──────────────────────────────────────────────────────────────
@@ -243,10 +256,59 @@ for folder in "${FOLDERS[@]}"; do
 done
 
 # ──────────────────────────────────────────────────────────────
-# Step 7: memory/last_task.md（記錄接入時間點）
+# Step 7: memory/adoption_gap_report.md（建立初始 GAP 報告）
 # ──────────────────────────────────────────────────────────────
 echo ""
-echo "📝 Step 7 — Recording adoption in memory/last_task.md..."
+echo "🧭 Step 7 — Creating memory/adoption_gap_report.md..."
+
+ADOPTION_GAP_REPORT="$PROJECT_PATH/memory/adoption_gap_report.md"
+
+if [ ! -f "$ADOPTION_GAP_REPORT" ]; then
+  cat > "$ADOPTION_GAP_REPORT" << EOF
+# Adoption Gap Report — $PROJECT_NAME
+
+> 舊專案接入的初始盤點。先標出差距，再決定哪些要現在補、哪些排到後續。
+
+## Environment Snapshot
+
+- Production branch: [待確認]
+- Deploy method: [待確認]
+- CI status: [待確認]
+- Automated tests: [待確認]
+- Staging / preview environment: [待確認]
+
+## Gaps
+
+### Now
+- [ ] 確認 production branch 與部署流程
+- [ ] 建立第一版 codebase snapshot
+- [ ] 確認第一個要接入的功能或修復
+
+### Next
+- [ ] 補齊缺少的 standards 對映
+- [ ] 補齊 CI / smoke checks
+- [ ] 補技術債與決策記錄
+
+### Later
+- [ ] legacy feature F-code 盤點
+- [ ] 完整 ADR 補記
+- [ ] 完整 Gate / compliance 接軌
+
+## Notes
+
+- 本報告允許先不完整，重點是讓接入工作可持續推進。
+- 建議 Lite 接入先完成 Now，再決定是否升級到 Standard 接入。
+EOF
+  echo "   ✅ Added: memory/adoption_gap_report.md"
+else
+  echo "   ⏭️  Skip (exists): memory/adoption_gap_report.md"
+fi
+
+# ──────────────────────────────────────────────────────────────
+# Step 8: memory/last_task.md（記錄接入時間點）
+# ──────────────────────────────────────────────────────────────
+echo ""
+echo "📝 Step 8 — Recording adoption in memory/last_task.md..."
 
 TODAY=$(date +%Y-%m-%d)
 FW_VERSION=$(cat "$FRAMEWORK_DIR/VERSION" 2>/dev/null || echo "2.3.0")
@@ -259,14 +321,10 @@ cat > "$TEMP_FILE" << EOF
 - **專案**: $PROJECT_NAME（舊專案接入）
 - **框架版本**: AI-First Framework v$FW_VERSION
 - **錯誤碼前綴**: $ERROR_PREFIX
-- **下一步**: 說「執行 Pipeline: 舊專案接入」開始 7-Stage 接入流程
-  Stage 1: map-codebase（技術全景掃描）
-  Stage 2: F-code 分配
-  Stage 3: ADR 補記
-  Stage 4: 技術債登記
-  Stage 5: GAP 評估
-  Stage 6: CI 整合
-  Stage 7: 接入宣告 commit
+- **下一步**: 說「執行 Pipeline: 舊專案接入」開始雙軌接入流程
+  Lite 接入：現況盤點 → baseline 建立 → codebase 掃描 → GAP 報告 → 選第一個接入功能
+  Standard 接入：map-codebase → F-code 分配 → ADR 補記 → 技術債登記 → GAP 評估 → CI 整合 → 接入宣告
+- **初始 GAP**: memory/adoption_gap_report.md
 
 EOF
 
@@ -290,14 +348,9 @@ echo "📋 接下來在 Claude Code / Cowork 中說："
 echo ""
 echo "   「執行 Pipeline: 舊專案接入」"
 echo ""
-echo "   這會啟動 7 個 Stage 的接入流程（約 1~2 天）："
-echo "   1. 技術全景掃描（map-codebase §41）"
-echo "   2. Feature 盤點 + F-code 分配"
-echo "   3. 架構決策補記（ADR）"
-echo "   4. 技術債顯性登記"
-echo "   5. 標準差距評估（GAP Report）"
-echo "   6. 環境 + CI 整合"
-echo "   7. 接入宣告 commit"
+echo "   這會啟動雙軌接入流程："
+echo "   Lite 接入：現況盤點 → baseline 建立 → codebase 掃描 → GAP 報告 → 第一個接入功能"
+echo "   Standard 接入：map-codebase → F-code 分配 → ADR 補記 → 技術債登記 → GAP 評估 → CI 整合 → 接入宣告"
 echo ""
 echo "   接入完成後，新功能走 Pipeline: 需求訪談，"
 echo "   修改舊 code 走 §4 四步修改法，緊急問題走 執行 Hotfix:。"

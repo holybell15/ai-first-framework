@@ -1,0 +1,178 @@
+# ──────────────────────────────────────────────────────────────
+# Handoff Auto-Notification
+# 偵測 handoff() commit → 自動發送通知到 Teams / Slack / Discord / LINE
+#
+# 設定方式：
+#   Repository Settings → Secrets → 加入以下任一：
+#   - HANDOFF_TEAMS_WEBHOOK   (recommended)
+#   - HANDOFF_SLACK_WEBHOOK
+#   - HANDOFF_DISCORD_WEBHOOK
+#   - HANDOFF_LINE_TOKEN
+# ──────────────────────────────────────────────────────────────
+
+name: Handoff Notification
+
+on:
+  push:
+    branches: [main, develop, "docs/**", "feature/**", "review/**"]
+
+jobs:
+  notify:
+    name: "Detect & Notify Handoff"
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, 'handoff(')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse handoff commit
+        id: parse
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+
+          # Extract: handoff(From→To): Feature Message
+          FROM=$(echo "$COMMIT_MSG" | sed -n 's/handoff(\([^→]*\)→.*/\1/p')
+          TO=$(echo "$COMMIT_MSG" | sed -n 's/handoff([^→]*→\([^)]*\)).*/\1/p')
+          REST=$(echo "$COMMIT_MSG" | sed -n 's/handoff([^)]*): *//p')
+          FEATURE=$(echo "$REST" | awk '{print $1}')
+          MESSAGE=$(echo "$REST" | sed "s/^${FEATURE} *//")
+
+          echo "from=$FROM" >> "$GITHUB_OUTPUT"
+          echo "to=$TO" >> "$GITHUB_OUTPUT"
+          echo "feature=$FEATURE" >> "$GITHUB_OUTPUT"
+          echo "message=$MESSAGE" >> "$GITHUB_OUTPUT"
+          echo "author=${{ github.event.head_commit.author.name }}" >> "$GITHUB_OUTPUT"
+          echo "timestamp=${{ github.event.head_commit.timestamp }}" >> "$GITHUB_OUTPUT"
+
+          echo "Parsed: $FROM → $TO | $FEATURE | $MESSAGE"
+
+      # ── Microsoft Teams (Primary) ───────────────────────────
+      - name: Notify Teams
+        if: env.HANDOFF_TEAMS_WEBHOOK != ''
+        env:
+          HANDOFF_TEAMS_WEBHOOK: ${{ secrets.HANDOFF_TEAMS_WEBHOOK }}
+        run: |
+          curl -s -X POST "$HANDOFF_TEAMS_WEBHOOK" \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "type": "message",
+              "attachments": [{
+                "contentType": "application/vnd.microsoft.card.adaptive",
+                "content": {
+                  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                  "type": "AdaptiveCard",
+                  "version": "1.4",
+                  "body": [
+                    {
+                      "type": "ColumnSet",
+                      "columns": [
+                        {
+                          "type": "Column",
+                          "width": "auto",
+                          "items": [{"type": "TextBlock", "text": "🔀", "size": "Large"}]
+                        },
+                        {
+                          "type": "Column",
+                          "width": "stretch",
+                          "items": [
+                            {"type": "TextBlock", "text": "交接通知", "weight": "Bolder", "size": "Large"},
+                            {"type": "TextBlock", "text": "${{ steps.parse.outputs.from }} → ${{ steps.parse.outputs.to }}", "spacing": "None", "isSubtle": true}
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "FactSet",
+                      "facts": [
+                        {"title": "Feature", "value": "${{ steps.parse.outputs.feature }}"},
+                        {"title": "完成", "value": "${{ steps.parse.outputs.message }}"},
+                        {"title": "by", "value": "${{ steps.parse.outputs.author }}"}
+                      ]
+                    },
+                    {
+                      "type": "TextBlock",
+                      "text": "📋 **下一步：** `git pull` → 確認 TASKS.md → 啟動 ${{ steps.parse.outputs.to }} Agent",
+                      "wrap": true,
+                      "spacing": "Medium",
+                      "separator": true
+                    }
+                  ],
+                  "msteams": {"width": "Full"}
+                }
+              }]
+            }'
+
+      # ── Slack ────────────────────────────────────────────────
+      - name: Notify Slack
+        if: env.HANDOFF_SLACK_WEBHOOK != ''
+        env:
+          HANDOFF_SLACK_WEBHOOK: ${{ secrets.HANDOFF_SLACK_WEBHOOK }}
+        run: |
+          curl -s -X POST "$HANDOFF_SLACK_WEBHOOK" \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {"type": "plain_text", "text": "🔀 交接通知", "emoji": true}
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {"type": "mrkdwn", "text": "*Feature：*\n${{ steps.parse.outputs.feature }}"},
+                    {"type": "mrkdwn", "text": "*交接：*\n${{ steps.parse.outputs.from }} → ${{ steps.parse.outputs.to }}"}
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {"type": "mrkdwn", "text": "*完成：*\n${{ steps.parse.outputs.message }}"}
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {"type": "mrkdwn", "text": "by ${{ steps.parse.outputs.author }} | 📋 下一步：`git pull` → TASKS.md → 啟動 ${{ steps.parse.outputs.to }} Agent"}
+                  ]
+                }
+              ]
+            }'
+
+      # ── Discord ──────────────────────────────────────────────
+      - name: Notify Discord
+        if: env.HANDOFF_DISCORD_WEBHOOK != ''
+        env:
+          HANDOFF_DISCORD_WEBHOOK: ${{ secrets.HANDOFF_DISCORD_WEBHOOK }}
+        run: |
+          curl -s -X POST "$HANDOFF_DISCORD_WEBHOOK" \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "embeds": [{
+                "title": "🔀 交接通知",
+                "color": 4886754,
+                "fields": [
+                  {"name": "Feature", "value": "${{ steps.parse.outputs.feature }}", "inline": true},
+                  {"name": "交接", "value": "${{ steps.parse.outputs.from }} → **${{ steps.parse.outputs.to }}**", "inline": true},
+                  {"name": "完成", "value": "${{ steps.parse.outputs.message }}", "inline": false},
+                  {"name": "下一步", "value": "`git pull` → TASKS.md → 啟動 ${{ steps.parse.outputs.to }} Agent", "inline": false}
+                ],
+                "footer": {"text": "by ${{ steps.parse.outputs.author }}"},
+                "timestamp": "${{ steps.parse.outputs.timestamp }}"
+              }]
+            }'
+
+      # ── LINE Notify ──────────────────────────────────────────
+      - name: Notify LINE
+        if: env.HANDOFF_LINE_TOKEN != ''
+        env:
+          HANDOFF_LINE_TOKEN: ${{ secrets.HANDOFF_LINE_TOKEN }}
+        run: |
+          MSG="
+          [交接通知]
+          ${{ steps.parse.outputs.from }} → ${{ steps.parse.outputs.to }}
+          Feature：${{ steps.parse.outputs.feature }}
+          完成：${{ steps.parse.outputs.message }}
+          by ${{ steps.parse.outputs.author }}
+          下一步：git pull → TASKS.md"
+
+          curl -s -X POST "https://notify-api.line.me/api/notify" \
+            -H "Authorization: Bearer $HANDOFF_LINE_TOKEN" \
+            -d "message=$MSG"

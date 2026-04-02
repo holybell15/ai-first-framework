@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-First Framework v4.0 — 總覽</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#1a73e8;--primary-light:#e8f0fe;--primary-dark:#1557b0;
+  --green:#10b981;--green-bg:#dcfce7;--green-dark:#059669;
+  --amber:#d97706;--amber-bg:#fef3c7;
+  --red:#ef4444;--red-bg:#fee2e2;
+  --purple:#7c3aed;--purple-bg:#ede9fe;
+  --cyan:#0891b2;--cyan-bg:#cffafe;
+  --text:#1e293b;--muted:#64748b;--subtle:#94a3b8;
+  --border:#e2e8f0;--bg:#f1f5f9;--card:#fff;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Fira Code',monospace;
+  --shadow:0 4px 16px rgba(0,0,0,.08);--shadow-sm:0 1px 4px rgba(0,0,0,.06);
+  --ease:.2s ease;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;font-size:14px}
+.header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:#fff;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.header h1{font-size:22px;font-weight:700;letter-spacing:-.3px}
+.header .badge{background:var(--primary);color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.header .sub{color:#94a3b8;font-size:13px;margin-top:4px}
+nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;gap:0;overflow-x:auto;position:sticky;top:0;z-index:100}
+nav button{background:none;border:none;padding:14px 20px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:var(--ease)}
+nav button:hover{color:var(--text);background:#f8fafc}
+nav button.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.page{display:none;padding:24px;max-width:1400px;margin:0 auto}
+.page.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.card h3{font-size:16px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 12px;background:#f8fafc;border-bottom:2px solid var(--border);font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#fafbfc}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin:2px}
+.tag-primary{background:var(--primary-light);color:var(--primary)}
+.tag-green{background:var(--green-bg);color:var(--green-dark)}
+.tag-amber{background:var(--amber-bg);color:var(--amber)}
+.tag-red{background:var(--red-bg);color:var(--red)}
+.tag-purple{background:var(--purple-bg);color:var(--purple)}
+.tag-cyan{background:var(--cyan-bg);color:var(--cyan)}
+.tag-gray{background:#f1f5f9;color:var(--muted)}
+
+/* Pipeline Flow */
+.pipeline-flow{display:flex;align-items:center;justify-content:center;gap:0;padding:24px 0;flex-wrap:wrap}
+.stage-box{padding:16px 24px;border-radius:12px;text-align:center;min-width:140px;position:relative;cursor:default;transition:var(--ease)}
+.stage-box:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.stage-box .name{font-weight:700;font-size:15px;margin-bottom:4px}
+.stage-box .gate{font-size:11px;opacity:.8}
+.arrow{font-size:24px;color:var(--subtle);margin:0 4px;flex-shrink:0}
+.stage-discover{background:#ede9fe;color:#5b21b6;border:2px solid #c4b5fd}
+.stage-plan{background:#cffafe;color:#155e75;border:2px solid #67e8f9}
+.stage-build{background:#dcfce7;color:#166534;border:2px solid #86efac}
+.stage-verify{background:#dbeafe;color:#1e40af;border:2px solid #93c5fd}
+.stage-ship{background:#fef3c7;color:#92400e;border:2px solid #fcd34d}
+
+/* Agent Cards */
+.agent-card{border-left:4px solid var(--border);padding:12px 16px;margin-bottom:8px;border-radius:0 8px 8px 0;background:#fafbfc;transition:var(--ease)}
+.agent-card:hover{background:#f0f4f8;border-left-color:var(--primary)}
+.agent-card .agent-name{font-weight:700;font-size:14px;margin-bottom:4px}
+.agent-card .agent-role{font-size:12px;color:var(--muted);margin-bottom:6px}
+.agent-card .skills{display:flex;flex-wrap:wrap;gap:4px}
+
+/* Group Header */
+.group-header{padding:12px 16px;border-radius:8px;margin-bottom:12px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px}
+.group-discovery{background:var(--purple-bg);color:var(--purple)}
+.group-build{background:var(--green-bg);color:var(--green-dark)}
+.group-verify{background:var(--primary-light);color:var(--primary)}
+.group-review{background:var(--amber-bg);color:var(--amber)}
+
+/* Memory/File Section */
+.file-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;margin-bottom:6px;background:#fafbfc}
+.file-item:hover{background:#f0f4f8}
+.file-icon{font-size:18px;width:28px;text-align:center}
+.file-info{flex:1}
+.file-name{font-weight:600;font-size:13px;font-family:var(--mono)}
+.file-desc{font-size:12px;color:var(--muted)}
+.file-budget{font-size:11px;color:var(--subtle);background:#f1f5f9;padding:2px 8px;border-radius:4px}
+
+/* Tenets */
+.tenet{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:8px;margin-bottom:8px}
+.tenet:hover{background:#f8fafc}
+.tenet-num{background:var(--primary);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.tenet-title{font-weight:700;font-size:14px}
+.tenet-desc{font-size:13px;color:var(--muted)}
+
+/* Gate checklist */
+.gate-section{border-left:3px solid var(--border);padding:12px 16px;margin-bottom:12px;border-radius:0 8px 8px 0}
+.gate-section.gate-discover{border-left-color:#7c3aed}
+.gate-section.gate-plan{border-left-color:#0891b2}
+.gate-section.gate-build{border-left-color:#10b981}
+.gate-section.gate-ship{border-left-color:#d97706}
+.gate-section h4{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.gate-section ul{list-style:none;padding:0}
+.gate-section li{padding:4px 0;font-size:13px;display:flex;align-items:flex-start;gap:6px}
+.gate-section li::before{content:'☐';color:var(--subtle);flex-shrink:0}
+
+/* Skill tier */
+.tier-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding:6px 12px;border-radius:6px;display:inline-block}
+.tier1{background:#fee2e2;color:#b91c1c}
+.tier2{background:#fef3c7;color:#92400e}
+.tier3{background:#f1f5f9;color:var(--muted)}
+.skill-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.skill-chip{padding:6px 12px;border-radius:6px;font-size:12px;font-weight:500;border:1px solid var(--border);background:#fff;cursor:default;transition:var(--ease)}
+.skill-chip:hover{border-color:var(--primary);background:var(--primary-light)}
+.skill-chip .trigger{font-size:10px;color:var(--muted);display:block;margin-top:2px}
+
+/* Special channels */
+.channel{padding:12px 16px;border-radius:8px;margin-bottom:8px;border:1px dashed var(--border);background:#fafbfc}
+.channel-name{font-weight:700;font-size:14px;margin-bottom:4px}
+.channel-desc{font-size:12px;color:var(--muted)}
+
+/* Rules */
+.rule{padding:12px 16px;border-radius:8px;margin-bottom:8px;border-left:3px solid var(--primary);background:#fafbfc}
+.rule-title{font-weight:700;font-size:13px;margin-bottom:4px}
+.rule-desc{font-size:12px;color:var(--muted)}
+
+/* Modification tiers */
+.mod-tier{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;margin-bottom:6px}
+.mod-free{background:#dcfce7}
+.mod-review{background:#fef3c7}
+.mod-cia{background:#fee2e2}
+.mod-forbidden{background:#1e293b;color:#fff}
+.mod-tier .level{font-weight:700;font-size:13px;min-width:60px}
+.mod-tier .scope{font-size:12px;flex:1}
+
+/* Footer */
+footer{text-align:center;padding:24px;color:var(--subtle);font-size:12px;border-top:1px solid var(--border);margin-top:32px}
+
+/* Tooltip */
+[data-tip]{position:relative;cursor:help}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:6px 10px;border-radius:6px;font-size:11px;white-space:nowrap;z-index:999;pointer-events:none}
+
+/* Responsive */
+@media(max-width:768px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .pipeline-flow{flex-direction:column}
+  .arrow{transform:rotate(90deg)}
+  nav{padding:0 8px}
+  nav button{padding:12px 14px;font-size:12px}
+  .page{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>AI-First Framework v4.0</h1>
+    <div class="sub">基於 Superpowers + GStack 設計 | Discover → Plan → Build → Verify → Ship</div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <span class="badge">v4.0</span>
+    <span class="badge" style="background:var(--green)">Template Ready</span>
+  </div>
+</div>
+
+<nav id="nav">
+  <button class="active" onclick="show('pipeline')">Pipeline 流程</button>
+  <button onclick="show('agents')">Agent 矩陣</button>
+  <button onclick="show('skills')">Skill 分層</button>
+  <button onclick="show('gates')">Quality Gates</button>
+  <button onclick="show('memory')">記憶系統</button>
+  <button onclick="show('design')">Design 鎖定</button>
+  <button onclick="show('rules')">關鍵規則</button>
+  <button onclick="show('files')">檔案結構</button>
+</nav>
+
+<!-- ======== TAB 1: Pipeline ======== -->
+<div id="pipeline" class="page active">
+  <div class="card">
+    <h3>🔄 主流程 Pipeline</h3>
+    <div class="pipeline-flow">
+      <div class="stage-box stage-discover">
+        <div class="name">Discover</div>
+        <div class="gate">→ Discover Gate</div>
+      </div>
+      <div class="arrow">▸</div>
+      <div class="stage-box stage-plan">
+        <div class="name">Plan</div>
+        <div class="gate">→ Plan Gate</div>
+      </div>
+      <div class="arrow">▸</div>
+      <div class="stage-box stage-build">
+        <div class="name">Build</div>
+        <div class="gate">→ Build Gate</div>
+      </div>
+      <div class="arrow">▸</div>
+      <div class="stage-box stage-verify">
+        <div class="name">Verify</div>
+        <div class="gate">→ Ship Gate</div>
+      </div>
+      <div class="arrow">▸</div>
+      <div class="stage-box stage-ship">
+        <div class="name">Ship</div>
+        <div class="gate">完成 ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📋 各階段目的與產出</h3>
+      <table>
+        <tr><th>階段</th><th>目的</th><th>典型產出</th></tr>
+        <tr>
+          <td><span class="tag tag-purple">Discover</span></td>
+          <td>收集需求、釐清範圍、確認 MVP 邊界</td>
+          <td>SRS, AC, WBS, Scope Baseline, DESIGN.md</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-cyan">Plan</span></td>
+          <td>架構設計、模組邊界、API/DB/UI baseline</td>
+          <td>System Design, SD Checklist, Slice Backlog, Test Matrix</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-green">Build</span></td>
+          <td>垂直切片實作、TDD、Code Review</td>
+          <td>Working code, Test suites, PR</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-primary">Verify</span></td>
+          <td>整合測試、回歸測試、合規審查</td>
+          <td>Test Reports, Security Audit, Release Evidence</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">Ship</span></td>
+          <td>部署、Smoke Test、監控、回顧</td>
+          <td>Release Notes, Deployment Record, Retro</td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>🔀 特殊通道</h3>
+      <div class="channel">
+        <div class="channel-name">Lite Mode</div>
+        <div class="channel-desc">首次功能 / 小型需求 / PoC → Discover(簡) → Plan(簡) → Build → Ship（跳過 Verify 合規部分）</div>
+      </div>
+      <div class="channel">
+        <div class="channel-name">Brownfield</div>
+        <div class="channel-desc">接手既有程式碼 → Codebase Snapshot → Baseline → Gap Report → First Safe Change → 併入主流程</div>
+      </div>
+      <div class="channel">
+        <div class="channel-name">Hotfix</div>
+        <div class="channel-desc">線上 Critical/High 事件 → Freeze → Investigate (max 3 attempts) → Minimal Fix → Regression Test → Rollback Plan → Smoke → Follow-up</div>
+      </div>
+
+      <h3 style="margin-top:20px">🔄 Task-Master Dispatcher</h3>
+      <div style="font-size:13px;color:var(--muted);margin-top:8px">
+        <p><strong>職責</strong>：分派（Route）→ 接收信號並路由（Receive Signal & Route）→ 交接（Handoff）</p>
+        <p style="margin-top:6px"><strong>不做</strong>：不偵測 drift、不載入完整技術 context、不寫 code、不做設計、不做 Gate 審查</p>
+        <p style="margin-top:6px"><strong>Context</strong>：必載 STATE.md + TASKS.md；drift 時讀 ARTIFACTS.md</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📊 DRIFT_SIGNAL 路由</h3>
+    <table>
+      <tr><th>Signal Type</th><th>來源</th><th>Task-Master 路由</th></tr>
+      <tr><td><span class="tag tag-red">scope_drift</span></td><td>Specialist 發現需求超出 SRS</td><td>退回 Discover → 重過 Discover Gate</td></tr>
+      <tr><td><span class="tag tag-amber">design_drift</span></td><td>Specialist 發現實作與 Design 不符</td><td>退回 Plan → 重過 Plan Gate</td></tr>
+      <tr><td><span class="tag tag-purple">test_escalation</span></td><td>測試顯示上游文件有誤</td><td>判斷是 code bug（留 Build）還是上游問題（退回）</td></tr>
+      <tr><td><span class="tag tag-gray">blocked</span></td><td>外部依賴阻塞</td><td>判斷轉交或等待</td></tr>
+      <tr><td><span class="tag tag-primary">handoff</span></td><td>Specialist 完成任務</td><td>執行交接協議</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ======== TAB 2: Agents ======== -->
+<div id="agents" class="page">
+  <div class="card">
+    <h3>🏗️ Specialist 架構</h3>
+    <div style="text-align:center;padding:16px;font-family:var(--mono);font-size:13px;background:#f8fafc;border-radius:8px;line-height:2">
+      <div style="font-weight:700">Task-Master (dispatcher)</div>
+      <div>│</div>
+      <div style="display:flex;justify-content:center;gap:48px;flex-wrap:wrap">
+        <div>├── <span style="color:var(--purple);font-weight:700">Discovery Group</span></div>
+        <div>├── <span style="color:var(--green-dark);font-weight:700">Build Group</span></div>
+        <div>├── <span style="color:var(--primary);font-weight:700">Verify Group</span></div>
+        <div>└── <span style="color:var(--amber);font-weight:700">Review ↕跨階段</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Discovery Group -->
+    <div class="card">
+      <div class="group-header group-discovery">🔍 Discovery Group</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">檔案：context-roles/GROUP_Discovery.md (~536 tokens)</div>
+
+      <div class="agent-card" style="border-left-color:var(--purple)">
+        <div class="agent-name">Interviewer / PM</div>
+        <div class="agent-role">需求收集、SRS 撰寫、AC 定義、WBS 拆解</div>
+        <div class="skills">
+          <span class="tag tag-purple">brainstorming</span>
+          <span class="tag tag-purple">writing-plans</span>
+          <span class="tag tag-purple">planning-with-tasks</span>
+          <span class="tag tag-gray">deep-research</span>
+          <span class="tag tag-gray">doc-coauthoring</span>
+        </div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px">🚫 不做技術決策、不定義架構、不寫 code</div>
+      </div>
+
+      <div class="agent-card" style="border-left-color:var(--purple)">
+        <div class="agent-name">UX</div>
+        <div class="agent-role">Design Token 定義、Prototype 產出、可用性測試</div>
+        <div class="skills">
+          <span class="tag tag-purple">brainstorming</span>
+          <span class="tag tag-purple">frontend-design</span>
+          <span class="tag tag-purple">planning-with-tasks</span>
+          <span class="tag tag-gray">screenshot-to-code</span>
+        </div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px">🚫 不修改 Baselined DESIGN.md（需 CIA）、不做後端邏輯</div>
+      </div>
+
+      <div class="agent-card" style="border-left-color:var(--purple)">
+        <div class="agent-name">Architect</div>
+        <div class="agent-role">系統架構設計、ADR 撰寫、SD Checklist 7 項</div>
+        <div class="skills">
+          <span class="tag tag-purple">writing-plans</span>
+          <span class="tag tag-purple">deep-research</span>
+          <span class="tag tag-purple">planning-with-tasks</span>
+        </div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px">🚫 不做 UI/UX、不寫 production code、不改 SRS</div>
+      </div>
+    </div>
+
+    <!-- Build Group -->
+    <div class="card">
+      <div class="group-header group-build">🔨 Build Group</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">檔案：context-roles/GROUP_Build.md (~596 tokens)</div>
+
+      <div class="agent-card" style="border-left-color:var(--green)">
+        <div class="agent-name">Backend</div>
+        <div class="agent-role">API 實作、業務邏輯、錯誤處理、契約履行</div>
+        <div class="skills">
+          <span class="tag tag-green">TDD</span>
+          <span class="tag tag-green">git-worktrees</span>
+          <span class="tag tag-green">systematic-debugging</span>
+          <span class="tag tag-green">code-review</span>
+          <span class="tag tag-gray">ground</span>
+          <span class="tag tag-gray">validate-contract</span>
+        </div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px">🚫 不碰 UI/CSS、不改 DB schema 未經 DBA、不跳 test</div>
+      </div>
+
+      <div class="agent-card" style="border-left-color:var(--green)">
+        <div class="agent-name">Frontend</div>
+        <div class="agent-role">UI 元件實作（遵循 DESIGN.md）、狀態管理、API 整合</div>
+        <div class="skills">
+          <span class="tag tag-green">TDD</span>
+          <span class="tag tag-green">git-worktrees</span>
+          <span class="tag tag-green">frontend-design</span>
+          <span class="tag tag-green">code-review</span>
+          <span class="tag tag-gray">ground</span>
+          <span class="tag tag-gray">screenshot-to-code</span>
+        </div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px">🚫 不碰 DB、不改 API contract、不用未定義 token</div>
+      </div>
+
+      <div class="agent-card" style="border-left-color:var(--green)">
+        <div class="agent-name">DBA</div>
+        <div class="agent-role">DB Schema 設計、Migration、索引最佳化</div>
+        <div class="skills">
+          <span class="tag tag-green">writing-plans</span>
+          <span class="tag tag-green">planning-with-tasks</span>
+          <span class="tag tag-gray">ground</span>
+          <span class="tag tag-gray">validate-contract</span>
+        </div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px">🚫 不寫 application code、不改 API、不碰業務邏輯</div>
+      </div>
+    </div>
+
+    <!-- Verify Group -->
+    <div class="card">
+      <div class="group-header group-verify">✅ Verify Group</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">檔案：context-roles/GROUP_Verify.md (~586 tokens)</div>
+
+      <div class="agent-card" style="border-left-color:var(--primary)">
+        <div class="agent-name">QA</div>
+        <div class="agent-role">Test Pyramid L1-L3 執行、Playwright E2E、AC 驗證</div>
+        <div class="skills">
+          <span class="tag tag-primary">webapp-testing</span>
+          <span class="tag tag-primary">systematic-debugging</span>
+          <span class="tag tag-primary">planning-with-tasks</span>
+        </div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px">🚫 不修改 production code（只報 bug）</div>
+      </div>
+
+      <div class="agent-card" style="border-left-color:var(--primary)">
+        <div class="agent-name">Security</div>
+        <div class="agent-role">OWASP Top 10、STRIDE 威脅模型、認證/授權驗證</div>
+        <div class="skills">
+          <span class="tag tag-primary">deep-research</span>
+          <span class="tag tag-primary">verification-before-completion</span>
+        </div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px">🚫 不修改 code、不做架構決策</div>
+      </div>
+
+      <div class="agent-card" style="border-left-color:var(--primary)">
+        <div class="agent-name">DevOps</div>
+        <div class="agent-role">CI/CD、部署、Smoke Test、監控</div>
+        <div class="skills">
+          <span class="tag tag-primary">systematic-debugging</span>
+          <span class="tag tag-primary">verification-before-completion</span>
+        </div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px">🚫 不修改業務邏輯、不改 API</div>
+      </div>
+    </div>
+
+    <!-- Review -->
+    <div class="card">
+      <div class="group-header group-review">⚖️ Review（跨階段）</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">檔案：context-roles/ROLE_Review.md (~918 tokens)</div>
+
+      <div class="agent-card" style="border-left-color:var(--amber)">
+        <div class="agent-name">Review</div>
+        <div class="agent-role">Gate 審查 + Code Review + CIA 觸發</div>
+        <div class="skills">
+          <span class="tag tag-amber">gate-check</span>
+          <span class="tag tag-amber">cia</span>
+          <span class="tag tag-amber">verification-before-completion</span>
+          <span class="tag tag-gray">retro</span>
+        </div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px">🚫 不修改被審查的 artifact、不做實作、不改設計決策</div>
+      </div>
+
+      <div style="font-size:12px;color:var(--muted);padding:12px;background:#fafbfc;border-radius:8px;margin-top:8px">
+        <strong>CIA 觸發</strong>：Review 發現被審查的 artifact 已 Baselined 但需修改時 → 停止審查 → 觸發 CIA → Task-Master 決定是否允許修改
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== TAB 3: Skills ======== -->
+<div id="skills" class="page">
+  <div class="card">
+    <h3>🧩 Skill 三層架構</h3>
+    <table>
+      <tr><th>層級</th><th>定義</th><th>載入方式</th><th>數量</th></tr>
+      <tr>
+        <td><span class="tier-label tier1">Tier 1 Core</span></td>
+        <td>行為約束型 — 「你必須怎麼做」</td>
+        <td>符合條件時強制載入</td>
+        <td>12</td>
+      </tr>
+      <tr>
+        <td><span class="tier-label tier2">Tier 2 Domain</span></td>
+        <td>領域/治理型 — 「這個專案的特殊規則」</td>
+        <td>依 project-config.yaml 按需載入</td>
+        <td>按專案定義</td>
+      </tr>
+      <tr>
+        <td><span class="tier-label tier3">Tier 3 Platform</span></td>
+        <td>工具型 — 「幫你產出特定格式」</td>
+        <td>由平台自動處理</td>
+        <td>不計入框架</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3><span class="tier-label tier1">Tier 1</span> Core Disciplines（12 個）</h3>
+    <table>
+      <tr><th>Skill</th><th>觸發條件</th><th>說明</th></tr>
+      <tr><td><strong>task-master</strong></td><td>session 開始 / handoff</td><td>Task-Master dispatcher 的分派/攔截/交接規則</td></tr>
+      <tr><td><strong>test-driven-development</strong></td><td>寫任何 code</td><td>RED→GREEN→REFACTOR 強制 TDD</td></tr>
+      <tr><td><strong>systematic-debugging</strong></td><td>遇到 bug</td><td>4-phase 結構化除錯</td></tr>
+      <tr><td><strong>verification-before-completion</strong></td><td>完成任務前</td><td>每個 Agent 完成前的強制驗證</td></tr>
+      <tr><td><strong>brainstorming</strong></td><td>探索想法</td><td>結構化腦力激盪：發散→收斂→決策</td></tr>
+      <tr><td><strong>planning-with-tasks</strong></td><td>開始實作計畫</td><td>TASKS.md + findings.md + progress.md 追蹤</td></tr>
+      <tr><td><strong>requesting-code-review</strong></td><td>提交 review</td><td>結構化 Code Review 請求</td></tr>
+      <tr><td><strong>using-git-worktrees</strong></td><td>開 feature branch</td><td>Git worktree 隔離開發</td></tr>
+      <tr><td><strong>gate-check</strong></td><td>過 Gate</td><td>Gate checklist 驗證 + evidence 收集</td></tr>
+      <tr><td><strong>ground</strong></td><td>改既有 code</td><td>修改前接地：Read→Context Check→Scope→Execute</td></tr>
+      <tr><td><strong>handoff-protocol</strong></td><td>Agent 交接</td><td>標準交接格式 + 路由流程</td></tr>
+      <tr><td><strong>cia</strong></td><td>修改 Baselined 文件</td><td>Change Impact Assessment 流程</td></tr>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="tier-label tier2">Tier 2</span> Domain & Governance</h3>
+      <div class="skill-grid">
+        <div class="skill-chip">call-center-domain<span class="trigger">業務領域知識</span></div>
+        <div class="skill-chip">deep-research<span class="trigger">技術調研/比較方案</span></div>
+        <div class="skill-chip">doc-coauthoring<span class="trigger">共同撰寫文件</span></div>
+        <div class="skill-chip">frontend-design<span class="trigger">Anti-AI-slop UI</span></div>
+        <div class="skill-chip">screenshot-to-code<span class="trigger">截圖還原</span></div>
+        <div class="skill-chip">webapp-testing<span class="trigger">Playwright E2E</span></div>
+        <div class="skill-chip">finishing-a-dev-branch<span class="trigger">收尾 merge/PR</span></div>
+        <div class="skill-chip">subagent-driven-dev<span class="trigger">多 Agent 並行</span></div>
+        <div class="skill-chip">brownfield-onboard<span class="trigger">接手舊 code</span></div>
+        <div class="skill-chip">project-init<span class="trigger">初始化新專案</span></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted)">配置位置：<code>project-config.yaml → tier2_skills</code></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="tier-label tier3">Tier 3</span> Platform Tools（不計入框架）</h3>
+      <div class="skill-grid">
+        <div class="skill-chip" style="opacity:.6">docx</div>
+        <div class="skill-chip" style="opacity:.6">pptx</div>
+        <div class="skill-chip" style="opacity:.6">xlsx</div>
+        <div class="skill-chip" style="opacity:.6">pdf</div>
+        <div class="skill-chip" style="opacity:.6">algorithmic-art</div>
+        <div class="skill-chip" style="opacity:.6">theme-factory</div>
+        <div class="skill-chip" style="opacity:.6">web-artifacts-builder</div>
+        <div class="skill-chip" style="opacity:.6">mcp-builder</div>
+        <div class="skill-chip" style="opacity:.6">schedule</div>
+        <div class="skill-chip" style="opacity:.6">internal-comms</div>
+        <div class="skill-chip" style="opacity:.6">skill-creator</div>
+      </div>
+      <div style="font-size:12px;color:var(--muted)">由 Cowork/Claude Code 平台自動處理，不影響框架 token budget</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗑️ v3.3 淘汰 / 合併清單</h3>
+    <table>
+      <tr><th>原 Skill</th><th>處置</th><th>原因</th></tr>
+      <tr><td>pipeline-orchestrator</td><td><span class="tag tag-red">重構</span></td><td>→ task-master skill</td></tr>
+      <tr><td>planning-with-files</td><td><span class="tag tag-amber">重命名</span></td><td>→ planning-with-tasks</td></tr>
+      <tr><td>slice-cycle</td><td><span class="tag tag-red">合併</span></td><td>→ Build 階段標準做法</td></tr>
+      <tr><td>quality-gates</td><td><span class="tag tag-amber">重構</span></td><td>→ gate-check（簡化）</td></tr>
+      <tr><td>forced-thinking</td><td><span class="tag tag-red">合併</span></td><td>→ verification-before-completion</td></tr>
+      <tr><td>execution-trace</td><td><span class="tag tag-red">淘汰</span></td><td>overhead 高，用 git log + TASKS.md</td></tr>
+      <tr><td>destructive-guard</td><td><span class="tag tag-gray">降級</span></td><td>→ git hook</td></tr>
+      <tr><td>info-ship/canary/doc-sync</td><td><span class="tag tag-red">合併</span></td><td>→ Ship 階段標準步驟</td></tr>
+      <tr><td>update-dashboard</td><td><span class="tag tag-red">淘汰</span></td><td>Dashboard 從 TASKS.md 自動生成</td></tr>
+      <tr><td>quantitative-retro</td><td><span class="tag tag-red">合併</span></td><td>→ retro</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ======== TAB 4: Gates ======== -->
+<div id="gates" class="page">
+  <div class="card">
+    <h3>🚪 Quality Gates — 4 個品質關卡</h3>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px">
+      Gate 失敗 → 列具體未達標項（附證據）→ 判斷問題層 → 退回修正（T4 原則）→ 重過 Gate
+    </div>
+
+    <div class="gate-section gate-discover">
+      <h4><span class="tag tag-purple">Discover Gate</span> Discover → Plan</h4>
+      <ul>
+        <li>SRS 完整：功能清單、無歧義、優先級明確</li>
+        <li>AC 可測試：驗收條件業務價值清晰</li>
+        <li>WBS 已拆至 Task 級別（S/M/L 估算）</li>
+        <li>MVP 邊界已確認、Stakeholder 已簽核</li>
+        <li>DESIGN.md 已填寫（3 方案已評估、最終方案鎖入）</li>
+      </ul>
+    </div>
+
+    <div class="gate-section gate-plan">
+      <h4><span class="tag tag-cyan">Plan Gate</span> Plan → Build</h4>
+      <ul>
+        <li>SD Checklist 7 項全通過：</li>
+        <li>&nbsp;&nbsp;SD-1 架構圖（Mermaid/ASCII）標明所有模組 + 介面</li>
+        <li>&nbsp;&nbsp;SD-2 資料流圖（Mermaid sequence）每個核心 API</li>
+        <li>&nbsp;&nbsp;SD-3 DB Schema（ERD + DDL）table + relation + index</li>
+        <li>&nbsp;&nbsp;SD-4 狀態機圖（有狀態變遷的核心實體）</li>
+        <li>&nbsp;&nbsp;SD-5 錯誤處理策略（Error code + HTTP status + fallback）</li>
+        <li>&nbsp;&nbsp;SD-6 測試矩陣（Feature × 測試層級 覆蓋規劃）</li>
+        <li>&nbsp;&nbsp;SD-7 ADR 清單（所有架構決策有記錄）</li>
+        <li>Design Baseline locked → ARTIFACTS.md 標記 Baselined</li>
+        <li>Test Matrix 存在、每個 Feature 有規劃數量</li>
+        <li>Slice Backlog 已建立</li>
+      </ul>
+    </div>
+
+    <div class="gate-section gate-build">
+      <h4><span class="tag tag-green">Build Gate</span> Build → Verify</h4>
+      <ul>
+        <li>所有 Slice 實作完成</li>
+        <li>L1 Unit Test 覆蓋率 ≥ 80%</li>
+        <li>L2 Integration Test 每個 endpoint happy + error path</li>
+        <li>Code Review 通過（無待修評論）</li>
+        <li>無 scope drift（對照 SRS）</li>
+        <li>API contract 符合 Plan 階段定義</li>
+        <li>CI pipeline 全綠</li>
+      </ul>
+    </div>
+
+    <div class="gate-section gate-ship">
+      <h4><span class="tag tag-amber">Ship Gate</span> Verify → Ship</h4>
+      <ul>
+        <li>L3 E2E Test 每個 critical journey 通過</li>
+        <li>L4 Security 掃描完成、無 critical/high 未修復</li>
+        <li>L5 Smoke Test 核心路徑 100%</li>
+        <li>合規審查完成（如適用）</li>
+        <li>Rollback plan 已驗證可 2 分鐘內完成</li>
+        <li>Release evidence 齊全</li>
+        <li>Monitoring/alerting 已配置</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔺 Test Pyramid — 5 層定義</h3>
+    <table>
+      <tr><th>層</th><th>名稱</th><th>範圍</th><th>覆蓋率目標</th><th>負責 Agent</th><th>時機</th></tr>
+      <tr><td>L1</td><td>Unit</td><td>函數/方法</td><td>≥ 80%</td><td>Backend / Frontend</td><td>Build 中持續</td></tr>
+      <tr><td>L2</td><td>Integration</td><td>API + DB</td><td>每 endpoint happy + error</td><td>Backend</td><td>Build 中持續</td></tr>
+      <tr><td>L3</td><td>E2E</td><td>使用者操作流程</td><td>每個 critical journey</td><td>QA</td><td>Build Gate 前</td></tr>
+      <tr><td>L4</td><td>Security</td><td>OWASP Top 10 + STRIDE</td><td>auth/payment 全覆蓋</td><td>Security</td><td>Ship Gate 前</td></tr>
+      <tr><td>L5</td><td>Smoke</td><td>部署後健康</td><td>核心路徑 100%</td><td>DevOps</td><td>Ship 後</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ======== TAB 5: Memory ======== -->
+<div id="memory" class="page">
+  <div class="card">
+    <h3>🧠 Memory System — 5 個核心文件</h3>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px">
+      每個檔案有明確職責，不重疊。Subagent 不繼承記憶（T3 原則），Controller 從這些檔案提取最小資訊手動傳入。
+    </div>
+
+    <div class="file-item">
+      <div class="file-icon">📍</div>
+      <div class="file-info">
+        <div class="file-name">memory/STATE.md</div>
+        <div class="file-desc">即時狀態 — 現在在哪、誰在做、下一步做什麼。Task-Master 必讀。</div>
+      </div>
+      <div class="file-budget">≤ 400 tokens</div>
+    </div>
+
+    <div class="file-item">
+      <div class="file-icon">📋</div>
+      <div class="file-info">
+        <div class="file-name">TASKS.md</div>
+        <div class="file-desc">唯一任務真相來源 — WBS Task 追蹤、Handoff Log、Open Questions。</div>
+      </div>
+      <div class="file-budget">不限</div>
+    </div>
+
+    <div class="file-item">
+      <div class="file-icon">📦</div>
+      <div class="file-info">
+        <div class="file-name">memory/ARTIFACTS.md</div>
+        <div class="file-desc">正式文件登記簿 — Maturity lifecycle: Draft → In Review → Approved → Baselined → Deprecated</div>
+      </div>
+      <div class="file-budget">不限</div>
+    </div>
+
+    <div class="file-item">
+      <div class="file-icon">⚖️</div>
+      <div class="file-info">
+        <div class="file-name">memory/DECISIONS.md</div>
+        <div class="file-desc">架構決策記錄 (ADR) — Append-only，決策可被 supersede 但不刪除。</div>
+      </div>
+      <div class="file-budget">不限</div>
+    </div>
+
+    <div class="file-item">
+      <div class="file-icon">💡</div>
+      <div class="file-info">
+        <div class="file-name">memory/LEARNINGS.md</div>
+        <div class="file-desc">教訓/模式/偏好 — 技術模式、踩坑記錄、凱子偏好、工具備忘。</div>
+      </div>
+      <div class="file-budget">≤ 800 tokens</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📏 記憶原則</h3>
+      <div class="rule"><div class="rule-title">STATE 只記現在</div><div class="rule-desc">不記歷史，不記「做過什麼」，只記「現在在哪、下一步、誰在做」</div></div>
+      <div class="rule"><div class="rule-title">TASKS 是唯一任務真相</div><div class="rule-desc">Dashboard、報告、進度追蹤全部從 TASKS.md 衍生</div></div>
+      <div class="rule"><div class="rule-title">ARTIFACTS 只記正式文件</div><div class="rule-desc">草稿不登記；每次 Gate 更新 maturity</div></div>
+      <div class="rule"><div class="rule-title">DECISIONS 只增不改</div><div class="rule-desc">決策可以被新 ADR supersede，但不刪除舊的</div></div>
+      <div class="rule"><div class="rule-title">Context > 60% 時存檔</div><div class="rule-desc">自動將狀態寫入 STATE.md，確保下一個 session 可接續</div></div>
+    </div>
+
+    <div class="card">
+      <h3>📂 靜態參考（按需讀取）</h3>
+      <div class="file-item"><div class="file-icon">📄</div><div class="file-info"><div class="file-name">memory/product.md</div><div class="file-desc">產品概述（名稱、類型、技術棧）</div></div></div>
+      <div class="file-item"><div class="file-icon">📄</div><div class="file-info"><div class="file-name">memory/glossary.md</div><div class="file-desc">專案術語表</div></div></div>
+      <div class="file-item"><div class="file-icon">📄</div><div class="file-info"><div class="file-name">memory/hotfix_log.md</div><div class="file-desc">Hotfix 歷史記錄</div></div></div>
+      <div class="file-item"><div class="file-icon">📁</div><div class="file-info"><div class="file-name">memory/handoffs/</div><div class="file-desc">Agent 交接記錄（per Feature）</div></div></div>
+      <div class="file-item"><div class="file-icon">📁</div><div class="file-info"><div class="file-name">memory/people/</div><div class="file-desc">團隊成員資訊</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== TAB 6: Design ======== -->
+<div id="design" class="page">
+  <div class="card">
+    <h3>🎨 DESIGN.md — Design Token 鎖定系統</h3>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px">
+      Discover 階段由 UX Agent 產出 → 3 個方案評估 → 選定鎖入 → Baselined 後修改需走 CIA
+    </div>
+
+    <div class="grid-3">
+      <div>
+        <h4 style="margin-bottom:8px;font-size:14px">Color Palette</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:20px;height:20px;border-radius:4px;background:#1a73e8"></div>Primary #1a73e8</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:20px;height:20px;border-radius:4px;background:#34a853"></div>Secondary #34a853</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:20px;height:20px;border-radius:4px;background:#d93025"></div>Error #d93025</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:20px;height:20px;border-radius:4px;background:#f9ab00"></div>Warning #f9ab00</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:20px;height:20px;border-radius:4px;background:#202124"></div>Text #202124</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:20px;height:20px;border-radius:4px;background:#f8f9fa;border:1px solid #ddd"></div>Surface #f8f9fa</div>
+        </div>
+      </div>
+      <div>
+        <h4 style="margin-bottom:8px;font-size:14px">Typography</h4>
+        <div style="font-size:12px;color:var(--muted)">
+          <div>Font: Inter, -apple-system, sans-serif</div>
+          <div>H1: 28px/700 | H2: 22px/600 | H3: 18px/600</div>
+          <div>Body: 14px/400 | Caption: 12px/400</div>
+          <div>Code: 13px JetBrains Mono</div>
+        </div>
+      </div>
+      <div>
+        <h4 style="margin-bottom:8px;font-size:14px">Spacing & Radius</h4>
+        <div style="font-size:12px;color:var(--muted)">
+          <div>xs:4 sm:8 md:16 lg:24 xl:32 2xl:48</div>
+          <div>Radius: sm:4 md:8 lg:12 full:9999</div>
+          <div>Button: 32/40/48px | Input: 40px</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔒 修改分級（4 Tier）</h3>
+
+    <div class="mod-tier mod-free">
+      <div class="level" style="color:var(--green-dark)">Free</div>
+      <div class="scope">文字內容、圖片/icon 替換、組件內部微調 → <strong>不需審批</strong></div>
+    </div>
+
+    <div class="mod-tier mod-review">
+      <div class="level" style="color:var(--amber)">Review</div>
+      <div class="scope">新增/刪除頁面元件、改變佈局結構、修改互動流程 → <strong>Review Agent 確認</strong></div>
+    </div>
+
+    <div class="mod-tier mod-cia">
+      <div class="level" style="color:var(--red)">CIA</div>
+      <div class="scope">改顏色、字體、間距、組件尺寸（本文件中的任何 token）→ <strong>CIA 流程 + 凱子核准</strong></div>
+    </div>
+
+    <div class="mod-tier mod-forbidden">
+      <div class="level">禁止</div>
+      <div class="scope">引入新 CSS framework、改 navigation 結構、使用未定義 token → <strong>不允許</strong></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Design Variant 流程</h3>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px;font-size:13px">
+      <div class="tag tag-purple" style="padding:8px 16px;font-size:13px">UX 調研</div>
+      <span class="arrow">→</span>
+      <div class="tag tag-purple" style="padding:8px 16px;font-size:13px">3 方案 (A/B/C)</div>
+      <span class="arrow">→</span>
+      <div class="tag tag-amber" style="padding:8px 16px;font-size:13px">凱子選擇</div>
+      <span class="arrow">→</span>
+      <div class="tag tag-green" style="padding:8px 16px;font-size:13px">鎖入 DESIGN.md</div>
+      <span class="arrow">→</span>
+      <div class="tag tag-red" style="padding:8px 16px;font-size:13px">Baselined 🔒</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== TAB 7: Rules ======== -->
+<div id="rules" class="page">
+  <div class="card">
+    <h3>🏛️ 設計原則 (Design Tenets)</h3>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">遇到取捨時，以原則編號小的優先。</div>
+
+    <div class="tenet"><div class="tenet-num">T1</div><div><div class="tenet-title">Evidence over Assertion</div><div class="tenet-desc">所有宣稱必須附帶可驗證的證據。不是 checklist 打勾，而是跑實際指令、看實際 output。</div></div></div>
+    <div class="tenet"><div class="tenet-num">T2</div><div><div class="tenet-title">Scope is Sacred</div><div class="tenet-desc">Discover Gate 通過後，需求文件是唯一範圍基準。No silent scope change / redesign / requirement rewrite。</div></div></div>
+    <div class="tenet"><div class="tenet-num">T3</div><div><div class="tenet-title">Context is Currency</div><div class="tenet-desc">每多載入 1K tokens 的 context 就是在花錢。Agent 只載入當前任務需要的最小 context。</div></div></div>
+    <div class="tenet"><div class="tenet-num">T4</div><div><div class="tenet-title">Fix Upstream, Not Downstream</div><div class="tenet-desc">若發現需求/設計有誤，回上游文件修正後再重新往下執行。不在下游硬修。</div></div></div>
+    <div class="tenet"><div class="tenet-num">T5</div><div><div class="tenet-title">Process over Guessing</div><div class="tenet-desc">遇到問題用結構化流程解決，不用直覺猜。</div></div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>⚡ 關鍵規則</h3>
+      <div class="rule"><div class="rule-title">1. Handoff Protocol</div><div class="rule-desc">Agent 之間不直接溝通，全部透過 Artifact + Task-Master 中轉</div></div>
+      <div class="rule"><div class="rule-title">2. CIA 強制</div><div class="rule-desc">修改 Baselined 文件必須走 Change Impact Assessment 流程</div></div>
+      <div class="rule"><div class="rule-title">3. DESIGN.md 鎖定</div><div class="rule-desc">Design Token 修改分 4 級（Free/Review/CIA/禁止）</div></div>
+      <div class="rule"><div class="rule-title">4. Bug Fix = Regression Test</div><div class="rule-desc">任何 bug fix 必須附帶自動化 regression test</div></div>
+      <div class="rule"><div class="rule-title">5. XL Task 強制拆分</div><div class="rule-desc">估算 > 4hr 的 Task 強制拆成多個 M 或 S</div></div>
+      <div class="rule"><div class="rule-title">6. Context > 60% 存檔</div><div class="rule-desc">自動將狀態寫入 STATE.md，確保下一個 session 可接續</div></div>
+    </div>
+
+    <div class="card">
+      <h3>📊 Token Budget</h3>
+      <table>
+        <tr><th>檔案</th><th>上限</th><th>說明</th></tr>
+        <tr><td><code>CLAUDE.md</code></td><td><strong>≤ 5,000</strong></td><td>框架導航（v3.3: 15K → v4: ~1.7K）</td></tr>
+        <tr><td><code>task-master SKILL.md</code></td><td><strong>≤ 2,000</strong></td><td>Dispatcher 規則</td></tr>
+        <tr><td><code>GROUP_*.md</code></td><td><strong>≤ 2,000</strong> each</td><td>Group 共享行為 + Specialist 區塊</td></tr>
+        <tr><td><code>ROLE_Review.md</code></td><td><strong>≤ 1,000</strong></td><td>跨階段 Review 定義</td></tr>
+        <tr><td><code>STATE.md</code></td><td><strong>≤ 400</strong></td><td>即時狀態快照</td></tr>
+        <tr><td><code>LEARNINGS.md</code></td><td><strong>≤ 800</strong></td><td>教訓/偏好持久記憶</td></tr>
+      </table>
+
+      <h3 style="margin-top:20px">📈 v3.3 → v4.0 對比</h3>
+      <table>
+        <tr><th>面向</th><th>v3.3</th><th>v4.0</th></tr>
+        <tr><td>CLAUDE.md</td><td>61KB (~15K tokens)</td><td>5.3KB (~1.7K tokens) <span class="tag tag-green">-91%</span></td></tr>
+        <tr><td>角色定義</td><td>11 SEED files</td><td>3 GROUP + 1 ROLE <span class="tag tag-green">-64%</span></td></tr>
+        <tr><td>Memory</td><td>17 files</td><td>5 core files <span class="tag tag-green">-71%</span></td></tr>
+        <tr><td>Skills</td><td>43 active</td><td>32 active (12 T1 + 10 T2 + 11 T3)</td></tr>
+        <tr><td>Pipeline</td><td>P00 → P06</td><td>Discover → Ship</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ======== TAB 8: Files ======== -->
+<div id="files" class="page">
+  <div class="card">
+    <h3>📁 project-template-v4.0/ 檔案結構</h3>
+    <div style="font-family:var(--mono);font-size:13px;line-height:2;padding:12px;background:#f8fafc;border-radius:8px">
+      <div><strong style="color:var(--primary)">Root</strong></div>
+      <div>├── <strong>CLAUDE.md</strong> <span class="tag tag-green" style="font-family:var(--font)">~1.7K tokens</span> 框架導航</div>
+      <div>├── <strong>DESIGN.md</strong> Design Token 鎖定</div>
+      <div>├── <strong>TASKS.md</strong> 唯一任務真相來源</div>
+      <div>├── <strong>project-config.yaml</strong> Agent×Skill Matrix + Domain + Mode</div>
+      <div>├── PROJECT_DASHBOARD.html</div>
+      <div>├── PROJECT_DASHBOARD.data.js</div>
+      <div>│</div>
+      <div><strong style="color:var(--primary)">memory/</strong> <span style="color:var(--muted)">— 5 核心 + 參考</span></div>
+      <div>├── STATE.md <span class="tag tag-green" style="font-family:var(--font)">≤400t</span></div>
+      <div>├── ARTIFACTS.md</div>
+      <div>├── DECISIONS.md</div>
+      <div>├── LEARNINGS.md <span class="tag tag-green" style="font-family:var(--font)">≤800t</span></div>
+      <div>├── handoffs/ <span style="color:var(--muted)">交接記錄</span></div>
+      <div>├── product.md / glossary.md / hotfix_log.md</div>
+      <div>└── people/ / projects/ / context/</div>
+      <div>│</div>
+      <div><strong style="color:var(--purple)">context-roles/</strong> <span style="color:var(--muted)">— 3 GROUP + 1 ROLE</span></div>
+      <div>├── GROUP_Discovery.md <span class="tag tag-green" style="font-family:var(--font)">~536t</span> (Interviewer/PM + UX + Architect)</div>
+      <div>├── GROUP_Build.md <span class="tag tag-green" style="font-family:var(--font)">~596t</span> (Backend + Frontend + DBA)</div>
+      <div>├── GROUP_Verify.md <span class="tag tag-green" style="font-family:var(--font)">~586t</span> (QA + Security + DevOps)</div>
+      <div>└── ROLE_Review.md <span class="tag tag-green" style="font-family:var(--font)">~918t</span> (跨階段)</div>
+      <div>│</div>
+      <div><strong style="color:var(--green-dark)">context-skills/</strong> <span style="color:var(--muted)">— 32 active</span></div>
+      <div>├── <span class="tag tag-red" style="font-family:var(--font)">T1</span> task-master / TDD / systematic-debugging / verification-before-completion</div>
+      <div>├── <span class="tag tag-red" style="font-family:var(--font)">T1</span> brainstorming / planning-with-tasks / requesting-code-review</div>
+      <div>├── <span class="tag tag-red" style="font-family:var(--font)">T1</span> using-git-worktrees / gate-check / ground / handoff-protocol / cia</div>
+      <div>├── <span class="tag tag-amber" style="font-family:var(--font)">T2</span> call-center-domain / deep-research / doc-coauthoring / frontend-design / ...</div>
+      <div>└── <span class="tag tag-gray" style="font-family:var(--font)">T3</span> docx / pptx / xlsx / pdf / algorithmic-art / theme-factory / ...</div>
+      <div>│</div>
+      <div><strong style="color:var(--amber)">02_Specifications/</strong> <span style="color:var(--muted)">— Templates</span></div>
+      <div>├── TEMPLATE_WBS_V4.md</div>
+      <div>├── TEMPLATE_SD_Checklist.md</div>
+      <div>└── TEMPLATE_Test_Matrix.md</div>
+      <div>│</div>
+      <div><strong style="color:var(--muted)">docs/archive/v3.3/</strong> <span style="color:var(--muted)">— 47 archived files</span></div>
+      <div>├── SEED_*.md (11 files)</div>
+      <div>├── MASTER_INDEX.md / TEAM.md / ETHOS.md / conductor.json</div>
+      <div>├── workflow_rules.md / dashboard.md / token_budget.md / ...</div>
+      <div>└── skills-archived/ (11 deprecated skills)</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  AI-First Framework v4.0 | Discover → Plan → Build → Verify → Ship | 基於 Superpowers + GStack 設計
+</footer>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // Find matching nav button
+  document.querySelectorAll('nav button').forEach(b => {
+    if (b.getAttribute('onclick').includes(id)) b.classList.add('active');
+  });
+}
+</script>
+</body>
+</html>

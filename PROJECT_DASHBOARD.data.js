@@ -1,0 +1,40 @@
+window.PROJECT_DASHBOARD_DATA = {
+  "overview": {
+    "name": "ai-first-framework",
+    "type": "[專案類型]",
+    "tech": "[技術棧]",
+    "stage": "未同步",
+    "stageNote": "未同步",
+    "updated": "未同步"
+  },
+  "inProgress": [],
+  "backlog": [],
+  "pipelineLog": [],
+  "documents": [],
+  "featureLifecycle": [],
+  "featureNames": {},
+  "ops": {
+    "synced_at": "未同步",
+    "phase": "未同步",
+    "current_feature": "未同步",
+    "current_work": "未同步",
+    "next_action": "未同步",
+    "current_role": "未同步",
+    "active_member": "未同步",
+    "handoff_to": "未同步",
+    "handoff_notified": "false",
+    "agent_last": "未同步",
+    "resume_command": "未同步",
+    "blockers": [],
+    "open_questions": [],
+    "files_in_progress": [],
+    "work_queue": [],
+    "recent_outputs": [],
+    "hotfixes": [],
+    "team_roles": [],
+    "pending_items": [],
+    "recent_handoffs": [],
+    "adoption_gap_summary": "",
+    "adoption_gaps": []
+  }
+};

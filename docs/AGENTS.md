@@ -1,6 +1,6 @@
 # Agent Reference
 
-> AI-First Framework uses 11 specialized agent roles. Each role has a narrow scope — it only does what it's designed for, hands off cleanly, and never makes decisions outside its responsibility.
+> AI-First Framework uses 12 agent roles: 11 execution agents + 1 coordination agent (Task-Master). Each role has a narrow scope — it only does what it's designed for, hands off cleanly, and never makes decisions outside its responsibility.
 
 ---
 
@@ -15,12 +15,25 @@ Load the seed file at the start of a task:
 
 Or let the **Pipeline Orchestrator** activate agents automatically when you run a pipeline.
 
+### First Feature Recommendation
+
+如果你是第一次導入框架、只有 1-2 人、或正在跑第一個 feature，建議先不要手動逐個啟動完整 Agent 鏈。
+
+先從這句開始：
+
+```text
+讀取 CLAUDE.md，使用 Lite Mode 啟動 F01
+```
+
+Lite Mode 會保留 Task-Master、最小需求、最小設計、最小驗證與 Lite Review，等複雜度升高再升級回完整 Pipeline。
+
 ---
 
 ## Agent Overview
 
 | Agent | Pipeline | Primary Output | Hands off to |
 |-------|---------|---------------|-------------|
+| **Task-Master** | Every Session | Dispatch report | Correct Agent / Member |
 | Interviewer | P01 | `IR-[date].md` | PM |
 | PM | P01 | `US_F##_*.md` | UX |
 | UX | P01 | `F##-UX.md` + `.html` prototype | Gate 1 |
@@ -32,6 +45,46 @@ Or let the **Pipeline Orchestrator** activate agents automatically when you run 
 | Security | P05 | `F##-SEC.md` | Review |
 | DevOps | P06 | `F##-DEPLOY.md` | Review |
 | Review | Gates | `F##-*-RVW.md` | Next Pipeline |
+
+### Domain Skill Recommendation
+
+如果專案屬於特定產業領域，不要新增一組平行 Agent，而是讓既有 Agent 共用一個 domain skill。
+
+例如 Call Center / Contact Center 專案，建議相關 Agent 在需要時一起讀：
+
+- `context-skills/call-center-domain/SKILL.md`
+- `memory/domain_call_center.md`
+- `10_Standards/DOMAIN/STD_Call_Center_Engineering.md`（若專案採用）
+
+這樣可以保留 Agent 職責穩定，同時補上產業知識。
+
+---
+
+## Task-Master Agent
+
+**Scope:** Coordination only — reads state, ranks priorities, and dispatches to the right agent. Never writes code, specs, or designs.
+
+**Process:**
+1. Read `memory/STATE.md` — current phase, what's in progress, last stopping point
+2. Read `TASKS.md` — all features and their status (Backlog / In Progress / Done / Blocked)
+3. Rank tasks by priority: 🔴 P0 Hotfix → 🟠 P1 In Progress → 🟡 P2 Unblocked Backlog → 🟢 P3 New Backlog
+4. If this is the first feature or a low-complexity small-team task, prefer Lite Mode
+5. Output a dispatch report: what to do now, who does it, how to start
+6. If a new feature is described, assign the next F-code and add it to TASKS.md
+
+**When to use:** At the start of every session before starting any Pipeline or Agent.
+
+**Lite Mode special rule:** If F01 has not yet completed its first closed loop, Task-Master should suggest Lite Mode before the full pipeline unless there is clear high-risk complexity.
+
+**Activation:**
+```
+執行 /info-task-master
+```
+Or naturally: "我來了，要做什麼？" / "執行 Task-Master"
+
+**Output format:** Dispatch report (stdout only — no files produced)
+
+**Seed file:** `~/.claude/agents/task-master.md` (global Claude Code agent)
 
 ---
 
@@ -56,6 +109,8 @@ Or let the **Pipeline Orchestrator** activate agents automatically when you run 
 
 **Scope:** Transform interview records into structured User Stories with testable Acceptance Criteria.
 
+**Lite Mode variant:** If the task is running in Lite Mode, PM may produce a single minimum viable requirement file instead of a full interview-to-prototype chain, but ACs must still be testable.
+
 **Process:**
 1. Read `IR-[date].md`
 2. Identify features (F01, F02, ...)
@@ -70,6 +125,8 @@ NYQ: POST /auth/login with wrong password ×3 → 403 + lockoutUntil in response
 ```
 
 **Output format:** `02_Specifications/US_F##_[功能名].md`
+
+**Call Center projects:** Also read `context-skills/call-center-domain/SKILL.md` to clarify queue, routing, agent role, KPI, recording, and compliance assumptions before writing ACs.
 
 **Seed file:** `context-seeds/SEED_PM.md`
 
@@ -100,6 +157,8 @@ NYQ: POST /auth/login with wrong password ×3 → 403 + lockoutUntil in response
 
 **Scope:** Define the technical architecture — how components connect, what technologies to use, and why.
 
+**Lite Mode variant:** For a low-complexity first feature, Architect may produce a minimal design note instead of a full multi-document architecture pack, as long as affected modules, data/API changes, and risks are explicit.
+
 **Process:**
 1. Read US + UX Prototype to understand what needs to be built
 2. Run **map-codebase §41** if `src/` has existing code
@@ -121,6 +180,8 @@ NYQ: POST /auth/login with wrong password ×3 → 403 + lockoutUntil in response
 ```
 
 **Output format:** `03_System_Design/F##-SW-ARCH.md` + `F##-HW-ARCH.md`
+
+**Call Center projects:** Also read `context-skills/call-center-domain/SKILL.md` and check event flow, agent state vs interaction state, CTI/PBX integration boundaries, and failure degradation paths.
 
 **Seed file:** `context-seeds/SEED_Architect.md`
 
@@ -170,6 +231,8 @@ created_at TIMESTAMPTZ DEFAULT NOW() -- GA: audit trail
 - P03: `02_Specifications/F##-API.md`
 - P04: `src/` (language/framework per `memory/product.md`)
 
+**Call Center projects:** Also read `context-skills/call-center-domain/SKILL.md` and make event ordering, idempotency, audit linkage, and telephony integration boundaries explicit.
+
 **Seed file:** `context-seeds/SEED_Backend.md`
 
 ---
@@ -199,6 +262,10 @@ created_at TIMESTAMPTZ DEFAULT NOW() -- GA: audit trail
 ## QA Agent
 
 **Scope:** (P03) Design test cases. (P04) Execute them and produce test reports.
+
+**Lite Mode variant:** QA may use a minimum evidence standard for the first feature: one main-flow validation, one critical error-path validation, and a lightweight report.
+
+**Call Center projects:** Also read `context-skills/call-center-domain/SKILL.md` and include routing, transfer, hold, wrap-up, recording, callback, and out-of-order event scenarios in test design.
 
 **P03 — Test Cases:**
 - Start from the NYQ hints in each AC (not from scratch)
@@ -300,6 +367,7 @@ Example:
 
 | What you need | Which seed |
 |--------------|-----------|
+| 不知道從哪開始 / 任務優先序 | `/info-task-master` (global agent) |
 | 討論新想法 / 探索方案 | `SEED_Interviewer.md` + `brainstorming` skill |
 | 需求 → User Story | `SEED_PM.md` |
 | 系統架構 / 技術選型 | `SEED_Architect.md` |

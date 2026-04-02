@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V4.0 變更情境指南 — AICC-III</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232733;
+    --border: #2e3345;
+    --text: #e2e4ea;
+    --text-dim: #8b8fa4;
+    --accent: #6c8cff;
+    --accent-dim: rgba(108,140,255,0.12);
+    --green: #34d399;
+    --green-dim: rgba(52,211,153,0.12);
+    --orange: #f59e0b;
+    --orange-dim: rgba(245,158,11,0.12);
+    --red: #f87171;
+    --red-dim: rgba(248,113,113,0.12);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.12);
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,0.12);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    padding: 40px 32px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .header p {
+    color: var(--text-dim);
+    font-size: 15px;
+  }
+
+  /* Tabs */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    background: none;
+    border-top: none; border-left: none; border-right: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* Content */
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 32px 60px;
+  }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Scenario Card */
+  .scenario {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .scenario-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .scenario-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .scenario-title {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .scenario-subtitle {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* Trigger Box */
+  .trigger-box {
+    background: var(--orange-dim);
+    border-left: 3px solid var(--orange);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .trigger-box strong { color: var(--orange); }
+
+  /* Flow Steps */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 20px 0;
+  }
+  .flow-step {
+    display: flex;
+    gap: 16px;
+    position: relative;
+  }
+  .flow-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 32px;
+    flex-shrink: 0;
+  }
+  .flow-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .flow-connector {
+    width: 2px;
+    flex-grow: 1;
+    min-height: 16px;
+    background: var(--border);
+  }
+  .flow-body {
+    padding-bottom: 20px;
+    flex: 1;
+  }
+  .flow-body h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .flow-body p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* Actor tag */
+  .actor {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .actor-user { background: var(--green-dim); color: var(--green); }
+  .actor-agent { background: var(--accent-dim); color: var(--accent); }
+  .actor-tm { background: var(--purple-dim); color: var(--purple); }
+  .actor-gate { background: var(--orange-dim); color: var(--orange); }
+
+  /* Mechanism Table */
+  .mech-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+  }
+  .mech-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .mech-table th:first-child { border-radius: 8px 0 0 0; }
+  .mech-table th:last-child { border-radius: 0 8px 0 0; }
+  .mech-table td {
+    padding: 12px 14px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .mech-table tr:last-child td { border-bottom: none; }
+
+  /* Badge */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 99px;
+  }
+  .badge-new { background: var(--green-dim); color: var(--green); }
+  .badge-exist { background: var(--surface2); color: var(--text-dim); }
+  .badge-enhanced { background: var(--cyan-dim); color: var(--cyan); }
+
+  /* Decision Box */
+  .decision-box {
+    background: var(--surface2);
+    border: 1px dashed var(--accent);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .decision-box h4 {
+    color: var(--accent);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .decision-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  .decision-box li {
+    font-size: 14px;
+    padding: 4px 0;
+    color: var(--text-dim);
+  }
+  .decision-box li::before {
+    content: "→ ";
+    color: var(--accent);
+  }
+
+  /* Compare Section */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .compare-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .compare-card ul {
+    list-style: none;
+    padding: 0;
+  }
+  .compare-card li {
+    font-size: 14px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .compare-card li:last-child { border-bottom: none; }
+
+  /* Summary stats */
+  .stat-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* Note callout */
+  .note {
+    background: var(--accent-dim);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  @media (max-width: 700px) {
+    .header, .content { padding-left: 16px; padding-right: 16px; }
+    .tab-bar { padding: 0 16px; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .stat-row { flex-direction: column; }
+    .tab { padding: 8px 12px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>V4.0 變更情境指南</h1>
+  <p>開發過程中遇到需求變更、需求不足、新增需求時的標準處理流程</p>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active" onclick="show('s1')">情境 1：需求寫不好</button>
+  <button class="tab" onclick="show('s2')">情境 2：開發完加需求</button>
+  <button class="tab" onclick="show('s3')">情境 3：Prototype 不符</button>
+  <button class="tab" onclick="show('s4')">情境 4：Agent 自行膨脹</button>
+  <button class="tab" onclick="show('s7')">流水線重疊</button>
+  <button class="tab" onclick="show('s8')">Tech Spec</button>
+  <button class="tab" onclick="show('s5')">機制總覽</button>
+  <button class="tab" onclick="show('s6')">新舊對比</button>
+</div>
+
+<div class="content">
+
+<!-- ==================== 情境 1 ==================== -->
+<div id="s1" class="panel active">
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-icon" style="background:var(--orange-dim)">⚠️</div>
+      <div>
+        <div class="scenario-title">情境 1：開發中發現需求文件寫不好</div>
+        <div class="scenario-subtitle">REQ_CONFIRM 某段描述模糊、矛盾或遺漏，無法直接實作</div>
+      </div>
+    </div>
+
+    <div class="trigger-box">
+      <strong>觸發時機：</strong>任何 Specialist（Backend / Frontend / DBA）在 Build 階段執行時，發現 RS 或 AC 中的需求描述與 Prototype 矛盾，或缺乏足夠資訊無法繼續實作。
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--accent-dim);color:var(--accent)">1</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-agent">Specialist</span> 發出 DRIFT_SIGNAL</h4>
+          <p>Specialist 發現問題後<strong>停止實作</strong>，向 Task-Master 發出 <code>DRIFT_SIGNAL (scope_drift)</code>，附上具體描述：哪個需求項、問題是什麼、影響範圍。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--purple-dim);color:var(--purple)">2</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-tm">Task-Master</span> 判斷退回層級</h4>
+          <p>Task-Master 根據 Fix Upstream (T4) 原則判斷：問題出在<strong>需求層</strong>（REQ_CONFIRM 本身有問題）→ 退回 Discover；問題出在<strong>設計層</strong>（RS 翻譯錯誤但需求本身 OK）→ 退回 Plan。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--green-dim);color:var(--green)">3</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-user">凱子</span> 確認修正方向</h4>
+          <p>Task-Master 呈報問題與建議修正方式。凱子確認：是需要修改 REQ_CONFIRM（走 CIA 流程）、還是只需修正 RS/AC 即可。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--accent-dim);color:var(--accent)">4</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-agent">Agent</span> 執行修正 + 重過 Gate</h4>
+          <p>退回到對應階段，修正文件後重新走 Gate Review。例如退回 Discover：更新 AC → 凱子確認 → 過 Discover Gate → 更新 RS → 過 Plan Gate → 繼續 Build。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--green-dim);color:var(--green)">5</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-gate">Gate</span> 記錄在 DECISIONS.md</h4>
+          <p>整個修正過程記錄為一筆 Decision（例如 D45），包含：原始問題、退回原因、修正內容、凱子批准時間。確保可追溯。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-box">
+      <h4>關鍵原則：絕不在下游硬猜</h4>
+      <ul>
+        <li>發現上游有問題 → 回上游改，改完再往下走</li>
+        <li>垂直切片保護：退回只影響當前 Feature，不波及其他 Feature</li>
+        <li>Specialist 禁止自行「補齊」需求，只能發 DRIFT_SIGNAL</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 情境 2 ==================== -->
+<div id="s2" class="panel">
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-icon" style="background:var(--green-dim)">➕</div>
+      <div>
+        <div class="scenario-title">情境 2：開發完成後要新增需求</div>
+        <div class="scenario-subtitle">Feature 已通過 Verify Gate，之後凱子想加新功能或擴充現有功能</div>
+      </div>
+    </div>
+
+    <div class="trigger-box">
+      <strong>觸發時機：</strong>凱子在使用已完成的 Feature 後，提出「我還想要 XXX 功能」或「這個 Feature 還要加一個 YYY」。
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--green-dim);color:var(--green)">1</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-user">凱子</span> 提出新需求</h4>
+          <p>描述想要的新功能。可以是全新功能（例如「加一個報表匯出」）或擴充現有功能（例如「登入要加雙因子驗證」）。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--accent-dim);color:var(--accent)">2</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-tm">Task-Master</span> 執行 CIA（變更影響評估）</h4>
+          <p>CIA 分析包含：影響哪些已完成的 Feature？需要改哪些 Baselined 文件？預估工作量多大？是否有技術風險？產出 CIA 報告。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--green-dim);color:var(--green)">3</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-user">凱子</span> 審核 CIA 並決定</h4>
+          <p>看完影響評估後決定：✅ 同意 → 進入實作排程；❌ 暫緩 → 放入 Backlog；🔄 調整 → 修改需求範圍後重新 CIA。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--purple-dim);color:var(--purple)">4</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-tm">Task-Master</span> 分流處理</h4>
+          <p><strong>全新功能：</strong>新增 Feature 編號（如 F14），加入垂直切片佇列尾端，從 Discover 開始跑完整週期。<br>
+          <strong>擴充現有 Feature：</strong>對該 Feature 重開一輪修正週期（Discover → Plan → Build → Verify），只改受影響的部分。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--orange-dim);color:var(--orange)">5</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-gate">Gate</span> 更新 Scope Baseline</h4>
+          <p>REQ_CONFIRM 更新（版本號遞增，如 v4.0.4 → v4.0.5），Prototype 如需更新也同步修改。所有變更記入 DECISIONS.md。Scope Baseline 正式擴張但有記錄。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>重點：</strong>Scope Baseline「不可偷偷擴張」不代表「永遠不能改」。它的意思是——每一次擴張都必須經過 CIA → 凱子批准 → 記錄，不能由 Agent 自行決定。
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 情境 3 ==================== -->
+<div id="s3" class="panel">
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-icon" style="background:var(--red-dim)">🔀</div>
+      <div>
+        <div class="scenario-title">情境 3：實作結果與 Prototype 不符</div>
+        <div class="scenario-subtitle">Build 產出的 UI 與 Baselined Prototype 長得不一樣</div>
+      </div>
+    </div>
+
+    <div class="trigger-box">
+      <strong>觸發時機：</strong>凱子在 Verify 階段對比實作結果與 Prototype，發現佈局、互動或欄位不一致。或 QA Agent 自動比對發現差異。
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--red-dim);color:var(--red)">1</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-gate">Gate</span> Verify Gate 不通過</h4>
+          <p>Verify Gate 的出口標準包含「UI 與 Baselined Prototype 一致」。不通過 = 退回 Build。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--accent-dim);color:var(--accent)">2</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-agent">Frontend Agent</span> 比對差異</h4>
+          <p>逐一列出不一致的項目：缺少哪些元素、多了什麼、位置或行為不對。產出差異清單。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--green-dim);color:var(--green)">3</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-user">凱子</span> 判斷</h4>
+          <p><strong>是 Bug：</strong>實作偏離了 Prototype → 修 Code，重過 Verify Gate。<br>
+          <strong>Prototype 需要更新：</strong>實作其實更好 → 走 CIA 更新 Prototype Baseline，再過 Verify Gate。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--accent-dim);color:var(--accent)">4</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-agent">Agent</span> 修正後重新驗證</h4>
+          <p>根據凱子的判斷執行修正（改 Code 或 CIA 更新 Prototype），然後重新進入 Verify Gate。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-box">
+      <h4>這就是為什麼 Prototype 要 Baseline</h4>
+      <ul>
+        <li>沒有 Baseline 的 Prototype → 沒有比對基準 → 做出來長什麼樣都算「對」</li>
+        <li>有 Baseline 的 Prototype → 明確的視覺合約 → 差異一目了然</li>
+        <li>上一次 AICC 問題：34 項 Prototype↔RS 不同步就是缺少這道防線</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 情境 4 ==================== -->
+<div id="s4" class="panel">
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-icon" style="background:var(--purple-dim)">🤖</div>
+      <div>
+        <div class="scenario-title">情境 4：Agent 自行膨脹需求</div>
+        <div class="scenario-subtitle">Agent 在 RS 或 Code 中添加了凱子沒有要求的「業界最佳實踐」</div>
+      </div>
+    </div>
+
+    <div class="trigger-box">
+      <strong>觸發時機：</strong>Gate Review 時發現 RS 或 Code 包含 REQ_CONFIRM 中不存在的功能或欄位。這是上次 AICC 最大的 Root Cause（4,984 → 29,431 行膨脹）。
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--orange-dim);color:var(--orange)">1</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-gate">Gate Review</span> 攔截膨脹</h4>
+          <p>Plan Gate 或 Build Gate 的 Review Agent 逐條比對：RS/Code 的每個功能點是否都能 trace 回 REQ_CONFIRM 的功能編號。無法 trace 的項目標記為 ❌ Scope Creep。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--red-dim);color:var(--red)">2</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-gate">Gate</span> 不通過，退回修正</h4>
+          <p>Gate 不通過。Agent 必須移除所有無法 trace 的內容，或者如果 Agent 認為這些內容確實必要，必須發 DRIFT_SIGNAL 讓凱子決定。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--green-dim);color:var(--green)">3</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-user">凱子</span> 決定是否納入</h4>
+          <p><strong>不需要：</strong>Agent 刪除膨脹部分，重過 Gate。<br>
+          <strong>確實需要：</strong>走 CIA 流程正式納入 Scope Baseline，更新 REQ_CONFIRM 版本，然後再過 Gate。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>V4.0 如何預防這件事：</strong>Scope Baseline Tracing 規則要求每一行 RS/Code 都必須對應到 REQ_CONFIRM 的功能編號。沒有編號 = 不允許存在。這在舊版是完全沒有的機制。
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 流水線重疊 ==================== -->
+<div id="s7" class="panel">
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-icon" style="background:var(--cyan-dim)">⚡</div>
+      <div>
+        <div class="scenario-title">流水線重疊（Pipeline Overlap）</div>
+        <div class="scenario-subtitle">在 Build 階段等待時，提前開始下一個 Feature 的 Discover</div>
+      </div>
+    </div>
+
+    <div class="trigger-box">
+      <strong>核心問題：</strong>嚴格的垂直切片（F01 全部做完才做 F02）效率太低。凱子在 F01 Build 期間無法參與，時間被浪費。
+    </div>
+
+    <div style="background:var(--surface2);border-radius:10px;padding:24px;margin:20px 0;font-family:monospace;font-size:14px;line-height:2.2;overflow-x:auto;">
+      <div style="color:var(--text-dim);margin-bottom:8px;">時間 →</div>
+      <div><span style="color:var(--accent);font-weight:600;">F01:</span> <span style="background:var(--green-dim);color:var(--green);padding:2px 8px;border-radius:4px;">Discover</span> <span style="background:var(--accent-dim);color:var(--accent);padding:2px 8px;border-radius:4px;">Plan</span> <span style="background:var(--orange-dim);color:var(--orange);padding:2px 20px;border-radius:4px;">═══ Build ═══</span> <span style="background:var(--purple-dim);color:var(--purple);padding:2px 8px;border-radius:4px;">Verify</span></div>
+      <div><span style="color:var(--accent);font-weight:600;">F02:</span> <span style="color:var(--border);">· · · · · · · · ·</span> <span style="background:var(--green-dim);color:var(--green);padding:2px 8px;border-radius:4px;">Discover</span> <span style="background:var(--accent-dim);color:var(--accent);padding:2px 8px;border-radius:4px;">Plan</span> <span style="background:var(--orange-dim);color:var(--orange);padding:2px 20px;border-radius:4px;">═══ Build ═══</span> <span style="background:var(--purple-dim);color:var(--purple);padding:2px 8px;border-radius:4px;">Verify</span></div>
+      <div><span style="color:var(--accent);font-weight:600;">F03:</span> <span style="color:var(--border);">· · · · · · · · · · · · · · · · · ·</span> <span style="background:var(--green-dim);color:var(--green);padding:2px 8px;border-radius:4px;">Discover</span> <span style="background:var(--accent-dim);color:var(--accent);padding:2px 8px;border-radius:4px;">Plan</span> <span style="color:var(--text-dim);">...</span></div>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--green-dim);color:var(--green)">1</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4>F01 進入 Build → 凱子空出來了</h4>
+          <p>Agent 在寫 Code，凱子不需要參與。這段時間就是啟動 F02 Discover 的最佳時機。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--accent-dim);color:var(--accent)">2</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-user">凱子</span> 開另一個 Session → 啟動 F02 Discover</h4>
+          <p>在另一個 Claude session 中開始 F02 的需求討論、AC 確認。這是文件層工作，不碰 Code，不會跟 F01 Build 衝突。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--purple-dim);color:var(--purple)">3</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4>F02 可以推進到 Plan（但不能進 Build）</h4>
+          <p>F02 的 RS 和 Tech Spec 都可以寫。但 F02 <strong>不能進入 Build</strong>，直到 F01 通過 Verify Gate。原因：兩個 Feature 同時改 Code 會互相衝突。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--orange-dim);color:var(--orange)">4</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4>F01 Verify 通過 → F02 進入 Build</h4>
+          <p>F01 驗收完成。F02 已經走完 Discover + Plan，可以立刻進入 Build，不用等。效率提升 30-50%。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-box">
+      <h4>硬性限制</h4>
+      <ul>
+        <li><strong>同時只能有 1 個 Feature 在 Build</strong>（Code 層互斥）</li>
+        <li>Discover 和 Plan 可以跟任何階段並行（文件層不衝突）</li>
+        <li>每個 Feature 的 Gate 獨立驗證，不因並行而降低標準</li>
+        <li>如果 F01 Build 發生退回（DRIFT_SIGNAL），F02 的 Discover/Plan 不受影響</li>
+      </ul>
+    </div>
+
+    <div class="note">
+      <strong>實際操作方式：</strong>F01 在 Session A 跑 Build。凱子開 Session B，對同一個 AICC-III 專案開始 F02 的 Discover。兩個 Session 各自讀寫不同的文件（F01 改 Code，F02 寫 AC/RS/Tech Spec），不會衝突。
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Tech Spec ==================== -->
+<div id="s8" class="panel">
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-icon" style="background:var(--accent-dim)">📐</div>
+      <div>
+        <div class="scenario-title">技術規格書（Tech Spec）</div>
+        <div class="scenario-subtitle">填補「需求」到「Code」之間的技術設計空白</div>
+      </div>
+    </div>
+
+    <div class="trigger-box">
+      <strong>解決的問題：</strong>目前文件鏈是 REQ → AC → RS → Code。RS 寫「做什麼」但沒寫「怎麼做」。導致不同 Feature 的 Agent 對 API 設計、Schema、共用元件各做各的，久了就不一致。
+    </div>
+
+    <h3 style="font-size:16px;margin:20px 0 12px;">文件鏈（更新後）</h3>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:24px;">
+      <span style="background:var(--green-dim);color:var(--green);padding:6px 14px;border-radius:6px;font-size:14px;font-weight:600;">REQ_CONFIRM</span>
+      <span style="color:var(--text-dim);">→</span>
+      <span style="background:var(--surface2);color:var(--text);padding:6px 14px;border-radius:6px;font-size:14px;">AC 驗收標準</span>
+      <span style="color:var(--text-dim);">→</span>
+      <span style="background:var(--surface2);color:var(--text);padding:6px 14px;border-radius:6px;font-size:14px;">RS 需求規格</span>
+      <span style="color:var(--text-dim);">→</span>
+      <span style="background:var(--accent-dim);color:var(--accent);padding:6px 14px;border-radius:6px;font-size:14px;font-weight:600;border:1px dashed var(--accent);">Tech Spec 🆕</span>
+      <span style="color:var(--text-dim);">→</span>
+      <span style="background:var(--surface2);color:var(--text);padding:6px 14px;border-radius:6px;font-size:14px;">Code</span>
+    </div>
+
+    <h3 style="font-size:16px;margin:20px 0 12px;">Tech Spec 涵蓋內容</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+      <div style="background:var(--surface2);border-radius:8px;padding:16px;">
+        <div style="font-weight:600;margin-bottom:6px;color:var(--accent);">API 設計</div>
+        <div style="font-size:13px;color:var(--text-dim);">端點清單、Request/Response 規格、認證授權方式、Error Code 定義</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:16px;">
+        <div style="font-weight:600;margin-bottom:6px;color:var(--green);">資料模型</div>
+        <div style="font-size:13px;color:var(--text-dim);">Schema 設計、欄位型別與約束、索引策略、Migration 計畫</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:16px;">
+        <div style="font-weight:600;margin-bottom:6px;color:var(--orange);">前端架構</div>
+        <div style="font-size:13px;color:var(--text-dim);">元件結構、狀態管理、路由規劃、Prototype 對應表</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:16px;">
+        <div style="font-weight:600;margin-bottom:6px;color:var(--purple);">共用元件</div>
+        <div style="font-size:13px;color:var(--text-dim);">本 Feature 提供的共用元件 + 依賴的其他 Feature 元件（最關鍵！）</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:16px;">
+        <div style="font-weight:600;margin-bottom:6px;color:var(--red);">技術決策</div>
+        <div style="font-size:13px;color:var(--text-dim);">選型理由、與既有 DECISIONS.md 的一致性驗證</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:16px;">
+        <div style="font-weight:600;margin-bottom:6px;color:var(--cyan);">安全與測試</div>
+        <div style="font-size:13px;color:var(--text-dim);">安全性考量、輸入驗證、測試策略與覆蓋率目標</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:16px;margin:20px 0 12px;">Tech Spec 在流程中的位置</h3>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--green-dim);color:var(--green)">1</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4>Plan 階段：RS 確認後</h4>
+          <p>凱子確認 RS（做什麼）後，Architect Agent 根據 RS 撰寫 Tech Spec（怎麼做）。命名：<code>TS_F[XX]_[名稱]_v0.1.md</code></p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--accent-dim);color:var(--accent)">2</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-agent">Architect</span> 讀取已有 Tech Spec</h4>
+          <p>如果不是第一個 Feature，必須讀取所有已 Baselined 的 Tech Spec，確保 API 風格、Schema 命名、共用元件使用方式保持一致。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--green-dim);color:var(--green)">3</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4><span class="actor actor-user">凱子</span> 確認 Tech Spec → Baseline</h4>
+          <p>凱子確認後，Tech Spec 狀態變為 Baselined。從此修改必須走 CIA。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--orange-dim);color:var(--orange)">4</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4>Plan Gate 新增檢查項</h4>
+          <p>Plan Gate 通過條件新增：Tech Spec 已完成且凱子確認 + 與既有 Tech Spec 不衝突 + 每個技術項目都追溯到 REQ。</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:var(--purple-dim);color:var(--purple)">5</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-body">
+          <h4>Build 階段：Agent 必須遵循 Tech Spec</h4>
+          <p>Backend / Frontend / DBA Agent 在 Build 時以 Tech Spec 為技術依據。不能偏離，偏離就是 DRIFT_SIGNAL。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-box">
+      <h4>Tech Spec 解決的根本問題</h4>
+      <ul>
+        <li><strong>跨 Feature 一致性</strong>：F05 的 Agent 知道 F01 用了 JWT，不會自己搞一套 Session</li>
+        <li><strong>共用元件管理</strong>：Auth Service 是 F01 建的，F02 要用就參照 F01 的 Tech Spec §5</li>
+        <li><strong>技術決策可追溯</strong>：為什麼選 Pinia 不選 Vuex？Tech Spec §6 有記錄</li>
+        <li><strong>修改有保護</strong>：改 F01 的 API 格式 → CIA → 評估影響 F02、F03 → 凱子批准</li>
+      </ul>
+    </div>
+
+    <div class="note">
+      <strong>模板位置：</strong><code>02_Specifications/TEMPLATE_Tech_Spec.md</code>  — 已放入 V4.0 Template 和 AICC-III 專案。
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 機制總覽 ==================== -->
+<div id="s5" class="panel">
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--green)">7</div>
+      <div class="stat-label">全新機制</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--cyan)">3</div>
+      <div class="stat-label">強化機制</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--text-dim)">4</div>
+      <div class="stat-label">原有機制（保留）</div>
+    </div>
+  </div>
+
+  <div class="scenario" style="padding:0;overflow:hidden;">
+    <table class="mech-table">
+      <thead>
+        <tr>
+          <th style="width:22%">機制名稱</th>
+          <th style="width:12%">狀態</th>
+          <th style="width:33%">說明</th>
+          <th style="width:33%">解決的問題</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>DRIFT_SIGNAL</strong></td>
+          <td><span class="badge badge-new">全新</span></td>
+          <td>Specialist 發現 scope/design/test 偏離時，向 Task-Master 發出的信號。包含三種：<code>scope_drift</code>、<code>design_drift</code>、<code>test_drift</code></td>
+          <td>上次 AICC 問題：Agent 發現問題時自行「補齊」而非回報，導致需求膨脹。DRIFT_SIGNAL 強制 Agent 停下來回報。</td>
+        </tr>
+        <tr>
+          <td><strong>CIA（變更影響評估）</strong></td>
+          <td><span class="badge badge-new">全新</span></td>
+          <td>修改任何 Baselined 文件前，必須先做 Change Impact Assessment：列出影響範圍、工作量、風險，凱子批准後才能改。</td>
+          <td>上次 AICC 問題：D35-D44 同一天做了 9 個決策，無影響評估。CIA 確保每次變更都經過評估。</td>
+        </tr>
+        <tr>
+          <td><strong>Scope Baseline Tracing</strong></td>
+          <td><span class="badge badge-new">全新</span></td>
+          <td>每行 RS/SSD/Code 必須能 trace 回 REQ_CONFIRM 的功能編號。無法 trace 的內容 = Scope Creep，不允許存在。</td>
+          <td>上次 AICC 問題：RS 從 4,984 行膨脹到 29,431 行，大量「業界最佳實踐」無人審批。Tracing 規則根本杜絕這種膨脹。</td>
+        </tr>
+        <tr>
+          <td><strong>Vertical Slice（垂直切片）</strong></td>
+          <td><span class="badge badge-new">全新</span></td>
+          <td>一次只做一個 Feature 的完整 Discover→Plan→Build→Verify，做完再做下一個。</td>
+          <td>上次 AICC 問題：33 份 RS 同時展開，一改就連鎖反應。垂直切片將影響範圍限制在單一 Feature。</td>
+        </tr>
+        <tr>
+          <td><strong>Fix Upstream（T4 原則）</strong></td>
+          <td><span class="badge badge-new">全新</span></td>
+          <td>發現上游有問題時，回上游修正再往下走，不在下游硬猜硬補。</td>
+          <td>上次 AICC 問題：14 個 gap 在 audit 階段才發現（而非 plan 階段），修正成本 10 倍以上。</td>
+        </tr>
+        <tr>
+          <td><strong>Tech Spec（技術規格書）</strong></td>
+          <td><span class="badge badge-new">全新</span></td>
+          <td>每個 Feature 在 Plan 階段必須產出 Tech Spec，定義 API Contract、Data Model、共用元件、技術決策。Baselined 後為 Build 的技術基準。</td>
+          <td>上次 AICC 問題：不同 Feature 的 Agent 對技術實作各做各的，API 風格不一致、共用元件重複建立、技術決策散落無記錄。</td>
+        </tr>
+        <tr>
+          <td><strong>Pipeline Overlap（流水線重疊）</strong></td>
+          <td><span class="badge badge-new">全新</span></td>
+          <td>F(N) 進入 Build 後，允許啟動 F(N+1) 的 Discover/Plan。但禁止同時有 2 個 Feature 在 Build。</td>
+          <td>純垂直切片效率過低問題：凱子在 Build 階段無法參與，時間浪費。重疊後效率提升 30-50%。</td>
+        </tr>
+        <tr style="background:var(--surface2)">
+          <td><strong>Gate Review</strong></td>
+          <td><span class="badge badge-enhanced">強化</span></td>
+          <td>原本已有 4 Gate（Discover/Plan/Build/Ship），V4.0 新增：Gate 必須驗證 Scope Baseline Tracing、且需要凱子確認通過。</td>
+          <td>原本 Gate 存在但沒有嚴格執行。強化後加入 Tracing 驗證，確保膨脹在 Gate 被攔截。</td>
+        </tr>
+        <tr style="background:var(--surface2)">
+          <td><strong>Prototype Baseline</strong></td>
+          <td><span class="badge badge-enhanced">強化</span></td>
+          <td>Prototype 從「參考文件」升級為 Scope Baseline 的一部分，與 REQ_CONFIRM 同等權威。UI 必須與 Prototype 一致。</td>
+          <td>原本 Prototype 只是參考，不具約束力。導致 34 項 Prototype↔RS 不同步。</td>
+        </tr>
+        <tr style="background:var(--surface2)">
+          <td><strong>DECISIONS.md 記錄</strong></td>
+          <td><span class="badge badge-enhanced">強化</span></td>
+          <td>原本已有決策記錄，V4.0 新增：CIA 結果、DRIFT_SIGNAL 回報、Scope 變更都必須記入，確保完整追溯。</td>
+          <td>原本決策記錄不夠完整，D35-D44 cluster 顯示缺乏決策脈絡。</td>
+        </tr>
+        <tr>
+          <td><strong>Pipeline 流程</strong></td>
+          <td><span class="badge badge-exist">保留</span></td>
+          <td>P01-P08 多階段 Pipeline，Agent 間標準化交接。</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>ARTIFACTS.md 文件註冊</strong></td>
+          <td><span class="badge badge-exist">保留</span></td>
+          <td>所有產出文件的版本、狀態、路徑集中管理。</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>STATE.md 狀態追蹤</strong></td>
+          <td><span class="badge badge-exist">保留</span></td>
+          <td>專案當前階段、任務進度的即時狀態。</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Agent 角色分工</strong></td>
+          <td><span class="badge badge-exist">保留</span></td>
+          <td>PM / UX / Architect / Backend / Frontend / DBA / QA / Review 各司其職。</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== 新舊對比 ==================== -->
+<div id="s6" class="panel">
+  <h2 style="font-size:20px;margin-bottom:8px;">舊做法 vs V4.0 做法</h2>
+  <p style="color:var(--text-dim);font-size:14px;margin-bottom:20px;">同樣一個問題，在舊版和 V4.0 分別會怎麼處理</p>
+
+  <div class="compare-grid">
+    <div class="compare-card" style="border-color:var(--red);border-color:rgba(248,113,113,0.3)">
+      <h3><span style="color:var(--red)">✗</span> 舊做法（AICC NEW 360）</h3>
+      <ul>
+        <li>❌ 需求模糊 → Agent 自己猜測補齊 → 膨脹</li>
+        <li>❌ 33 份 RS 同時展開 → 改一個影響全部</li>
+        <li>❌ 沒有 Scope Baseline → 不知道什麼算「範圍內」</li>
+        <li>❌ Prototype 僅供參考 → 做出來長不一樣也沒人發現</li>
+        <li>❌ Gate 存在但不嚴格 → 膨脹的 RS 直接通過</li>
+        <li>❌ 一天做 9 個決策 → 沒有影響評估</li>
+        <li>❌ 問題在 audit 才發現 → 修正成本 10 倍</li>
+        <li>❌ 4,984 → 29,431 行 → 誰加的？為什麼加？不知道</li>
+        <li>❌ 沒有技術規格書 → 不同 Agent 各做各的技術決策</li>
+        <li>❌ 嚴格串行 → 凱子在 Build 期間只能等</li>
+      </ul>
+    </div>
+    <div class="compare-card" style="border-color:var(--green);border-color:rgba(52,211,153,0.3)">
+      <h3><span style="color:var(--green)">✓</span> V4.0 做法（AICC-III）</h3>
+      <ul>
+        <li>✅ 需求模糊 → DRIFT_SIGNAL → 退回上游釐清</li>
+        <li>✅ 垂直切片 → 一次一個 Feature → 影響範圍最小</li>
+        <li>✅ Scope Baseline 明確 → 凡事 trace 回 REQ_CONFIRM</li>
+        <li>✅ Prototype = Baseline → UI 必須與 Prototype 一致</li>
+        <li>✅ Gate 強制 Tracing 驗證 → 膨脹在 Gate 被攔截</li>
+        <li>✅ 每次變更先做 CIA → 凱子批准才能改</li>
+        <li>✅ Fix Upstream → 問題在哪層就在哪層修</li>
+        <li>✅ 每次 Scope 變更都記入 DECISIONS.md → 完全可追溯</li>
+        <li>✅ Tech Spec 統一技術設計 → 跨 Feature 一致性有保障</li>
+        <li>✅ 流水線重疊 → Build 期間可提前 Discover 下一個 F</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scenario" style="margin-top:24px;">
+    <div class="scenario-header">
+      <div class="scenario-icon" style="background:var(--accent-dim)">📊</div>
+      <div>
+        <div class="scenario-title">決策路徑速查表</div>
+        <div class="scenario-subtitle">遇到狀況時的第一步行動</div>
+      </div>
+    </div>
+    <table class="mech-table">
+      <thead>
+        <tr>
+          <th>遇到的狀況</th>
+          <th>第一步</th>
+          <th>最終由誰決定</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>需求描述看不懂 / 矛盾</td>
+          <td>DRIFT_SIGNAL → 退回 Discover</td>
+          <td><span class="actor actor-user">凱子</span></td>
+        </tr>
+        <tr>
+          <td>RS 設計有誤但需求本身 OK</td>
+          <td>DRIFT_SIGNAL → 退回 Plan</td>
+          <td><span class="actor actor-tm">Task-Master</span></td>
+        </tr>
+        <tr>
+          <td>想加新功能（全新）</td>
+          <td>CIA → 新增 Feature 編號</td>
+          <td><span class="actor actor-user">凱子</span></td>
+        </tr>
+        <tr>
+          <td>想擴充已完成的 Feature</td>
+          <td>CIA → 重開該 Feature 週期</td>
+          <td><span class="actor actor-user">凱子</span></td>
+        </tr>
+        <tr>
+          <td>UI 與 Prototype 長不一樣</td>
+          <td>Verify Gate 不通過 → 比對差異</td>
+          <td><span class="actor actor-user">凱子</span></td>
+        </tr>
+        <tr>
+          <td>Agent 多加了不存在的功能</td>
+          <td>Gate Review 攔截 → 刪除或 CIA</td>
+          <td><span class="actor actor-user">凱子</span></td>
+        </tr>
+        <tr>
+          <td>技術限制無法照需求做</td>
+          <td>DRIFT_SIGNAL → CIA 調整需求</td>
+          <td><span class="actor actor-user">凱子</span></td>
+        </tr>
+        <tr>
+          <td>不同 Feature 的技術設計不一致</td>
+          <td>讀取既有 Tech Spec → 對齊 → CIA 修正</td>
+          <td><span class="actor actor-tm">Task-Master</span></td>
+        </tr>
+        <tr>
+          <td>Build 等待中，凱子想做下一個 F</td>
+          <td>開新 Session → 啟動 F(N+1) Discover</td>
+          <td><span class="actor actor-user">凱子</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  const ids = ['s1','s2','s3','s4','s7','s8','s5','s6'];
+  tabs[ids.indexOf(id)].classList.add('active');
+}
+</script>
+</body>
+</html>
