@@ -1,0 +1,11 @@
+# Cross-Feature Dependency Map
+# 每次 Feature start 時由 parallel-feature.sh 提示更新
+# 格式說明見 context-skills/concurrent-build/SKILL.md
+
+dependencies: []
+# 範例：
+# - downstream: F05
+#   upstream: F02
+#   type: "api"
+#   detail: "F05 需要 F02 的 POST /api/v1/cti/calls"
+#   status: "waiting"       # waiting / available / integrated

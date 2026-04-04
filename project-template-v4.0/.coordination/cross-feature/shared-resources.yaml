@@ -1,0 +1,10 @@
+# Shared Resource Conflict Tracker
+# 每次 Feature start / merge 時更新
+# 格式說明見 context-skills/concurrent-build/SKILL.md
+
+resources: {}
+# 範例：
+# "src/shared/types/index.ts":
+#   touched_by: [F02, F03]
+#   conflict_risk: "high"
+#   resolution: "F02 先 merge，F03 rebase 後 merge"

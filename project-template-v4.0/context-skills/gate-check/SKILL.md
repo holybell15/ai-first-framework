@@ -26,6 +26,138 @@ source: levnikolaevich/claude-code-skills (adapted for workflow_rules §31.7)
 
 ---
 
+## Gate 分級機制（v4.1 — 降低人工阻塞）
+
+> 不是所有 Gate 都需要人坐在旁邊確認。依風險和變更規模分為三級。
+
+### 三級分類
+
+| 級別 | 名稱 | 條件 | 人工介入 | 機制 |
+|------|------|------|---------|------|
+| **L1** | Auto-Pass | 測試全綠 + 無 drift signal + diff < 200 行 + 非外部串接 | 不需要 | AI 自動通過，產出 Gate 報告通知人 |
+| **L2** | Review-Pass | 測試全綠 + （有架構變更 OR diff ≥ 200 行 OR 涉及共用元件） | 看摘要確認 | AI 產出摘要 + 風險評估，人確認即通過 |
+| **L3** | Full-Gate | 測試有失敗 / scope drift / 跨 Feature 影響 / 外部串接 / 合規 | 完整 Review | 走完整 Gate Checklist |
+
+### 分級判定流程
+
+```
+Gate 觸發
+  ↓
+讀取 gate_policy（project-config.yaml）
+  ↓
+收集信號：
+  - tests_green?          ← 跑測試結果
+  - drift_signals?        ← 有無 DRIFT_SIGNAL
+  - diff_lines?           ← git diff --stat 行數
+  - has_arch_change?      ← 修改了 ARCH / ADR / Schema
+  - shared_component?     ← 修改了共用元件
+  - external_integration? ← .gates/F##/.integration 存在
+  - compliance_required?  ← COMP_Checklist 有更新
+  ↓
+匹配級別（最嚴格者優先）：
+  L3 條件符合 → Full-Gate
+  L2 條件符合 → Review-Pass
+  都不符合   → Auto-Pass
+```
+
+### L1: Auto-Pass 行為
+
+```markdown
+## 🟢 Gate [X] Auto-Pass Report — F[XX]
+
+**級別**: L1 Auto-Pass
+**時間**: [ISO timestamp]
+**判定依據**:
+- 測試: ✅ 全綠 ([N] passed / [N] total)
+- Drift Signal: 0
+- Diff: [N] 行（< 200）
+- 架構變更: 無
+- 外部串接: 無
+
+**變更摘要**: [1-3 句話描述做了什麼]
+**檔案清單**: [列出修改的檔案]
+
+> ℹ️ 此 Gate 已自動通過。如需完整 Review，回覆「升級為 L3」。
+```
+
+- 自動寫入 `.gates/F##/gate[X]-auto-passed.log`
+- 通知人（但不阻塞）
+- 人可隨時回覆「升級為 L3」要求完整 Review
+
+### L2: Review-Pass 行為
+
+```markdown
+## 🟡 Gate [X] Review-Pass Report — F[XX]
+
+**級別**: L2 Review-Pass
+**時間**: [ISO timestamp]
+**升級原因**: [架構變更 / diff ≥ 200 行 / 共用元件修改]
+
+**變更摘要**: [3-5 句話，重點在「為什麼這樣改」]
+**風險評估**:
+- 影響範圍: [列出受影響的 Feature / 元件]
+- 破壞風險: [低/中/高 + 理由]
+- 回滾難度: [低/中/高]
+
+**AI 建議**: [通過 / 需要注意 X]
+
+**檔案清單** (按風險排序):
+- 🔴 [高風險檔案] — [修改說明]
+- 🟡 [中風險檔案] — [修改說明]
+- 🟢 [低風險檔案] — [修改說明]
+
+> 回覆「通過」或「升級為 L3」或「需要修改 [具體項目]」
+```
+
+- 人只需看摘要 + 風險評估
+- 回覆「通過」即可（不需逐項勾 checklist）
+- 回覆「升級為 L3」走完整 Review
+
+### L3: Full-Gate 行為
+
+走原有的完整 Gate Checklist（Gate 1 / Gate 2 / G4-ENG / Gate 3），無變化。
+
+### 特殊規則
+
+| 規則 | 說明 |
+|------|------|
+| **Gate 1 / Gate 2 強制 L3** | 需求和架構 Gate 風險高，永遠走 Full-Gate |
+| **G4-ENG-D 可降級** | 如果 Slice 的設計變更 < 50 行且不涉及新 API → L2 |
+| **G4-ENG-R 可降級** | 測試全綠 + diff < 200 行 + 無共用元件 → L1 |
+| **Gate 3 可降級** | 測試全綠 + 合規無變更 + 非首次部署 → L2 |
+| **人可隨時升級** | 任何 L1/L2 都可回覆「升級為 L3」 |
+| **連續 Auto-Pass ≥ 5 次** | 第 6 次強制升級為 L2（防止慣性盲區） |
+
+### Gate 分級設定
+
+```yaml
+# project-config.yaml → gate_policy
+gate_policy:
+  enabled: true
+  
+  # L1 Auto-Pass 條件（全部滿足才 Auto-Pass）
+  auto_pass:
+    tests_green: true
+    drift_signals: 0
+    max_diff_lines: 200
+    no_arch_change: true
+    no_shared_component: true
+    no_external_integration: true
+    no_compliance_change: true
+  
+  # 強制 Full-Gate 的情境
+  force_full_gate:
+    - "gate-1"              # 需求 Gate 永遠 Full
+    - "gate-2"              # 架構 Gate 永遠 Full
+    - "first_deployment"    # 首次部署永遠 Full
+    - "compliance_change"   # 合規變更永遠 Full
+  
+  # 安全閥：連續 Auto-Pass 上限
+  auto_pass_streak_limit: 5
+```
+
+---
+
 ## Review Staleness Detection（強制）
 
 > 靈感來源：gstack review staleness — 防止 ship 已被改動但未重新 review 的程式碼。

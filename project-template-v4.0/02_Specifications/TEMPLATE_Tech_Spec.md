@@ -56,7 +56,52 @@
 | 400 | INVALID_INPUT | [說明] |
 | 401 | UNAUTHORIZED | [說明] |
 
-### 2.3 認證與授權
+### 2.3 Executable Contract（OpenAPI Snippet）
+
+> **目的**：減少「自然語言 → code」的語義落差。AI 從 contract 生成 code，一次通過率顯著提升。
+> 只需寫關鍵 endpoint，不需完整 OpenAPI spec。
+
+```yaml
+# OpenAPI 3.0 snippet — 關鍵 endpoint
+paths:
+  /api/v1/[resource]:
+    post:
+      summary: "[說明]"
+      operationId: "[operationId]"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [field1, field2]
+              properties:
+                field1:
+                  type: string
+                  description: "[說明]"
+                  minLength: 1
+                  maxLength: 200
+                field2:
+                  type: integer
+                  description: "[說明]"
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: 驗證失敗
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+```
+
+> **使用方式**：Backend Agent 讀取此 snippet 生成 Controller + Validation；QA Agent 從 schema 自動生成邊界測試。
+
+### 2.4 認證與授權
 - 認證方式：[JWT / Session / OAuth2 / 依專案決策]
 - 授權模型：[RBAC / ABAC / 說明角色權限]
 
@@ -177,6 +222,47 @@ src/
 | L1 Unit | [範圍] | [Jest/Vitest/JUnit] | [%] |
 | L2 Integration | [範圍] | [工具] | [%] |
 | L3 E2E | [範圍] | [Playwright/Cypress] | [關鍵路徑] |
+
+### 9.1 Executable AC（Given/When/Then）
+
+> **目的**：AC 直接對應 test case，消除「AC 寫了但不知道怎麼測」的問題。
+> QA Agent 從這些 GWT 自動生成測試骨架，Backend/Frontend Agent 從 GWT 驗證實作。
+
+#### AC-[XX]: [AC 描述]
+
+```gherkin
+Scenario: [情境名稱]
+  Given [前置條件 — 系統狀態 / 使用者角色 / 資料狀態]
+  When  [操作 — API 呼叫 / UI 操作]
+  Then  [預期結果 — response / UI 變化 / DB 狀態]
+  And   [額外驗證（可選）]
+
+Scenario: [錯誤情境]
+  Given [前置條件]
+  When  [觸發錯誤的操作]
+  Then  [預期錯誤 — error code / 提示訊息]
+
+Scenario: [邊界情境]
+  Given [邊界資料 — 空值 / 最大值 / 特殊字元]
+  When  [操作]
+  Then  [預期行為]
+```
+
+> **規則**：
+> - 每個 AC 至少 3 個 Scenario（happy / error / boundary）
+> - Given 必須是可程式化設定的狀態（不是「使用者覺得...」）
+> - Then 必須是可斷言的結果（response code / DOM 狀態 / DB 值）
+
+### 9.2 前端 Testability Mapping
+
+> **目的**：Prototype 的 UI 元素對應 data-testid，Playwright 可直接定位。
+
+| UI 元素 | data-testid | 對應 AC | 測試動作 |
+|---------|-------------|---------|---------|
+| [按鈕/輸入框/表格] | `[feature]-[element]-[action]` | AC-[XX] | click / fill / assert |
+
+> **命名規則**：`{feature}-{element}-{action}`，例如 `customer-search-input`、`ticket-submit-btn`
+> Prototype HTML 中加入：`data-testid="customer-search-input"`
 
 ---
 

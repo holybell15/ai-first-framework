@@ -105,7 +105,9 @@ agents:
     required_skills:
       - writing-plans
       - test-driven-development
+      - self-healing-build           # v4.1: TDD GREEN 失敗時自動修復
       - systematic-debugging
+      - pattern-library              # v4.1: Build 前查/後回饋 pattern
       - planning-with-tasks
       - using-git-worktrees
       - requesting-code-review
@@ -113,6 +115,7 @@ agents:
     optional_skills:
       - ground
       - validate-contract
+      - external-integration        # 串接外部 SDK/API/WS 時載入
     context_files:
       - context-roles/GROUP_Build.md
 
@@ -122,7 +125,9 @@ agents:
     required_skills:
       - writing-plans
       - test-driven-development
+      - self-healing-build           # v4.1: TDD GREEN 失敗時自動修復
       - systematic-debugging
+      - pattern-library              # v4.1: Build 前查/後回饋 pattern
       - frontend-design
       - planning-with-tasks
       - using-git-worktrees
@@ -131,6 +136,7 @@ agents:
     optional_skills:
       - ground
       - screenshot-to-code
+      - external-integration        # 串接外部 SDK/API/WS 時載入
     context_files:
       - context-roles/GROUP_Build.md
       - DESIGN.md
@@ -200,7 +206,53 @@ tier2_skills:
   - validate-contract
   - ground
   - retro
+  - external-integration            # 異質系統串接時由 GROUP_Build 強制觸發
+  - self-healing-build              # v4.1: Build Agent 自動載入
+  - pattern-library                 # v4.1: Build Agent 自動載入
+  - concurrent-build                # v4.1: Specialist 並行時載入
   # Domain skill 自動從 domain.skill_path 載入，不需列在此
+
+# ---- Self-Healing Build ----
+self_healing:
+  max_attempts: 3                    # 最多嘗試次數（不可超過 3）
+  attempt1_timeout_sec: 120          # Quick Fix 上限
+  attempt2_timeout_sec: 300          # Root Cause Analysis 上限
+  attempt3_timeout_sec: 300          # Alternative Strategy 上限
+  auto_freeze_on_escalate: true      # 升級時自動啟用 Freeze Mode
+  log_file: "healing-log.md"         # 自癒記錄檔
+  pattern_feedback: true             # 成功修復自動回饋 pattern library
+
+# ---- Gate 分級策略 ----
+gate_policy:
+  enabled: true
+
+  # L1 Auto-Pass 條件（全部滿足才 Auto-Pass）
+  auto_pass:
+    tests_green: true
+    drift_signals: 0
+    max_diff_lines: 200
+    no_arch_change: true
+    no_shared_component: true
+    no_external_integration: true
+    no_compliance_change: true
+
+  # 強制 Full-Gate（永遠 L3）
+  force_full_gate:
+    - "gate-1"              # 需求 Gate
+    - "gate-2"              # 架構 Gate
+    - "first_deployment"    # 首次部署
+    - "compliance_change"   # 合規變更
+
+  # 安全閥
+  auto_pass_streak_limit: 5   # 連續 Auto-Pass 超過此數強制升級 L2
+
+# ---- Concurrency（v4.1）----
+concurrency:
+  max_parallel_features: 3           # 同時 Build 的 Feature 上限
+  max_specialists_per_feature: 2     # 每個 Feature 的 specialist worktree 上限（BE + FE）
+  cross_feature_integration_interval: 3  # 每 N 個 Feature merge 後強制整合測試
+  coordination_dir: ".coordination"  # 協調目錄
+  signal_bus_format: "jsonl"         # signal 格式
 
 # ---- Execution Modes ----
 modes:
