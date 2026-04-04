@@ -44,7 +44,53 @@ case "$FILE_PATH" in
     ;;
 esac
 
-# ─── 情境 A：想寫 production code 但測試未跑 ───
+# ─── 情境 A-1：Self-Healing 未完成就想改 code（v4.1）───
+HEALING_FILE=".healing-required"
+if [ -f "$HEALING_FILE" ]; then
+  IS_PROD=false
+  case "$FILE_PATH" in
+    */src/main/*) IS_PROD=true ;;
+    *.java) IS_PROD=true ;;
+    */src/*.vue|*/src/*.ts|*/src/*.tsx|*/src/*.js|*/src/*.jsx) IS_PROD=true ;;
+  esac
+
+  if [ "$IS_PROD" = true ]; then
+    ATTEMPT_COUNT=$(grep -c "attempt" "$HEALING_FILE" 2>/dev/null || echo "0")
+    if [ "$ATTEMPT_COUNT" -ge 3 ]; then
+      cat <<EOF
+⛔ SELF-HEALING EXHAUSTED — 3 次自動修復都失敗了
+
+已嘗試記錄：
+$(cat "$HEALING_FILE")
+
+必須產出 Escalation Report 升級給人（見 self-healing-build skill）：
+1. 列出 3 次嘗試的方法和失敗原因
+2. 提供 AI 的判斷和建議
+3. 列出可以繼續的獨立 AC
+
+產出報告後，人工介入修復，或執行：
+  rm .healing-required    （人工確認後清除）
+EOF
+      exit 2
+    else
+      NEXT=$((ATTEMPT_COUNT + 1))
+      cat <<EOF
+⛔ SELF-HEALING REQUIRED — 測試失敗，請先自動修復（Attempt ${NEXT}/3）
+
+上次失敗記錄：
+$(tail -1 "$HEALING_FILE")
+
+請遵循 self-healing-build skill：
+$(if [ "$NEXT" -eq 1 ]; then echo "  → Attempt 1: Quick Fix（比對 Known Bug Pattern，修 typo/import/型別）"; elif [ "$NEXT" -eq 2 ]; then echo "  → Attempt 2: Root Cause Analysis（觸發 systematic-debugging Phase 1+2）"; else echo "  → Attempt 3: Alternative Strategy（換實作方式或檢查測試本身）"; fi)
+
+修復後重跑測試。測試通過 → .healing-required 自動清除。
+EOF
+      exit 2
+    fi
+  fi
+fi
+
+# ─── 情境 A-2：想寫 production code 但測試未跑 ───
 if [ -f "$DIRTY_FILE" ]; then
   IS_PROD=false
   case "$FILE_PATH" in

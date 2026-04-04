@@ -98,12 +98,40 @@ echo "confirmed $(date -u +%Y-%m-%dT%H:%M:%SZ)" > .gates/F[XX]/build-grounded.co
 - ✅ 用戶已確認 Checklist
 - ✅ `.gates/F[XX]/build-grounded.confirmed` 已建立
 
+#### Step 4: Pattern Library 查詢（v4.1 — 強制）
+
+Build Grounding 確認後，**寫 code 之前**必須查 Pattern Library：
+
+1. 讀取 `verified-patterns/README.md`
+2. 對照 Build Checklist 每個實作項目，標記：
+
+```markdown
+## Pattern Check Log — F[XX]
+
+| # | 實作項目 | 有 Pattern？ | Pattern 名稱 | 備註 |
+|---|---------|-------------|-------------|------|
+| 1 | 客戶 CRUD API | ✅ 有 | crud-standard | 直接複用 |
+| 2 | 搜尋分頁 | ✅ 有 | search-with-pagination | 需調整欄位 |
+| 3 | CTI 事件處理 | ❌ 無 | — | 從零實作 |
+```
+
+3. 建立 checkpoint：
+
+```bash
+echo "confirmed $(date -u +%Y-%m-%dT%H:%M:%SZ)" > .gates/F[XX]/pattern-checked.confirmed
+```
+
+**gate-checkpoint.sh 會攔截：沒有 pattern-checked.confirmed → 不能寫 production code。**
+
+> 查完就好，不強制使用 pattern。但先查再寫，避免重複造輪子。
+
 ### 禁止事項
 
 - ❌ 不靠記憶描述 UI — 必須讀 Prototype HTML
 - ❌ 不跳過 Checklist 直接寫 code
 - ❌ 不省略 AC — 每條 AC 都要有對應實作
 - ❌ 不在 Checklist 中加入 RS 未定義的功能
+- ❌ 不跳過 Pattern Check — gate-checkpoint.sh 會攔截
 
 ---
 

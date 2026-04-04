@@ -167,6 +167,31 @@ EOF
       exit 2
     fi
 
+    # ── v4.1: Pattern Check Gate ──
+    # Build Grounding 通過後，寫 code 前必須查 Pattern Library
+    if [ ! -f "${FEATURE_GATE_DIR}/pattern-checked.confirmed" ]; then
+      cat <<EOF
+⛔ PATTERN CHECK GATE — 阻擋寫入 production code
+
+Feature: ${FEATURE_ID}
+目標檔案: ${FILE_PATH}
+
+✅ Build Grounding 已通過
+❌ Pattern Library 未查詢 — 可能在重複造輪子
+
+必須先完成（pattern-library skill）：
+1. 讀取 verified-patterns/README.md 查看有無可複用的 pattern
+2. 對照 Build Checklist 的每個實作項目，標記：
+   - ✅ 有 pattern 可用 → 記錄 pattern 名稱
+   - ❌ 無 pattern → 標記「從零實作」
+3. 產出 Pattern Check Log 後建立 checkpoint：
+   echo "confirmed \$(date -u +%Y-%m-%dT%H:%M:%SZ)" > ${FEATURE_GATE_DIR}/pattern-checked.confirmed
+
+查完就好，不是每個 AC 都一定要有 pattern。重點是先查再寫。
+EOF
+      exit 2
+    fi
+
   fi
 done
 

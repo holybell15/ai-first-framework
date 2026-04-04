@@ -120,13 +120,28 @@ DSV: TDD cycle for [AC-ID] [AC描述]
 
 ---
 
-## AFL §36 整合
+## GREEN 失敗 → Self-Healing Build（v4.1 強制）
 
-如果 GREEN phase 嘗試 3 次仍無法通過測試：
-1. 停下來，不要繼續猜測
-2. 觸發 `systematic-debugging` skill 做 root cause 分析
-3. 分析完成後回到 RED，確認測試本身是否寫對
-4. 若仍失敗超過 3 輪 → 記錄為 AFL-UNRESOLVED，回報阻塞
+**GREEN phase 測試失敗時，不要直接問人怎麼修。必須先走 self-healing-build 流程。**
+
+```
+GREEN phase → 跑測試 → ❌ 失敗
+  ↓
+  ⚠️ .healing-required 已由 test-on-change.sh 自動建立
+  ↓
+  強制觸發 self-healing-build skill：
+    Attempt 1: Quick Fix（比對 Known Bug Pattern）
+    Attempt 2: Root Cause（systematic-debugging Phase 1+2）
+    Attempt 3: Alternative Strategy
+  ↓
+  ✅ 測試通過 → .healing-required 自動清除 → 回到 TDD 繼續
+  ❌ 3 次都失敗 → 產出 Escalation Report → 升級給人
+```
+
+**禁止**：
+- 跳過 self-healing 直接問人「這個怎麼修」
+- 改測試讓它通過（除非 Attempt 3 確認測試本身有 bug）
+- 在 .healing-required 存在時繼續寫新 code（Hook 會攔截）
 
 ---
 

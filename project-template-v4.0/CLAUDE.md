@@ -363,7 +363,7 @@ Tech Spec 新增：
 | `test-before-continue.sh` | PreToolUse | **硬攔截**：測試未跑 → 不能繼續改 code / 標記完成 |
 | `freeze-hook.sh` | PreToolUse | Freeze Mode 目錄鎖定 |
 | `destructive-guard-hook.sh` | PreToolUse | 攔截破壞性指令（rm -rf / DROP / force push） |
-| `test-on-change.sh` | PostToolUse | production code 變更 → 標記 dirty；測試通過 → 清除 |
+| `test-on-change.sh` | PostToolUse | production code 變更 → 標記 dirty；測試失敗 → 標記 `.healing-required`；測試通過 → 清除 |
 | `auto-state-update.sh` | PostToolUse | Pipeline 產出物寫入後更新 STATE.md 時間戳 |
 | `findings-reminder.sh` | PostToolUse | 每 10 次有意義操作提醒更新 findings.md |
 
@@ -374,12 +374,25 @@ Tech Spec 新增：
 ```
 改 code → .tests-dirty 建立 → 想再改 code → ⛔ 阻擋「先跑測試」
                               → 跑測試通過 → .tests-dirty 清除 → ✅ 可以繼續
+                              → 跑測試失敗 → .healing-required 建立（v4.1）
+                                             → 想再改 code → ⛔ 阻擋「先走 Self-Healing」
+                                             → Self-Healing 修復 → 跑測試通過 → 清除 → ✅
+                                             → 3 次都失敗 → ⛔ 阻擋「產出 Escalation Report」
 
 改前端  → .playwright-required 建立 → 想標記完成 → ⛔ 阻擋「先跑 Playwright」
                                     → 跑 Playwright 通過 → 清除 → ✅ 可以完成
 ```
 
-**手動清除**（僅在 hook 誤判時使用）：`rm .tests-dirty .playwright-required`
+**手動清除**（僅在 hook 誤判時使用）：`rm .tests-dirty .playwright-required .healing-required`
+
+### Pattern Check Gate（v4.1 硬攔截）
+
+Build Grounding 通過後、寫 code 前，必須查 Pattern Library。
+
+```
+Build Grounding ✅ → 想寫 code → ⛔ 阻擋「先查 Pattern Library」
+                    → 查完 Pattern → pattern-checked.confirmed → ✅ 可以寫 code
+```
 
 ### Gate Checkpoint 機制（硬攔截）
 

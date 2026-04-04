@@ -107,13 +107,27 @@ if [ "$TOOL_NAME" = "Bash" ]; then
   # 從工具輸出偵測測試結果
   TOOL_OUTPUT=$(echo "$INPUT" | grep -oE '"stdout"\s*:\s*"[^"]*"' | head -1 | sed 's/.*: *"//;s/"//' || true)
 
+  HEALING_FILE=".healing-required"
+
   if [ "$IS_UNIT_TEST" = true ]; then
     # 檢查是否通過（簡單啟發式：沒有 FAIL/FAILED/ERROR 關鍵字）
     if echo "$TOOL_OUTPUT" | grep -qiE "FAIL|FAILED|ERROR|BROKEN"; then
       echo "🔴 test-on-change: 測試有失敗項目。.tests-dirty 保持標記。修完再跑。"
+
+      # ── v4.1: Self-Healing 強制觸發 ──
+      # 測試失敗 → 建立 .healing-required → AI 下次改 code 前被攔截
+      ATTEMPT=$(cat "$HEALING_FILE" 2>/dev/null | grep -c "attempt" || echo "0")
+      NEXT_ATTEMPT=$((ATTEMPT + 1))
+      if [ "$NEXT_ATTEMPT" -le 3 ]; then
+        echo "attempt:${NEXT_ATTEMPT} ts:$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$HEALING_FILE"
+        echo "🔧 test-on-change: Self-Healing Attempt ${NEXT_ATTEMPT}/3 已記錄。請遵循 self-healing-build skill 修復。"
+      else
+        echo "🚨 test-on-change: Self-Healing 3 次嘗試已用完。必須產出 Escalation Report 升級給人。"
+      fi
     else
-      # 清除 dirty 標記
+      # 清除 dirty 標記 + healing 標記
       rm -f "$DIRTY_FILE"
+      rm -f "$HEALING_FILE"
       echo "✅ test-on-change: 單元測試通過。.tests-dirty 已清除。"
     fi
   fi
