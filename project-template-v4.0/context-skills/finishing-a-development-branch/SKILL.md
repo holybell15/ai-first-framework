@@ -3,7 +3,7 @@ name: finishing-a-development-branch
 description: >
   Use this skill when a feature is complete and ready to merge or submit for review. Trigger on:
   "功能做完了", "我完成了 F01", "準備合併", "這個 branch 做完了", "可以 merge 了嗎",
-  "準備提 PR", "Gate 3 前要確認什麼". This is the checklist that prevents "I thought it was done"
+  "準備提 PR", "Gate 前要確認什麼". This is the checklist that prevents "I thought it was done"
   problems — missed tests, hardcoded secrets, STATE.md not updated. If someone says they're done
   with a feature, always run through this skill before proceeding.
 source: obra/superpowers (adapted for AI-First workflow)
@@ -23,15 +23,42 @@ source: obra/superpowers (adapted for AI-First workflow)
 ## Step 1 — 測試驗證
 
 ```bash
+# 跑全套測試
 ./mvnw test && npm run test
-cat .worktree-baseline    # 比較：現在的數字應該 >= 基準線
 ```
 
 **未全過 → 不進 Step 2。修好再來。**
 
 ---
 
-## Step 2 — 自我 Code Review
+## Step 2 — 回溯完整開發脈絡（commit/PR 上下文）
+
+在寫 commit message 或 PR description 之前，先回溯整個開發過程：
+
+```
+必讀檔案（依序）：
+1. .plan-history/INDEX.md          ← Plan 演變歷史（如果存在）
+2. src/[feature-id]/findings.md    ← 過程觀察、決策依據、踩過的坑
+3. src/[feature-id]/progress.md    ← Phase 摘要、測試結果
+4. TASKS.md                        ← 任務狀態與交接摘要
+```
+
+**為什麼？** Context 壓縮後早期的嘗試、失敗、決策原因都會遺失。
+如果只看最後的 diff，commit message 只會描述「改了什麼」，不會描述「為什麼這樣改」。
+
+**Commit message 必須包含：**
+- **What**: 改了什麼（從 diff 看）
+- **Why**: 為什麼這樣改（從 findings.md 看）
+- **Context**: 過程中嘗試過但放棄的方案（從 .plan-history 看）
+
+**PR description 必須包含：**
+- Summary: 功能摘要（從 progress.md Phase Log 整理）
+- Key decisions: 關鍵決策及原因（從 findings.md Decisions Made 整理）
+- Test plan: 測試覆蓋（從 progress.md Test Results 整理）
+
+---
+
+## Step 3 — 自我 Code Review
 
 在請 Review Agent 審查前，先自己過一遍：
 
@@ -51,7 +78,7 @@ cat .worktree-baseline    # 比較：現在的數字應該 >= 基準線
 - [ ] 多租戶 tenant_id 正確隔離（若適用）
 
 API 合約
-- [ ] API response 格式與 F##-API.md 規格一致
+- [ ] API response 格式與 Tech Spec 規格一致
 - [ ] 錯誤碼與 Spec 定義一致
 
 TDD 證據
@@ -60,9 +87,7 @@ TDD 證據
 
 ---
 
-## Step 3 — Bisectable Commit 整理（強制）
-
-> 靈感來源：gstack bisectable history — 每個 commit 是單一邏輯變更，`git bisect` 才能用。
+## Step 4 — Bisectable Commit 整理（強制）
 
 ```bash
 git log --oneline main..HEAD    # 確認 commit 清單合理
@@ -84,7 +109,7 @@ git log --oneline main..HEAD    # 確認 commit 清單合理
 git log --oneline main..HEAD | grep -iE "wip|temp|fixup|todo"
 
 # 如有 → 考慮 interactive rebase squash（僅在提 PR 前）
-# 如無 → Step 4
+# 如無 → Step 5
 ```
 
 ### QA Bug Fix Commit 規範
@@ -100,7 +125,7 @@ Found by QA on {date}
 
 ---
 
-## Step 4 — 決策
+## Step 5 — 決策
 
 | 選項 | 適用情境 |
 |------|---------|
@@ -111,25 +136,32 @@ Found by QA on {date}
 
 ---
 
-## Step 5 — 執行 Merge 或 PR
+## Step 6 — 執行 Merge 或 PR
+
+**統一使用 `parallel-feature.sh`，不手動執行 git 指令。**
+**在 Claude Code 內執行時加 `-y` 跳過互動確認。**
 
 ```bash
-# 直接 merge
-git checkout main
-git merge --no-ff feature/F01-login -m "feat: F01 用戶登入"
-git worktree remove ../feature-F01-login
+# 直接 merge（腳本會檢查 gate、dirty flag、未 commit 變更）
+bash scripts/parallel-feature.sh -y merge F01
 
-# 或建 PR
-git push origin feature/F01-login
+# merge 後同時推送 main 到 remote
+bash scripts/parallel-feature.sh -y merge F01 --push
+
+# 或建 PR（先 push feature branch，再由 requesting-code-review skill 接手）
+bash scripts/parallel-feature.sh -y push F01
 # → 由 requesting-code-review skill 接手
+
+# 放棄
+bash scripts/parallel-feature.sh -y drop F01
 ```
 
 ---
 
-## Step 6 — 更新追蹤文件
+## Step 7 — 更新追蹤文件
 
 完成後必須更新：
 
 1. **TASKS.md** — 標記此任務完成，寫簡短交接摘要
-2. **memory/STATE.md** — 更新 current_focus + next_action（§38）
+2. **memory/STATE.md** — 更新 current_focus + next_action
 3. **Dashboard** — 觸發 update-dashboard skill，新增 pipelineLog 記錄

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/plan-backup.sh \"$TOOL_INPUT\"",
+            "description": "備份 TASKS.md / task_plan.md / findings.md / progress.md 歷史版本"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/test-before-continue.sh \"$TOOL_INPUT\"",
+            "description": "測試未跑時阻擋寫入 production code 和標記完成"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/gate-checkpoint.sh \"$TOOL_INPUT\"",
+            "description": "Gate 未通過時阻擋寫入 production code（需 .gates/<feature>/.enabled 啟用）"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/freeze-hook.sh \"$TOOL_INPUT\"",
+            "description": "Freeze Mode 目錄鎖定（需 .claude-freeze-scope 啟用）"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/test-lint.sh \"$TOOL_INPUT\"",
+            "description": "跑 Playwright 前檢查 waitForTimeout、重複登入、背景執行"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/destructive-guard-hook.sh \"$TOOL_INPUT\"",
+            "description": "攔截 rm -rf / DROP TABLE / git push --force 等破壞性指令"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/test-on-change.sh \"$TOOL_INPUT\"",
+            "description": "production code 變更後標記 dirty；測試通過後清除"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/auto-state-update.sh \"$TOOL_INPUT\"",
+            "description": "Pipeline 產出物寫入後自動更新 STATE.md 時間戳"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/findings-reminder.sh \"$TOOL_INPUT\"",
+            "description": "每 10 次有意義操作提醒更新 findings.md"
+          }
+        ]
+      }
+    ]
+  }
+}

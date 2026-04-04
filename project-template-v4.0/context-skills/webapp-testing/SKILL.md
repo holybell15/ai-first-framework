@@ -30,10 +30,110 @@ npm install -D @playwright/test
 npx playwright install
 ```
 
+## ⚠️ 執行效率鐵規（違反會讓測試從秒級變成 40 分鐘）
+
+### 規則 1：共用登入 Session（禁止每個 test 重新登入）
+
+```typescript
+// ✅ 正確：全域 setup 登入一次，所有 test 共用
+// playwright.config.ts
+export default defineConfig({
+  projects: [
+    // 先跑 setup：登入一次，存 storageState
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
+    // 所有 test 使用 setup 產出的 session
+    {
+      name: 'e2e',
+      dependencies: ['setup'],
+      use: {
+        storageState: '.auth/user.json',
+      },
+    },
+  ],
+})
+```
+
+```typescript
+// tests/auth.setup.ts — 只跑一次
+import { test as setup, expect } from '@playwright/test'
+
+setup('login', async ({ page }) => {
+  await page.goto('/login')
+  await page.getByLabel('帳號').fill(process.env.TEST_USER!)
+  await page.getByLabel('密碼').fill(process.env.TEST_PASS!)
+  await page.getByRole('button', { name: '登入' }).click()
+  await expect(page).toHaveURL(/console/)
+  
+  // 存 session，後續所有 test 自動帶入
+  await page.context().storageState({ path: '.auth/user.json' })
+})
+```
+
+```typescript
+// ❌ 錯誤：每個 test 都登入 → 5 個 test = 5 次登入 = 多花 2-3 分鐘
+test.beforeEach(async ({ page }) => {
+  await page.goto('/login')
+  await page.fill('#username', 'admin')  // 每次都跑
+  await page.fill('#password', 'pass')   // 每次都跑
+  await page.click('button[type=submit]') // 每次都跑
+})
+```
+
+### 規則 2：禁止 waitForTimeout（用 Playwright 內建等待）
+
+```typescript
+// ❌ 禁止：固定等待 = 浪費時間 + 不可靠
+await page.waitForTimeout(3000)  // 等 3 秒「希望」頁面載完
+await page.waitForTimeout(1000)  // 等 1 秒「希望」按鈕出現
+await page.waitForTimeout(5000)  // 等 5 秒「希望」API 回來
+
+// ✅ 正確：等具體條件滿足
+await page.waitForSelector('.data-table')                        // 等元素出現
+await page.waitForResponse('**/api/v1/customers')                // 等 API 回應
+await expect(page.getByTestId('save-btn')).toBeEnabled()         // 等按鈕可按
+await expect(page.locator('.loading')).toBeHidden()              // 等 loading 消失
+await page.waitForLoadState('networkidle')                       // 等網路靜止
+```
+
+**唯一允許使用 waitForTimeout 的場景**：測試動畫或計時器行為，且必須加註解說明原因。
+
+### 規則 3：Playwright 必須前台執行（禁止背景跑）
+
+```bash
+# ✅ 正確：前台直接執行，看到完整輸出
+npx playwright test
+
+# ✅ 正確：指定 test 檔案
+npx playwright test tests/e2e/customer.spec.ts
+
+# ❌ 禁止：丟到背景（看不到輸出、無法判斷狀態、佔用資源）
+npx playwright test &
+nohup npx playwright test &
+```
+
+**AI 使用 Bash 工具時**：不加 `run_in_background`，不加 `&`，直接前台跑。
+如果測試太久（> 5 分鐘），拆分 test 檔案分開跑，不要用背景規避。
+
+### 效率 Checklist（每次寫 E2E test 前過一遍）
+
+```
+□ 登入用 storageState 共用，不是 beforeEach 重複登入
+□ 沒有任何 waitForTimeout（搜尋確認）
+□ 所有等待都用 waitForSelector / waitForResponse / expect
+□ Playwright 前台執行，不丟背景
+□ 單個 test 檔案執行時間 < 30 秒（超過就拆分）
+```
+
+---
+
 ## 測試結構
 
 ```
 tests/
+├── auth.setup.ts  # 登入 setup（只跑一次）
 ├── e2e/           # 完整流程測試（跨頁面狀態轉移）
 ├── prototype/     # Prototype 靜態測試（單頁面元件驗證）
 └── playwright.config.ts
