@@ -1,0 +1,134 @@
+# ============================================================
+# API Contract — F[XX]-[endpoint-name]
+# ============================================================
+# 這是前後端的 Single Source of Truth。
+# Backend DTO 欄位名 = 這裡定義的 = Frontend Type 欄位名。
+# 三者不一致 = validate-contract BLOCK。
+#
+# 命名規則：F[XX]-[resource]-[action].yaml
+# 例如：F06-interaction-list.yaml、F04-agent-status-update.yaml
+#
+# 建立時機：Tech Spec §2.5 確認後，寫 code 之前
+# gate-checkpoint.sh 會檢查：有新 API → 必須有 contract YAML
+# ============================================================
+
+# ---- 基本資訊 ----
+feature: "F[XX]"
+endpoint:
+  method: "GET"                          # GET / POST / PUT / DELETE
+  path: "/api/v1/[resource]"
+  summary: "[一句話說明]"
+  auth_required: true
+  roles: ["AGENT", "SUPERVISOR"]         # 可存取的角色
+
+# ---- Request ----
+request:
+  query_params:                          # GET 用 query params
+    - name: "page"
+      type: "integer"
+      required: false
+      default: 0
+    - name: "size"
+      type: "integer"
+      required: false
+      default: 20
+  # body:                                # POST/PUT 用 body
+  #   required: true
+  #   fields:
+  #     - name: "fieldName"
+  #       type: "string"
+  #       required: true
+  #       validation: "minLength: 1, maxLength: 200"
+
+# ---- Response ----
+# 這裡定義的欄位名 = Backend DTO 欄位名 = Frontend Type 欄位名
+# 禁止前後端各自發明不同的欄位名
+response:
+  # 標準 envelope
+  envelope:
+    success: { type: "boolean" }
+    data: { type: "object | array", ref: "response_item" }
+    message: { type: "string", nullable: true }
+    errorCode: { type: "string", nullable: true }
+
+  # 單一項目的結構（data 的內容）
+  response_item:
+    # ---- 格式說明 ----
+    # name:
+    #   type: 型別
+    #   source: DB 來源欄位（後端需要做的 mapping）
+    #   nullable: 是否可為 null
+    #   description: 說明
+    #   frontend_usage: 前端在 UI 上怎麼用這個欄位
+
+    id:
+      type: "string"
+      source: "db.[table].id"
+      nullable: false
+      description: "唯一識別碼"
+      frontend_usage: "列表 key / 詳情頁路由參數"
+
+    # ---- 巢狀物件範例 ----
+    # customer:
+    #   type: "object"
+    #   fields:
+    #     name:
+    #       type: "string"
+    #       source: "db.customer.customer_name"
+    #       nullable: true
+    #       frontend_usage: "客戶姓名欄位"
+    #     phone:
+    #       type: "string"
+    #       source: "db.customer.phone_number"
+    #       nullable: false
+    #       frontend_usage: "客戶電話欄位"
+
+    # ---- Enum 範例 ----
+    # status:
+    #   type: "string"
+    #   source: "db.[table].status"
+    #   enum_ref: "enum_registry.yaml → [EnumName]"
+    #   mapping:
+    #     ACTIVE: "active"
+    #     INACTIVE: "inactive"
+    #   frontend_usage: "狀態 Badge"
+
+    # ---- 計算欄位範例 ----
+    # ahtSec:
+    #   type: "integer"
+    #   source: "COMPUTED: db.duration_sec + db.acw_duration_sec"
+    #   description: "平均處理時間（秒）"
+    #   frontend_usage: "AHT 顯示，前端格式化為 mm:ss"
+
+# ---- Error Responses ----
+errors:
+  - status: 400
+    code: "INVALID_INPUT"
+    when: "[觸發條件]"
+  - status: 401
+    code: "UNAUTHORIZED"
+    when: "未登入或 token 過期"
+  - status: 403
+    code: "FORBIDDEN"
+    when: "角色無權限"
+
+# ---- 驗證 Checklist ----
+# validate-contract skill 會逐項檢查
+validation:
+  backend_dto_class: "[Package].[ClassName]Response"     # 後端 DTO 的完整類名
+  frontend_type_file: "src/types/[feature].ts"           # 前端 Type 定義檔
+  frontend_type_name: "[TypeName]"                       # 前端 interface/type 名稱
+  contract_test_file: "src/test/java/.../[Name]ContractTest.java"  # Contract Test 位置
+
+# ---- 變更歷史 ----
+history:
+  - version: "v1.0"
+    date: "[YYYY-MM-DD]"
+    author: "[Agent/人名]"
+    change: "初版建立"
+    cia: null                             # 初版不需要 CIA
+  # - version: "v1.1"
+  #   date: "[YYYY-MM-DD]"
+  #   author: "[Agent/人名]"
+  #   change: "新增 customer.email 欄位"
+  #   cia: "CIA-[XX]"                     # 變更必須有 CIA 編號

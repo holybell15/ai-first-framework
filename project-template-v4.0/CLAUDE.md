@@ -391,14 +391,17 @@ Tech Spec 新增：
 
 **手動清除**（僅在 hook 誤判時使用）：`rm .tests-dirty .playwright-required .healing-required`
 
-### Pattern Check Gate（v4.1 硬攔截）
+### Pattern Check Gate + Contract Gate（v4.1 硬攔截）
 
-Build Grounding 通過後、寫 code 前，必須查 Pattern Library。
+Build Grounding 通過後、寫 code 前，必須查 Pattern Library 和定義 API Contract。
 
 ```
-Build Grounding ✅ → 想寫 code → ⛔ 阻擋「先查 Pattern Library」
-                    → 查完 Pattern → pattern-checked.confirmed → ✅ 可以寫 code
+Build Grounding ✅ → 想寫 code → ⛔「先查 Pattern Library」
+  → pattern-checked.confirmed ✅ → 想寫 code → ⛔「先定義 API Contract YAML」
+  → contract-defined.confirmed ✅ → 可以寫 code
 ```
+
+Gate 鏈：`build-grounded → pattern-checked → contract-defined → 可以寫 code`
 
 ### Gate Checkpoint 機制（硬攔截）
 

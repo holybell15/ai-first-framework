@@ -105,6 +105,29 @@ paths:
 - 認證方式：[JWT / Session / OAuth2 / 依專案決策]
 - 授權模型：[RBAC / ABAC / 說明角色權限]
 
+### 2.5 Shared DTO / Response Schema（v4.1 — 前後端共用 SSOT）
+
+> **目的**：前後端必須從同一份 DTO 定義開發。禁止各自發明欄位名。
+> **教訓**：後端返回 `callType, durationSec`（DB 欄位），前端期望 `interactionType, talkDurationSec`（UI 欄位），合併後全炸。
+> **Contract 檔案**：`contracts/F[XX]-[endpoint].yaml`（SSOT，兩邊都從這裡讀）
+
+#### [Endpoint 名稱] Response DTO
+
+| API 欄位（前後端共用） | 型別 | 來源（DB / 計算） | 前端用途 | 備註 |
+|----------------------|------|-------------------|---------|------|
+| `interactionId` | string | `db.interaction_id` | 列表 key | — |
+| `interactionType` | string | `db.call_type` mapping: INBOUND→inbound | Badge 顯示 | enum 見 enum_registry |
+| `customer.name` | string | `db.customer_name` | 列表欄位 | nullable |
+| `customer.phone` | string | `db.caller_number` | 列表欄位 | — |
+| `talkDurationSec` | integer | `db.duration_sec` | 時長顯示 | 秒，前端自行格式化 |
+| `ahtSec` | integer | `db.duration_sec + db.acw_duration_sec` | AHT 顯示 | 後端計算 |
+
+**規則**：
+- **API 欄位名 = 前端 Type 欄位名 = 後端 DTO 欄位名**（三者必須一致）
+- **DB 欄位名可以不同**，但必須在「來源」欄標明 mapping 方式
+- **巢狀結構**（如 `customer.name`）：後端 DTO 必須用巢狀物件，不可 flat
+- **每個 endpoint 都必須有對應的 Contract YAML**：`contracts/F[XX]-[endpoint].yaml`
+
 ---
 
 ## 3. 資料模型

@@ -192,6 +192,38 @@ EOF
       exit 2
     fi
 
+    # ── v4.1: Contract Defined Gate ──
+    # Pattern Check 通過後，有 API endpoint 的 Feature 必須有 Contract YAML
+    if [ ! -f "${FEATURE_GATE_DIR}/contract-defined.confirmed" ]; then
+      # 檢查這個 Feature 是否有 API（有的 Feature 可能純前端 UI 不需要）
+      CONTRACT_FILES=$(ls contracts/${FEATURE_ID}-*.yaml 2>/dev/null | wc -l | tr -d ' ')
+      if [ "$CONTRACT_FILES" -gt 0 ]; then
+        # 已有 contract 檔案 → 自動通過（但還沒有 confirmed 標記）
+        echo "⚠️ gate-checkpoint: 已找到 ${CONTRACT_FILES} 個 Contract YAML，但尚未確認。請驗證後建立 checkpoint。"
+      fi
+      cat <<EOF
+⛔ CONTRACT DEFINED GATE — 阻擋寫入 production code
+
+Feature: ${FEATURE_ID}
+目標檔案: ${FILE_PATH}
+
+✅ Build Grounding 已通過
+✅ Pattern Check 已通過
+❌ API Contract 未定義 — 前後端會各自發明 DTO 欄位名
+
+必須先完成（validate-contract skill）：
+1. 對照 Tech Spec §2.5 的 Shared DTO 定義
+2. 為每個 API endpoint 建立 Contract YAML：
+   contracts/${FEATURE_ID}-[endpoint].yaml（模板：contracts/TEMPLATE_API_Contract.yaml）
+3. Contract YAML 定義 response 結構（欄位名 = 前後端共用 SSOT）
+4. 確認後建立 checkpoint：
+   echo "confirmed \$(date -u +%Y-%m-%dT%H:%M:%SZ)" > ${FEATURE_GATE_DIR}/contract-defined.confirmed
+
+如果本 Feature 沒有 API endpoint（純 UI），直接建立 checkpoint 標記跳過。
+EOF
+      exit 2
+    fi
+
   fi
 done
 
