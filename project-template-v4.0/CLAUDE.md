@@ -97,6 +97,7 @@ Specialist 發現問題 → 發 DRIFT_SIGNAL → Task-Master 路由：
 | Agent 交接 | `handoff-protocol` |
 | 修改 Baselined 文件 | `cia` |
 | 串接外部 SDK/API/WS | `external-integration` |
+| **Build Gate 前** | **`validate-contract`（v4.1 — 升級為 Tier 1，Contract 雙向驗證）** |
 | **拆 Feature 為 BE/FE 並行** | **`concurrent-build`（v4.1 — Specialist 並行協調）** |
 
 ### Tier 2 — 按需（依 project-config.yaml）
@@ -109,8 +110,9 @@ Specialist 發現問題 → 發 DRIFT_SIGNAL → Task-Master 路由：
 |------|------|----------|
 | **Discover Gate** | Discover → Plan | SRS 完整、AC 可測試、WBS 已拆、MVP 邊界確認 |
 | **Plan Gate** | Plan → Build | SD Checklist 7 項全過、Design Baseline locked、Test Matrix 存在、**Tech Spec 已確認**、**外部系統串接有介面契約摘要** |
-| **Build Gate** | Build → Verify | 所有 Slice 完成、L1+L2 test 達標、無 scope drift、Code Review 通過、**異質系統 5-Gate 全通過** |
+| **Build Gate** | Build → Verify | 所有 Slice 完成、L1+L2 test 達標、無 scope drift、Code Review 通過、**Contract 雙向驗證**、**Mock/Real 標記達標**、**Config 環境驗證** |
 | **Ship Gate** | Verify → Ship | L3+L4+L5 test 達標、合規審查完成、Rollback plan 準備好 |
+| **Smoke Test** | Merge 後 | **部署到目標環境 + Health Check + 每個 endpoint 打真實 request + Console 無 error**（v4.1） |
 
 Gate 失敗 → 列具體未達標項（附證據）→ 判斷問題層 → 退回修正（T4）→ 重過 Gate
 
@@ -349,6 +351,10 @@ Tech Spec 新增：
 11. **事後架構驗證**: 架構變更完成後，必須驗證 claimed state = actual state。具體做法：(1) code 註解描述的行為必須與 code 實際行為一致 (2) 測試的 mock 假設必須與 production code path 一致 (3) 不一致 = Build Gate 失敗
 12. **Integration Test = Production Path**: 整合測試必須走 production code path。如果測試中 mock 了 `X.register()`，production 也必須呼叫 `X.register()`。測試綠但 production 不呼叫 = 測試無效，視同未測試
 13. **Build Grounding**: Feature 進入 Build 前，必須實際讀取 RS + Prototype + Tech Spec（用 Read 工具，不是靠記憶），產出 Build Checklist 並用戶確認。**禁止靠記憶描述 UI** — 必須讀 Prototype HTML 檔案後描述看到的佈局和元件。由 `gate-checkpoint.sh` + `.gates/<feature>/build-grounded.confirmed` 強制執行
+14. **Mock ≠ Real**（v4.1）: 每個測試必須標記 `@mock` 或 `@real`。每個 API endpoint 至少 1 個 `@real` integration test。全部只有 `@mock` = Build Gate BLOCK。Mock 全綠不代表功能正常
+15. **Contract 雙向驗證**（v4.1）: 前端定義的 API endpoint 後端必須有 Controller；後端新增的 endpoint 前端必須有呼叫。Build Gate 前強制執行 `validate-contract`
+16. **Merge 後 Smoke Test**（v4.1）: Feature merge 後必須部署到目標環境，Backend health check + 每個新 endpoint 打一次真實 request + 前端 console 無 error。未通過不能標記 Feature Done
+17. **Config 必須有保護**（v4.1）: 外部系統 Config（DataSource / Redis / MQ）必須用 `@ConditionalOnProperty` 保護。無條件載入的外部 Config = Build Gate BLOCK
 
 ## ⚠️ Hook 強制執行機制
 

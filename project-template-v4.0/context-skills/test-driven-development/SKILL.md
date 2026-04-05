@@ -116,7 +116,73 @@ DSV: TDD cycle for [AC-ID] [AC描述]
 - GREEN:    [實作檔案路徑:行數]  — 實作方式
 - REFACTOR: [修改摘要]
 - 測試結果: [X passed / Y total]
+- 測試類型: @mock / @real           ← v4.1 強制標記
 ```
+
+---
+
+## Mock/Real 標記規則（v4.1 — 強制）
+
+> **教訓**：F04 的 37 個 L1 test + 5 個 E2E 全部 mock API，Build Gate 全綠通過。
+> 但 Controller 根本不存在。Mock 全綠 ≠ 功能正常。
+
+### 規則
+
+**每個測試必須標記 `@mock` 或 `@real`：**
+
+```java
+// @mock — 用 MockMvc / @MockBean / WireMock，不打真實 DB / 外部系統
+@Test @Tag("mock")
+void shouldCreateCustomer_mock() { ... }
+
+// @real — 打真實 DB（H2/TestContainers）或真實 API（staging）
+@Test @Tag("real")
+void shouldCreateCustomer_real() { ... }
+```
+
+```typescript
+// 前端
+test('@mock: 表單驗證', async () => {
+  // 用 MSW mock API response
+})
+
+test('@real: API 串接', async () => {
+  // 打真實 backend endpoint
+})
+```
+
+### Build Gate 出口標準（G4-ENG-R 新增）
+
+| 條件 | 結果 |
+|------|------|
+| 每個 API endpoint 至少 1 個 `@real` test | ✅ PASS |
+| 有 endpoint 只有 `@mock` test | ⚠️ 標記 `mock verified / real integration pending` |
+| **全部 endpoint 都只有 `@mock`** | 🔴 **BLOCK — 不允許只有 mock 就過 Gate** |
+
+### Contract 雙向驗證（v4.1 — Tier 1 強制）
+
+> **教訓**：F04 前端定義了 4 個 API endpoint，但後端 Controller 不存在。
+
+Build Gate 前必須執行 contract 雙向驗證：
+
+```
+驗證 1（前端 → 後端）：
+  前端 api/*.ts 裡的每個 endpoint URL
+    → 在後端 *Controller.java 搜尋對應的 @RequestMapping / @PostMapping
+    → 找不到 = 🔴 BLOCK
+
+驗證 2（後端 → 前端）：
+  後端新增的 @RequestMapping endpoint
+    → 在前端 api/*.ts 搜尋對應的 fetch / axios 呼叫
+    → 找不到 = ⚠️ 警告（可能是內部 API，但需要說明）
+
+驗證方式（在 Build Gate 中執行）：
+  grep -r "@PostMapping\|@GetMapping\|@PutMapping\|@DeleteMapping" src/main/java/ | 提取 URL
+  grep -r "fetch\|axios\|api/" src/frontend/api/ | 提取 URL
+  比對兩份清單 → 列出不匹配項
+```
+
+**validate-contract skill 從 Tier 2 升級為 Tier 1 — 每個 Feature Build Gate 前強制執行。**
 
 ---
 

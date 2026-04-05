@@ -433,9 +433,12 @@ DAYS_SINCE=$(( ($(date +%s) - $(date -d $REVIEW_DATE +%s)) / 86400 ))
 | R-02 | Scope Drift 清單（超出範圍的實作，必須解釋原因） | 🔴 若有未說明的 |
 | R-03 | 自行假設清單（應為 0，全部走 Open Issue） | 🔴 若有 |
 | R-04 | Design vs Code 一致性（API / State / Error Code） | 🔴 |
+| R-04b | **Contract 雙向驗證**：前端定義的 API 後端都有 Controller；後端的 endpoint 前端都有呼叫（v4.1） | 🔴 |
 | R-05 | 測試覆蓋：AC 的 Test Case 全部存在 | 🔴 |
+| R-05b | **Mock/Real 標記**：每個 API endpoint 至少 1 個 `@real` integration test；全 `@mock` = BLOCK（v4.1） | 🔴 |
 | R-06 | 編譯通過 | 🔴 |
 | R-07 | 無 P0 阻塞（啟動失敗 / 安全漏洞 / 主流程壞） | 🔴 |
+| R-07b | **Config 環境驗證**：application.yml 變更已在目標環境確認可用；外部系統 Config 有 @ConditionalOnProperty 保護（v4.1） | 🔴（若有 Config 變更）|
 | R-08 | Open Issues 更新 | 🟡 |
 | R-09 | 檔案異動清單（新增 / 修改 / 刪除） | 🟡 |
 | R-10 | 需要人工決策的 Open Issues | 🟡 |
@@ -632,6 +635,16 @@ DAYS_SINCE=$(( ($(date +%s) - $(date -d $REVIEW_DATE +%s)) / 86400 ))
 - [ ] Rollback plan documented (how to undo if things go wrong)
 - [ ] Monitoring/alerts configured (know when things break in production)
 
+**Config 環境驗證（v4.1 — 強制）**
+
+- [ ] `application.yml` / `.env` 的本 Feature 新增/修改設定已列出
+- [ ] 每個外部系統連線（DB / Redis / MQ / 外部 API）在目標環境可達
+- [ ] 外部系統 Config 有 `@ConditionalOnProperty` 或 `@Profile` 保護：
+  - ✅ 該服務不啟動時 → Bean 不建立 → 不影響其他功能
+  - ❌ 無條件載入的外部 Config → 🔴 BLOCK（一個連不上就拖垮整個 Backend）
+- [ ] 敏感 Config（密碼、API Key）不在 application.yml 明文中（用 env var 或 Vault）
+- [ ] Config 變更清單已加入 Smoke Test Report
+
 **Carry-Forward from Earlier Gates**
 
 - [ ] L1 Gate Review: Were any Gate 1 or Gate 2 open items resolved?
@@ -651,6 +664,80 @@ DAYS_SINCE=$(( ($(date +%s) - $(date -d $REVIEW_DATE +%s)) / 86400 ))
 
 **PASS** if: P0 tests pass, coverage ≥80%, OWASP signed, DSV complete, deployment tested, open items resolved, **真人確認項全勾**
 **BLOCK** if: P0 tests failing, coverage <80%, security unsigned, DSV gaps, deployment untested, open items unresolved, **真人確認項有未勾選**
+
+---
+
+## Smoke Test Gate — Merge 後部署驗證（v4.1 — 強制）
+
+> **教訓來源**：F04 Mock 全綠但 Controller 不存在、F06 Config 在目標環境無法連線。
+> Mock E2E ≠ 功能正常。Merge ≠ 完成。**部署到目標環境跑一次真的 API 才算完成。**
+
+**觸發時機**：Feature merge 到 develop 之後，標記 Feature 完成之前。
+
+### 必須驗證的項目
+
+**1. Backend 啟動（Health Check）**
+- [ ] 部署到目標環境（248 / staging）
+- [ ] `GET /actuator/health` → 200（Spring Boot）或對應 health endpoint
+- [ ] 啟動日誌無 ERROR（特別注意 DataSource / Bean creation / Config 錯誤）
+- [ ] 所有 `@Configuration` 類別成功載入（無 BeanCreationException）
+
+**2. API Endpoint Smoke（每個新/改的 endpoint 打一次真實 request）**
+- [ ] 列出本 Feature 新增/修改的所有 API endpoint
+- [ ] 每個 endpoint 至少一次真實 HTTP request（不是 mock）
+- [ ] 每個 response 的 HTTP status 符合預期（200/201/204，不是 500/404）
+- [ ] Response body 結構符合 API Contract（有 `success`, `data`, `errorCode` 欄位）
+
+**3. 前端 Console 乾淨**
+- [ ] 打開瀏覽器 → 進入本 Feature 相關頁面
+- [ ] Console 無 JavaScript error（network error 因為相依 Feature 未完成可接受，但必須記錄）
+- [ ] 頁面載入不 blank / 不跑版（基本 UI 結構完整）
+
+**4. Config 環境驗證（如果本 Feature 有改 Config）**
+- [ ] `application.yml` / `.env` 的新增設定在目標環境有效
+- [ ] 外部系統連線可達（DB / Redis / MQ / 外部 API）
+- [ ] 連線失敗的 Config 有 `@ConditionalOnProperty` 保護（不會拖垮整個 Backend）
+
+### Smoke Test 報告格式
+
+```markdown
+## Smoke Test Report — F[XX]
+
+**環境**: [248 / staging / IP]
+**部署時間**: [ISO timestamp]
+**部署方式**: [手動 / CI/CD]
+
+### Backend Health
+- Health Check: ✅ 200 / ❌ [error]
+- 啟動日誌 ERROR: 0 / [N] 個（列出）
+
+### API Smoke
+| # | Endpoint | Method | Request | Status | 符合 Contract? |
+|---|----------|--------|---------|--------|---------------|
+| 1 | /api/v1/xxx | POST | `{...}` | 200 ✅ | ✅ |
+| 2 | /api/v1/yyy | GET | — | 500 ❌ | — |
+
+### Frontend Console
+- 頁面: [URL]
+- JS Errors: 0 / [N] 個（列出）
+- UI 結構: ✅ 正常 / ❌ 跑版
+
+### Config 驗證
+| Config Key | 目標環境值 | 連線結果 |
+|------------|-----------|---------|
+| aicc.datasource.url | jdbc:mysql://... | ✅ 連線成功 / ❌ 失敗 |
+
+### 結論
+- ✅ PASS — 可標記 Feature 完成
+- ❌ FAIL — 必須修復後重新部署驗證
+```
+
+### 強制規則
+
+- **Smoke Test 未通過 → Feature 不能標記為 Done**（TASKS.md 不能寫 ✅）
+- **Smoke Test 不可用 Mock 替代** — 必須在目標環境打真實 request
+- **Smoke Test 報告存入** `08_Test_Reports/SMOKE_F[XX]_[日期].md`
+- **Gate 分級**：Smoke Test 永遠 L3（Full Gate），不可降級
 
 ---
 

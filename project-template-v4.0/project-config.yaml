@@ -108,13 +108,13 @@ agents:
       - self-healing-build           # v4.1: TDD GREEN 失敗時自動修復
       - systematic-debugging
       - pattern-library              # v4.1: Build 前查/後回饋 pattern
+      - validate-contract            # v4.1: 升級 Tier 1，Contract 雙向驗證
       - planning-with-tasks
       - using-git-worktrees
       - requesting-code-review
       - verification-before-completion
     optional_skills:
       - ground
-      - validate-contract
       - external-integration        # 串接外部 SDK/API/WS 時載入
     context_files:
       - context-roles/GROUP_Build.md
@@ -128,6 +128,7 @@ agents:
       - self-healing-build           # v4.1: TDD GREEN 失敗時自動修復
       - systematic-debugging
       - pattern-library              # v4.1: Build 前查/後回饋 pattern
+      - validate-contract            # v4.1: 升級 Tier 1，Contract 雙向驗證
       - frontend-design
       - planning-with-tasks
       - using-git-worktrees
