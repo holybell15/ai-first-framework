@@ -417,7 +417,9 @@ touch .gates/HOTFIX-xxx/.ui-bug
 ```
 想修 bug → ⛔「先 SSH 看 log + 收集證據」→ debug-evidence.confirmed
   → UI 問題 → ⛔「先讀 Prototype 逐行比對」→ debug-prototype.confirmed
-  → 可以改 code → 改完 → 必須在 248 上 Smoke Test
+  → 可以改 code → 改完 → .deploy-verify-required 自動建立
+  → 想再改 code → ⛔「先自己部署 + SSH 驗證 + curl API」
+  → 驗證通過 → .deploy-verify-required 自動清除 → 繼續下一個修復
 ```
 
 ### Gate Checkpoint 機制（硬攔截）

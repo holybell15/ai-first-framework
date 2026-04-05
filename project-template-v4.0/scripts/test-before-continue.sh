@@ -90,6 +90,45 @@ EOF
   fi
 fi
 
+# ─── 情境 A-1b：Debug 模式 — 改了 code 但沒自己部署驗證（v4.1）───
+DEPLOY_VERIFY_FILE=".deploy-verify-required"
+if [ -f "$DEPLOY_VERIFY_FILE" ]; then
+  IS_PROD=false
+  case "$FILE_PATH" in
+    */src/main/*) IS_PROD=true ;;
+    *.java) IS_PROD=true ;;
+    */src/*.vue|*/src/*.ts|*/src/*.tsx|*/src/*.js|*/src/*.jsx) IS_PROD=true ;;
+  esac
+
+  if [ "$IS_PROD" = true ]; then
+    CHANGED_COUNT=$(wc -l < "$DEPLOY_VERIFY_FILE" 2>/dev/null | tr -d ' ')
+    cat <<EOF
+⛔ DEPLOY-VERIFY GATE — 你改了 code 但還沒自己部署驗證
+
+已修改 ${CHANGED_COUNT} 個檔案但尚未部署驗證：
+$(cat "$DEPLOY_VERIFY_FILE")
+
+你必須自己完成以下步驟（不要等人幫你測）：
+
+  1. 部署到目標環境：
+     bash scripts/deploy.sh
+     （或你的專案部署指令）
+
+  2. 等 Backend 啟動後，SSH 驗證：
+     ssh user@host "grep -E 'ERROR|Started' /path/to/app.log | tail -20"
+
+  3. 打真實 API 確認修復：
+     curl -s http://host:port/api/v1/xxx | head -5
+
+  4. 前端問題 → 檢查瀏覽器 Console
+
+部署驗證通過後 .deploy-verify-required 會自動清除。
+驗證失敗 → 繼續修復 → 再部署驗證。不要只改 code 不驗證。
+EOF
+    exit 2
+  fi
+fi
+
 # ─── 情境 A-2：想寫 production code 但測試未跑 ───
 if [ -f "$DIRTY_FILE" ]; then
   IS_PROD=false
@@ -143,6 +182,13 @@ if [ "$IS_COMPLETION" = true ]; then
     BLOCKERS="${BLOCKERS}
 ❌ Playwright E2E 未跑（${PW_COUNT} 個前端檔案已修改）
    → 執行: npx playwright test"
+  fi
+
+  if [ -f "$DEPLOY_VERIFY_FILE" ]; then
+    DV_COUNT=$(wc -l < "$DEPLOY_VERIFY_FILE" 2>/dev/null | tr -d ' ')
+    BLOCKERS="${BLOCKERS}
+❌ 部署驗證未完成（${DV_COUNT} 個檔案已修改但未在目標環境驗證）
+   → 執行: bash scripts/deploy.sh → SSH 驗證 → curl 打 API"
   fi
 
   if [ -n "$BLOCKERS" ]; then

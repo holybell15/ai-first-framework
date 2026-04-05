@@ -61,10 +61,19 @@ if [ "$TOOL_NAME" = "Write" ] || [ "$TOOL_NAME" = "Edit" ]; then
       ;;
   esac
 
+  DEPLOY_VERIFY_FILE=".deploy-verify-required"
+
   if [ "$IS_PROD" = true ]; then
     # 標記 dirty
     echo "$FILE_PATH $(date +%Y-%m-%dT%H:%M:%S)" >> "$DIRTY_FILE"
     echo "🔴 test-on-change: production code 已修改（$(basename "$FILE_PATH")）。必須跑測試才能繼續。"
+
+    # ── v4.1: Debug 模式 → 額外標記 deploy-verify-required ──
+    # 有 .debug gate 存在 = 正在做 hotfix → 改完必須自己部署驗證
+    if ls .gates/*/.debug 1>/dev/null 2>&1; then
+      echo "$FILE_PATH $(date +%Y-%m-%dT%H:%M:%S)" >> "$DEPLOY_VERIFY_FILE"
+      echo "🚀 test-on-change: Debug 模式 — 改完後你必須自己部署到目標環境並驗證。不要等人幫你測。"
+    fi
 
     # 前端 code 額外標記 playwright-required
     case "$FILE_PATH" in
@@ -138,6 +147,47 @@ if [ "$TOOL_NAME" = "Bash" ]; then
     else
       rm -f "$PLAYWRIGHT_FILE"
       echo "✅ test-on-change: Playwright E2E 通過。.playwright-required 已清除。"
+    fi
+  fi
+
+  # ── v4.1: 偵測部署 + 驗證行為 → 清除 .deploy-verify-required ──
+  DEPLOY_VERIFY_FILE=".deploy-verify-required"
+  if [ -f "$DEPLOY_VERIFY_FILE" ]; then
+    IS_DEPLOY_OR_VERIFY=false
+    case "$COMMAND" in
+      *deploy*|*scp*|*rsync*|*docker*push*|*kubectl*apply*)
+        IS_DEPLOY_OR_VERIFY=true
+        ;;
+    esac
+
+    # SSH 到目標環境做驗證也算
+    IS_REMOTE_VERIFY=false
+    case "$COMMAND" in
+      *ssh*grep*|*ssh*curl*|*ssh*health*|*ssh*log*|*ssh*tail*)
+        IS_REMOTE_VERIFY=true
+        ;;
+    esac
+
+    # curl 打 API smoke test 也算
+    IS_SMOKE_TEST=false
+    case "$COMMAND" in
+      *curl*api*|*curl*health*|*curl*actuator*)
+        IS_SMOKE_TEST=true
+        ;;
+    esac
+
+    if [ "$IS_DEPLOY_OR_VERIFY" = true ]; then
+      echo "📡 test-on-change: 偵測到部署行為。"
+    fi
+
+    if [ "$IS_REMOTE_VERIFY" = true ] || [ "$IS_SMOKE_TEST" = true ]; then
+      # 驗證行為 → 檢查結果
+      if echo "$TOOL_OUTPUT" | grep -qiE "ERROR|FAIL|500|502|503|Connection refused"; then
+        echo "🔴 test-on-change: 部署驗證有問題。.deploy-verify-required 保持。繼續修復。"
+      else
+        rm -f "$DEPLOY_VERIFY_FILE"
+        echo "✅ test-on-change: 部署驗證通過。.deploy-verify-required 已清除。"
+      fi
     fi
   fi
 
