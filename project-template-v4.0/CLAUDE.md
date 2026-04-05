@@ -365,7 +365,7 @@ Tech Spec 新增：
 | Hook | 類型 | 用途 |
 |------|------|------|
 | `plan-backup.sh` | PreToolUse | 覆寫 TASKS.md / task_plan.md / findings.md / progress.md 前自動備份到 `.plan-history/` |
-| `gate-checkpoint.sh` | PreToolUse | **硬攔截**：Gate checkpoint file 不存在時阻擋寫入 production code |
+| `gate-checkpoint.sh` | PreToolUse | **硬攔截**：Gate checkpoint 不存在時阻擋（Build Grounding / Integration / **Debug Grounding**） |
 | `test-before-continue.sh` | PreToolUse | **硬攔截**：測試未跑 → 不能繼續改 code / 標記完成 |
 | `freeze-hook.sh` | PreToolUse | Freeze Mode 目錄鎖定 |
 | `destructive-guard-hook.sh` | PreToolUse | 攔截破壞性指令（rm -rf / DROP / force push） |
@@ -401,7 +401,24 @@ Build Grounding ✅ → 想寫 code → ⛔「先查 Pattern Library」
   → contract-defined.confirmed ✅ → 可以寫 code
 ```
 
-Gate 鏈：`build-grounded → pattern-checked → contract-defined → 可以寫 code`
+Gate 鏈（新 Feature）：`build-grounded → pattern-checked → contract-defined → 可以寫 code`
+
+### Debug Grounding Gate（v4.1 硬攔截 — Hotfix / Bug Fix）
+
+Bug fix 修 code 前，必須先收集證據 + 讀 Prototype。
+
+```bash
+# 建立 debug gate
+mkdir -p .gates/HOTFIX-xxx && touch .gates/HOTFIX-xxx/.enabled .gates/HOTFIX-xxx/.debug
+# UI 問題額外加
+touch .gates/HOTFIX-xxx/.ui-bug
+```
+
+```
+想修 bug → ⛔「先 SSH 看 log + 收集證據」→ debug-evidence.confirmed
+  → UI 問題 → ⛔「先讀 Prototype 逐行比對」→ debug-prototype.confirmed
+  → 可以改 code → 改完 → 必須在 248 上 Smoke Test
+```
 
 ### Gate Checkpoint 機制（硬攔截）
 

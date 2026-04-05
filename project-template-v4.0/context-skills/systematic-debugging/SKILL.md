@@ -261,6 +261,109 @@ If this is a sign of larger issues:
 
 ---
 
+## 部署環境 Debug 模式（v4.1 — Hotfix / Bug Fix 強制）
+
+> **教訓**：AICC-III F01-F08 部署後修了 3 輪都沒修好，因為 Agent 跳過 Phase 1 直接改 code。
+> 部署環境的 bug 和本地開發 bug 不同 — **你看不到本地 console，必須 SSH 看 log**。
+
+### 觸發條件
+
+以下情境強制進入部署環境 Debug 模式：
+- Hotfix（`bash scripts/parallel-feature.sh hotfix start xxx`）
+- 從部署環境回報的 bug
+- 「248 上不能用」「部署後壞了」「線上有問題」
+
+### 啟用 Debug Grounding Gate
+
+```bash
+# 建立 debug gate（所有 bug fix 都要）
+mkdir -p .gates/HOTFIX-xxx && touch .gates/HOTFIX-xxx/.enabled .gates/HOTFIX-xxx/.debug
+
+# 如果是 UI 問題，額外加 .ui-bug 標記
+touch .gates/HOTFIX-xxx/.ui-bug
+```
+
+**效果**：gate-checkpoint.sh 會攔截 — 沒有 `debug-evidence.confirmed` 不能寫 production code。
+
+### 強制步驟（Phase 0 — 在 Phase 1 之前）
+
+**D0-1: SSH 讀真實 log（不是本地 log）**
+
+```bash
+# 必須在目標環境看 log，不是在本地跑測試
+ssh user@248 "grep -E 'ERROR|WARN|Exception' /path/to/app.log | tail -100"
+ssh user@248 "grep -E '關鍵字' /path/to/app.log | tail -50"
+```
+
+把 log 貼到 Debug Evidence Report 裡。
+
+**D0-2: 瀏覽器 Console 截取（前端問題）**
+
+打開 248 的頁面，把 Console 裡的 error **完整複製**（不是截圖看一眼）。
+
+**D0-3: 精確描述（Phase 1a 的升級版）**
+
+```
+SYMPTOM: 在 248 上，點擊外撥按鈕後 UI 無反應
+EXPECTED: 應該顯示撥號中狀態，CTI 撥出
+ACTUAL: 按鈕點了沒反應，但 log 顯示 MAKE_CALL 有送出，CTI 回 code=1402
+
+LOG 證據:
+  09:50:49 MAKE_CALL sent → called="0928273727"
+  09:50:54 NOT_READY → code=1402 "Agent on a call"
+  09:52:37 sendCommand skipped — no WS connection
+
+瀏覽器 Console:
+  [error 內容]
+```
+
+**D0-4: UI 問題 → 讀 Prototype 逐行比對**
+
+```
+1. Read 工具讀取 Prototype HTML
+2. 列出差異：
+   | UI 元素 | Prototype | 248 實際 | 差異 |
+   |---------|-----------|---------|------|
+   | 佇列卡片 | flex + gap-2 | 沒有 gap | CSS class 遺漏 |
+3. 確認後建立 checkpoint:
+   echo "confirmed ..." > .gates/HOTFIX-xxx/debug-prototype.confirmed
+```
+
+**D0-5: 產出 Debug Evidence Report → 建立 checkpoint**
+
+```markdown
+## Debug Evidence Report — HOTFIX-xxx
+
+### 環境
+- 目標: 192.168.10.248
+- Backend log: /path/to/app.log
+- 前端 URL: http://248:port/
+
+### 證據摘要
+[log 關鍵行 + console error + Prototype 比對結果]
+
+### 根因假設
+H1: [假設] — [依據哪行 log]
+H2: [假設] — [依據哪行 log]
+H3: [假設] — [依據哪行 log]
+```
+
+```bash
+echo "confirmed $(date -u +%Y-%m-%dT%H:%M:%SZ)" > .gates/HOTFIX-xxx/debug-evidence.confirmed
+```
+
+**之後才進入 Phase 1-4 的正常 systematic-debugging 流程。**
+
+### 禁止事項（Debug 模式）
+
+- ❌ **沒有 SSH 看 log 就改 code**（gate-checkpoint.sh 會攔截）
+- ❌ **靠本地測試通過就說修好了**（必須在 248 上驗證）
+- ❌ **UI 問題不讀 Prototype 就改 CSS**（gate-checkpoint.sh 會攔截 .ui-bug）
+- ❌ **不理解系統機制就改 code**（Phase 2 的假設必須基於 log 證據）
+- ❌ **修完不做 Smoke Test**（修完必須在 248 上驗證）
+
+---
+
 ## GSD Integration
 
 After confirming root cause and fix:

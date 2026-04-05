@@ -75,7 +75,7 @@ GATES_DIR=".gates"
 [ ! -d "$GATES_DIR" ] && exit 0
 
 ENABLED_FEATURES=""
-for enabled_file in "$GATES_DIR"/*/.enabled 2>/dev/null; do
+for enabled_file in "$GATES_DIR"/*/.enabled; do
   [ -f "$enabled_file" ] || continue
   FEATURE_DIR=$(dirname "$enabled_file")
   FEATURE_ID=$(basename "$FEATURE_DIR")
@@ -89,9 +89,67 @@ for FEATURE_ID in $ENABLED_FEATURES; do
   FEATURE_GATE_DIR="${GATES_DIR}/${FEATURE_ID}"
 
   # ════════════════════════════════════════
+  # 模式 C：Debug Grounding Gate（Hotfix / Bug Fix）
+  # ════════════════════════════════════════
+  if [ -f "${FEATURE_GATE_DIR}/.debug" ]; then
+
+    # Gate D1: 證據收集 — 讀了真實 log 才能改 code
+    if [ ! -f "${FEATURE_GATE_DIR}/debug-evidence.confirmed" ]; then
+      cat <<EOF
+⛔ DEBUG GROUNDING GATE — 阻擋寫入 production code
+
+Feature: ${FEATURE_ID}（Debug / Hotfix 模式）
+目標檔案: ${FILE_PATH}
+
+❌ 證據收集未完成 — 你還沒看 log 就想改 code
+
+必須先完成（systematic-debugging → 部署環境模式）：
+1. SSH 到目標環境，grep 相關 log：
+   ssh user@host "grep -E 'ERROR|WARN|異常關鍵字' /path/to/app.log | tail -50"
+2. 如果是前端問題 → 打開瀏覽器 Console，截取/複製完整 error
+3. 收集完整 error stack trace + 環境資訊
+4. 精確描述 SYMPTOM / EXPECTED / ACTUAL（不是「不能用」）
+5. 列出 ≤3 個根因假設（排序：最可能 → 最不可能）
+6. 產出 Debug Evidence Report 後建立 checkpoint：
+   echo "confirmed \$(date -u +%Y-%m-%dT%H:%M:%SZ)" > ${FEATURE_GATE_DIR}/debug-evidence.confirmed
+
+⚠️ 禁止靠猜測改 code。沒有 log 證據的修復 = 瞎猜。
+EOF
+      exit 2
+    fi
+
+    # Gate D2: UI 問題 → 必須讀 Prototype（僅 UI 相關 bug）
+    if [ -f "${FEATURE_GATE_DIR}/.ui-bug" ] && [ ! -f "${FEATURE_GATE_DIR}/debug-prototype.confirmed" ]; then
+      cat <<EOF
+⛔ DEBUG PROTOTYPE GATE — 阻擋寫入前端 code
+
+Feature: ${FEATURE_ID}（UI Bug 修復模式）
+目標檔案: ${FILE_PATH}
+
+✅ 證據收集已完成
+❌ Prototype 比對未完成 — 你還沒看 Prototype 就想改 CSS/HTML
+
+必須先完成：
+1. 讀取 Prototype HTML（用 Read 工具，不是靠記憶）
+2. 逐行比對：Prototype 的佈局 vs 目前 248 上的實際畫面
+3. 列出差異清單：
+   | UI 元素 | Prototype | 目前 248 | 差異 |
+   |---------|-----------|---------|------|
+4. 確認後建立 checkpoint：
+   echo "confirmed \$(date -u +%Y-%m-%dT%H:%M:%SZ)" > ${FEATURE_GATE_DIR}/debug-prototype.confirmed
+
+⚠️ 禁止靠記憶描述 Prototype。必須實際讀取 HTML 檔案。
+EOF
+      exit 2
+    fi
+
+    # Debug gate 通過 → 放行
+    exit 0
+
+  # ════════════════════════════════════════
   # 模式 B：External Integration Gate
   # ════════════════════════════════════════
-  if [ -f "${FEATURE_GATE_DIR}/.integration" ]; then
+  elif [ -f "${FEATURE_GATE_DIR}/.integration" ]; then
 
     # Gate 0: 讀 Spec + 介面契約摘要
     if [ ! -f "${FEATURE_GATE_DIR}/gate0-spec.confirmed" ]; then

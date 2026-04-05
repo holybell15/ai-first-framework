@@ -836,6 +836,17 @@ cmd_hotfix() {
         git push -u origin "${HOTFIX_BRANCH}" 2>/dev/null || true
       fi
 
+      # v4.1: 自動建立 Debug Grounding Gate
+      cd "$hotfix_dir"
+      local gate_id
+      gate_id=$(echo "$name" | tr '[:lower:]' '[:upper:]')
+      mkdir -p ".gates/HOTFIX-${gate_id}"
+      touch ".gates/HOTFIX-${gate_id}/.enabled"
+      touch ".gates/HOTFIX-${gate_id}/.debug"
+      echo "   🔒 Debug Grounding Gate 已啟用"
+      echo "      如果包含 UI bug → 額外執行:"
+      echo "      touch ${hotfix_dir}/.gates/HOTFIX-${gate_id}/.ui-bug"
+
       echo ""
       echo "════════════════════════════════════════════"
       echo "✅ Hotfix ${name} 就緒"
@@ -843,6 +854,12 @@ cmd_hotfix() {
       echo ""
       echo "  📂 ${hotfix_dir}"
       echo "  🌿 ${HOTFIX_BRANCH}（從 ${MAIN_BRANCH} 切出）"
+      echo "  🔒 Debug Gate: .gates/HOTFIX-${gate_id}/"
+      echo ""
+      echo "⚠️  改 code 前必須先收集證據："
+      echo "  1. SSH 到 248 看 log"
+      echo "  2. 列出根因假設"
+      echo "  3. echo \"confirmed \$(date -u +%Y-%m-%dT%H:%M:%SZ)\" > .gates/HOTFIX-${gate_id}/debug-evidence.confirmed"
       echo ""
       echo "修完後執行："
       echo "  bash scripts/parallel-feature.sh hotfix finish ${name}"
