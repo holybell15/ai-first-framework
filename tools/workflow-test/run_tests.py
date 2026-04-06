@@ -16,84 +16,80 @@ HTML_OUTPUT = SCRIPT_DIR / "index.html"
 
 # ── 期望設定 ────────────────────────────────────────────────────────
 PIPELINE_CONFIG = {
-    "P00 需求建立": {
+    "Discover 需求收集": {
         "agents": ["aicc-interviewer", "aicc-pm"],
-        "skills": ["brainstorming", "forced-thinking", "verification-before-completion"],
-        "gate_agent": None,
-        "gate_skill": None,
-        "confirms": ["C0", "C1", "C2"],
+        "skills": ["brainstorming", "planning-with-tasks", "verification-before-completion"],
+        "gate_agent": "gate-reviewer",
+        "gate_skill": "gate-check",
         "templates": ["TEMPLATE_SRS_Complete.md", "TEMPLATE_RS_Function_Spec.md"],
     },
-    "P01 精煉+Prototype": {
-        "agents": ["aicc-pm", "aicc-ux"],
-        "skills": ["frontend-design", "verification-before-completion"],
+    "Plan 技術設計": {
+        "agents": ["aicc-pm", "aicc-ux", "aicc-architect", "aicc-dba"],
+        "skills": ["deep-research", "brainstorming", "frontend-design",
+                   "planning-with-tasks", "verification-before-completion"],
         "gate_agent": "gate-reviewer",
-        "gate_skill": "quality-gates",
+        "gate_skill": "gate-check",
     },
-    "P02 技術設計": {
-        "agents": ["aicc-architect", "aicc-dba", "aicc-review"],
-        "skills": ["deep-research", "brainstorming", "forced-thinking", "verification-before-completion"],
-        "gate_agent": "gate-reviewer",
-        "gate_skill": "quality-gates",
-        "extra_outputs": ["SLICE-BACKLOG"],
-    },
-    "P03+P04 Slice Cycle": {
+    "Build 實作開發": {
         "agents": ["aicc-backend", "aicc-frontend", "aicc-qa", "aicc-review"],
-        "skills": ["slice-cycle", "test-driven-development", "using-git-worktrees",
+        "skills": ["test-driven-development", "self-healing-build", "pattern-library",
+                   "validate-contract", "using-git-worktrees",
                    "finishing-a-development-branch", "systematic-debugging",
-                   "destructive-guard", "webapp-testing", "verification-before-completion"],
+                   "webapp-testing", "verification-before-completion"],
         "gate_agent": "gate-reviewer",
-        "gate_skill": "quality-gates",
-        "gates": ["G4-ENG-D", "G4-ENG-R", "Cross-Slice-IC"],
+        "gate_skill": "gate-check",
     },
-    "P05 合規審查": {
-        "agents": ["aicc-security", "aicc-review"],
-        "skills": ["deep-research", "quality-gates"],
-        "gate_agent": None,
-        "gate_skill": None,
+    "Verify 品質驗證": {
+        "agents": ["aicc-qa", "aicc-security", "aicc-review"],
+        "skills": ["deep-research", "webapp-testing", "gate-check",
+                   "verification-before-completion"],
+        "gate_agent": "gate-reviewer",
+        "gate_skill": "gate-check",
     },
-    "P06 部署上線": {
+    "Ship 部署上線": {
         "agents": ["aicc-devops", "aicc-review"],
-        "skills": ["deep-research", "verification-before-completion",
-                   "info-canary", "info-doc-sync", "quantitative-retro"],
-        "gate_agent": "retrospective-facilitator",
-        "gate_skill": "retro",
+        "skills": ["deep-research", "systematic-debugging",
+                   "verification-before-completion"],
+        "gate_agent": "gate-reviewer",
+        "gate_skill": "gate-check",
     },
 }
 
 AGENT_SKILL_MAP = {
-    "aicc-interviewer": ["brainstorming", "forced-thinking", "verification-before-completion"],
-    "aicc-pm":          ["brainstorming", "forced-thinking", "verification-before-completion"],
-    "aicc-ux":          ["frontend-design", "brainstorming", "verification-before-completion"],
-    "aicc-architect":   ["deep-research", "brainstorming", "forced-thinking", "verification-before-completion"],
-    "aicc-dba":         ["deep-research", "verification-before-completion"],
-    "aicc-backend":     ["test-driven-development", "using-git-worktrees",
-                         "finishing-a-development-branch", "systematic-debugging",
-                         "destructive-guard", "verification-before-completion"],
-    "aicc-frontend":    ["test-driven-development", "using-git-worktrees",
-                         "finishing-a-development-branch", "frontend-design",
-                         "systematic-debugging", "destructive-guard", "verification-before-completion"],
-    "aicc-qa":          ["webapp-testing", "test-driven-development",
-                         "systematic-debugging", "verification-before-completion"],
-    "aicc-security":    ["deep-research", "verification-before-completion"],
-    "aicc-devops":      ["deep-research", "verification-before-completion",
-                         "info-canary", "info-doc-sync"],
-    "aicc-review":      ["requesting-code-review", "quality-gates", "slice-cycle",
+    "aicc-interviewer": ["brainstorming", "planning-with-tasks", "verification-before-completion"],
+    "aicc-pm":          ["planning-with-tasks", "verification-before-completion"],
+    "aicc-ux":          ["frontend-design", "brainstorming", "planning-with-tasks",
                          "verification-before-completion"],
+    "aicc-architect":   ["deep-research", "planning-with-tasks", "verification-before-completion"],
+    "aicc-dba":         ["planning-with-tasks", "verification-before-completion"],
+    "aicc-backend":     ["test-driven-development", "self-healing-build", "pattern-library",
+                         "validate-contract", "using-git-worktrees",
+                         "systematic-debugging", "verification-before-completion"],
+    "aicc-frontend":    ["test-driven-development", "self-healing-build", "pattern-library",
+                         "validate-contract", "frontend-design", "using-git-worktrees",
+                         "systematic-debugging", "verification-before-completion"],
+    "aicc-qa":          ["webapp-testing", "systematic-debugging",
+                         "planning-with-tasks", "verification-before-completion"],
+    "aicc-security":    ["deep-research", "verification-before-completion"],
+    "aicc-devops":      ["systematic-debugging", "verification-before-completion"],
+    "aicc-review":      ["gate-check", "cia", "verification-before-completion"],
 }
 
-# v2.9 新增：必須存在的 skills（框架級）
+# v4.0/v4.1：必須存在的 skills（框架級）
 FRAMEWORK_SKILLS = [
-    "slice-cycle", "info-ship", "info-canary", "info-doc-sync",
-    "quantitative-retro", "forced-thinking", "destructive-guard",
-    "planning-with-files", "pipeline-orchestrator",
+    "gate-check", "ground", "validate-contract", "cia",
+    "self-healing-build", "pattern-library", "concurrent-build",
+    "handoff-protocol", "task-master", "test-driven-development",
+    "verification-before-completion",
 ]
 
-# v2.9 新增：必須存在的模板
+# v4.0：必須存在的模板
 FRAMEWORK_TEMPLATES = [
     "02_Specifications/TEMPLATE_SRS_Complete.md",
     "02_Specifications/TEMPLATE_RS_Function_Spec.md",
     "02_Specifications/TEMPLATE_P00_Product_Vision.md",
+    "02_Specifications/TEMPLATE_RFP_Brief.md",
+    "02_Specifications/TEMPLATE_Tech_Spec.md",
 ]
 
 FRAMEWORK_DOCS = [
@@ -102,12 +98,12 @@ FRAMEWORK_DOCS = [
     ("docs/INFORMATION_ARCHITECTURE.md", "Information architecture"),
     ("docs/START_HERE.md", "Start here guide"),
     ("docs/VALIDATION_REPAIR.md", "Validation repair guide"),
-    ("project-template/START_HERE.md", "Project template start guide"),
+    ("project-template-v4.0/CLAUDE.md", "Project template CLAUDE.md"),
 ]
 
 SUPPORT_AGENTS = [
     "code-grounder", "data-contract-validator", "gate-reviewer",
-    "retrospective-facilitator", "ssot-guardian", "doc-generator",
+    "retrospective-facilitator", "ssot-guardian",
     "task-master",
 ]
 
@@ -117,27 +113,27 @@ SUPPORT_AGENT_TRIGGERS = {
     "gate-reviewer":             "gate-check",
     "retrospective-facilitator": "retro",
     "ssot-guardian":             "ssot-guardian",
-    "doc-generator":             "new-doc",
     "task-master":               None,   # 由 description 觸發，無獨立 skill
 }
 
 HOTFIX_PIPELINE_AGENTS  = ["aicc-review", "aicc-backend", "aicc-frontend", "aicc-devops"]
 BROWNFIELD_PIPELINE_AGENTS = ["aicc-architect", "aicc-dba", "aicc-pm", "aicc-review", "aicc-devops"]
 
-# Slash commands expected in project-template/.claude/commands/
+# Slash commands expected in project-template-v4.0/.claude/commands/
 EXPECTED_PROJECT_COMMANDS = [
     "info-init", "info-health", "info-setup-team", "info-pipeline", "info-gate",
-    "info-hotfix", "info-progress", "info-pause", "info-handoff", "info-complete-milestone", "info-quick",
+    "info-hotfix", "info-progress", "info-pause", "info-handoff", "info-complete-milestone",
+    "info-quick", "info-agent",
 ]
 EXPECTED_GLOBAL_COMMANDS = ["resume"]
 
 # Framework directory (two levels up from this script)
 FRAMEWORK_DIR  = Path(__file__).parent.parent.parent
-TEMPLATE_DIR   = FRAMEWORK_DIR / "project-template"
+TEMPLATE_DIR   = FRAMEWORK_DIR / "project-template-v4.0"
 COMMANDS_DIR   = TEMPLATE_DIR / ".claude" / "commands"
 GLOBAL_CMDS_DIR = Path.home() / ".claude" / "commands"
 
-PIPELINE_SKILL = "pipeline-orchestrator"
+PIPELINE_SKILL = "task-master"
 
 LOCAL_FRAMEWORK_DIR = FRAMEWORK_DIR
 
@@ -162,7 +158,9 @@ def agent_exists(name):
     return (AGENTS_DIR / f"{name}.md").exists()
 
 def skill_exists(name):
-    return (SKILLS_DIR / name / "SKILL.md").exists()
+    """Check skill in ~/.claude/skills/ OR in template context-skills/"""
+    return ((SKILLS_DIR / name / "SKILL.md").exists() or
+            (TEMPLATE_DIR / "context-skills" / name / "SKILL.md").exists())
 
 def agent_description(name):
     p = AGENTS_DIR / f"{name}.md"
@@ -205,12 +203,12 @@ cat2 = {"name": "Agent Description 品質", "icon": "📝", "tests": []}
 next_map = {
     "aicc-interviewer": "aicc-pm",
     "aicc-pm": "aicc-ux",
-    "aicc-ux": "gate-reviewer",
+    "aicc-ux": "aicc-architect",
     "aicc-architect": "aicc-dba",
     "aicc-dba": "aicc-backend",
     "aicc-backend": "aicc-frontend",
     "aicc-frontend": "aicc-qa",
-    "aicc-qa": "gate-reviewer",
+    "aicc-qa": "aicc-review",
     "aicc-security": "aicc-review",
     "aicc-devops": "aicc-review",
 }
@@ -304,27 +302,23 @@ for pipeline, cfg in PIPELINE_CONFIG.items():
 results["categories"].append(cat5)
 
 # ── 6. Pipeline Orchestrator Skill ───────────────────────────────────
-cat6 = {"name": "Pipeline Orchestrator", "icon": "🎯", "tests": []}
-if skill_exists(PIPELINE_SKILL):
-    skill_content = (SKILLS_DIR / PIPELINE_SKILL / "SKILL.md").read_text()
-    # 檢查是否有 * agent 名稱
-    missing_refs = [a for a in AGENT_SKILL_MAP if a not in skill_content]
-    if missing_refs:
-        cat6["tests"].append(make_test(
-            "agent 名稱引用", "warn",
-            f"未提及: {', '.join(missing_refs)}",
-            "更新 pipeline-orchestrator SKILL.md 加入完整 agent 名稱"))
+cat6 = {"name": "Task-Master (v4.0 Dispatcher)", "icon": "🎯", "tests": []}
+task_master_path = TEMPLATE_DIR / "context-skills" / PIPELINE_SKILL / "SKILL.md"
+if task_master_path.exists():
+    skill_content = task_master_path.read_text()
+    cat6["tests"].append(make_test("task-master SKILL.md 存在", "pass",
+        f"在 project-template-v4.0/context-skills/{PIPELINE_SKILL}/"))
+    # 檢查是否有 dispatch 邏輯
+    if "dispatch" in skill_content.lower() or "STATE" in skill_content:
+        cat6["tests"].append(make_test("dispatch 邏輯", "pass", "含 dispatch/STATE 路由"))
     else:
-        cat6["tests"].append(make_test("agent 名稱引用", "pass", "所有 * agents 均有引用"))
-    # 檢查是否有自動觸發規則
-    if "自動觸發" in skill_content or "code-grounder" in skill_content:
-        cat6["tests"].append(make_test("自動觸發規則", "pass", "含 code-grounder 等自動觸發設定"))
-    else:
-        cat6["tests"].append(make_test("自動觸發規則", "warn",
-            "未找到自動觸發規則",
-            "補充 code-grounder, data-contract-validator 的觸發時機"))
+        cat6["tests"].append(make_test("dispatch 邏輯", "warn",
+            "未找到 dispatch/STATE 路由邏輯",
+            "task-master SKILL.md 需包含 dispatch 和 STATE.md 讀取邏輯"))
 else:
-    cat6["tests"].append(make_test(PIPELINE_SKILL, "fail", "skill 不存在"))
+    cat6["tests"].append(make_test(PIPELINE_SKILL, "fail",
+        f"skill 不存在: {task_master_path}",
+        f"建立 context-skills/{PIPELINE_SKILL}/SKILL.md"))
 results["categories"].append(cat6)
 
 # ── 7. 缺失 Skills ────────────────────────────────────────────────────
@@ -358,15 +352,19 @@ def check_content(rel_path, keyword, test_name, hint=""):
     else:
         cat8["tests"].append(make_test(test_name, "fail", f"檔案不存在: {rel_path}", hint))
 
-# FIX-1: Pipeline Wave 並行
-check_content("../skills/pipeline-orchestrator/SKILL.md",
-    "aicc-architect ∥ aicc-dba",
-    "FIX-1: P02 Wave 並行格式",
-    "pipeline-orchestrator/SKILL.md 需更新 P02 為 Wave 格式（Wave 1: aicc-architect ∥ aicc-dba）")
-check_content("../skills/pipeline-orchestrator/SKILL.md",
-    "aicc-backend ∥ aicc-frontend",
-    "FIX-1: P03/P04 Wave 並行格式",
-    "pipeline-orchestrator/SKILL.md 需更新 P03/P04 為 Wave 格式（Wave 1: aicc-backend ∥ aicc-frontend）")
+# FIX-1: v4.1 並行機制
+concurrent_skill = TEMPLATE_DIR / "context-skills" / "concurrent-build" / "SKILL.md"
+if concurrent_skill.exists():
+    cat8["tests"].append(make_test("FIX-1: concurrent-build skill 存在", "pass", "v4.1 並行 skill 已建立"))
+else:
+    cat8["tests"].append(make_test("FIX-1: concurrent-build skill 存在", "fail",
+        "缺少 concurrent-build/SKILL.md", "建立 v4.1 並行 skill"))
+parallel_script = TEMPLATE_DIR / "scripts" / "parallel-feature.sh"
+if parallel_script.exists():
+    cat8["tests"].append(make_test("FIX-1: parallel-feature.sh 存在", "pass", "v4.1 並行腳本已建立"))
+else:
+    cat8["tests"].append(make_test("FIX-1: parallel-feature.sh 存在", "fail",
+        "缺少 scripts/parallel-feature.sh", "建立 v4.1 並行腳本"))
 
 # FIX-2: Performance Testing
 check_content("../skills/quality-gates/SKILL.md",
@@ -446,16 +444,23 @@ for agent_file, label in [
         f"planning-with-files 整合: {label}",
         f"{agent_file} 需在 description 和 Skill 套件中引用 planning-with-files")
 
-check_content("../skills/pipeline-orchestrator/SKILL.md",
-    "planning-with-files",
-    "planning-with-files 整合: pipeline-orchestrator 自動觸發",
-    "pipeline-orchestrator/SKILL.md 需在自動觸發規則中加入 planning-with-files")
+task_master_skill = TEMPLATE_DIR / "context-skills" / "task-master" / "SKILL.md"
+if task_master_skill.exists():
+    content = task_master_skill.read_text(encoding="utf-8")
+    if "planning" in content.lower():
+        cat8["tests"].append(make_test("planning 整合: task-master 自動觸發", "pass", "已整合"))
+    else:
+        cat8["tests"].append(make_test("planning 整合: task-master 自動觸發", "warn",
+            "task-master SKILL.md 未提及 planning", "建議加入 planning 相關觸發"))
+else:
+    cat8["tests"].append(make_test("planning 整合: task-master skill 存在", "fail",
+        "task-master/SKILL.md 不存在", "建立 task-master skill"))
 
 results["categories"].append(cat8)
 
 # ── 9. 10_Standards 結構驗證 ──────────────────────────────────────────
 cat9 = {"name": "10_Standards 規範結構", "icon": "📐", "tests": []}
-AICC_DIR = Path(os.environ.get("PROJECT_DIR", str(Path.home() / "Projects" / "AICC-X")))
+AICC_DIR = TEMPLATE_DIR  # v4.0: Standards live inside the project template
 STANDARDS_DIR = AICC_DIR / "10_Standards"
 
 REQUIRED_STANDARDS = [
@@ -529,7 +534,7 @@ results["categories"].append(cat10)
 # ── 11. Pipeline 觸發詞一致性 ─────────────────────────────────────────
 cat11 = {"name": "Pipeline 觸發詞一致性", "icon": "🎯", "tests": []}
 
-orchestrator_path = SKILLS_DIR / PIPELINE_SKILL / "SKILL.md"
+orchestrator_path = TEMPLATE_DIR / "context-skills" / PIPELINE_SKILL / "SKILL.md"
 if orchestrator_path.exists():
     orch_content = orchestrator_path.read_text(encoding="utf-8")
     for pipeline_name in PIPELINE_CONFIG:
@@ -541,7 +546,7 @@ if orchestrator_path.exists():
         else:
             cat11["tests"].append(make_test(
                 f"{pipeline_name} 觸發詞", "warn",
-                f"pipeline-orchestrator/SKILL.md 未提及 '{short_name}'",
+                f"task-master/SKILL.md 未提及 '{short_name}'",
                 "更新 SKILL.md 加入此 Pipeline 觸發詞"))
 
     # 檢查 Hotfix 觸發詞
@@ -549,7 +554,7 @@ if orchestrator_path.exists():
         cat11["tests"].append(make_test("Hotfix Pipeline 觸發詞", "pass", "orchestrator 有引用"))
     else:
         cat11["tests"].append(make_test("Hotfix Pipeline 觸發詞", "warn",
-            "pipeline-orchestrator/SKILL.md 未提及 Hotfix",
+            "task-master/SKILL.md 未提及 Hotfix",
             "加入 Hotfix Pipeline 段落"))
 
     # 檢查 Brownfield 觸發詞
@@ -557,7 +562,7 @@ if orchestrator_path.exists():
         cat11["tests"].append(make_test("Brownfield 觸發詞", "pass", "orchestrator 有引用"))
     else:
         cat11["tests"].append(make_test("Brownfield 觸發詞", "warn",
-            "pipeline-orchestrator/SKILL.md 未提及 Brownfield / 舊專案",
+            "task-master/SKILL.md 未提及 Brownfield / 舊專案",
             "加入 Brownfield 引入段落"))
 else:
     cat11["tests"].append(make_test(
@@ -631,10 +636,10 @@ results["categories"].append(cat13)
 # ── 14. Information Architecture Boundaries ───────────────────────────
 cat14 = {"name": "Information Architecture Boundaries", "icon": "🗂️", "tests": []}
 boundary_checks = [
-    ("project-template/memory/STATE.md", "resume_command", "STATE resume"),
-    ("project-template/TASKS.md", "交接摘要", "TASKS handoff"),
-    ("project-template/MASTER_INDEX.md", "F-code 分配登記", "MASTER_INDEX f-code"),
-    ("project-template/memory/decisions.md", "ADR", "decisions ADR"),
+    ("project-template-v4.0/memory/STATE.md", "stage", "STATE stage"),
+    ("project-template-v4.0/TASKS.md", "Handoff Log", "TASKS handoff"),
+    ("project-template-v4.0/memory/DECISIONS.md", "ADR", "decisions ADR"),
+    ("project-template-v4.0/memory/ARTIFACTS.md", "產出", "ARTIFACTS registry"),
 ]
 for rel, keyword, label in boundary_checks:
     path = LOCAL_FRAMEWORK_DIR / rel
@@ -651,10 +656,9 @@ results["categories"].append(cat14)
 # ── 15. Lite Mode Command Routing ────────────────────────────────────
 cat15 = {"name": "Lite Mode Command Routing", "icon": "⚡", "tests": []}
 lite_command_checks = [
-    ("project-template/.claude/commands/info-init.md", "Lite Mode", "info-init Lite"),
-    ("project-template/.claude/commands/info-pipeline.md", "Lite Mode", "info-pipeline Lite"),
-    ("project-template/.claude/commands/info-task-master.md", "Lite Mode", "info-task-master Lite"),
-    ("project-template/context-skills/pipeline-orchestrator/SKILL.md", "使用 Lite Mode 啟動 F01", "orchestrator Lite trigger"),
+    ("project-template-v4.0/.claude/commands/info-init.md", "Lite", "info-init Lite"),
+    ("project-template-v4.0/.claude/commands/info-pipeline.md", "Lite", "info-pipeline Lite"),
+    ("project-template-v4.0/.claude/commands/info-task-master.md", "Lite", "info-task-master Lite"),
 ]
 for rel, keyword, label in lite_command_checks:
     path = LOCAL_FRAMEWORK_DIR / rel

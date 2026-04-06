@@ -13,10 +13,10 @@ import os, re, json, sys, argparse
 from datetime import datetime
 from pathlib import Path
 
-TEMPLATE_DIR = Path(__file__).parent.parent.parent / "project-template"
+TEMPLATE_DIR = Path(__file__).parent.parent.parent / "project-template-v4.0"
 SPECS_DIR = TEMPLATE_DIR / "02_Specifications"
 SKILLS_DIR = TEMPLATE_DIR / "context-skills"
-SEEDS_DIR = TEMPLATE_DIR / "context-seeds"
+ROLES_DIR = TEMPLATE_DIR / "context-roles"
 
 BRIEF = False
 results = {
@@ -200,30 +200,27 @@ def test_p00():
 # Stage 2: P01 精煉
 # ═══════════════════════════════════════
 def test_p01():
-    stage = {"name": "P01 精煉+Prototype", "icon": "✨", "tests": []}
+    stage = {"name": "Plan 設計+Prototype", "icon": "✨", "tests": []}
     print(f"\n {'='*55}")
-    print(f" ✨ Stage 2: P01 精煉+Prototype")
+    print(f" ✨ Stage 2: Plan 設計+Prototype")
     print(f" {'='*55}\n")
 
-    pm = SEEDS_DIR / "SEED_PM.md"
-    check(stage, "PM 含 7 區塊格式", pm, "7 區塊|TEMPLATE_RS_Function_Spec",
-          "PM 撰寫 RS 時必須遵循 7 區塊模板")
-    check(stage, "PM 含 4 Scope Modes", pm, "Scope Mode|4 Scope|Expansion",
-          "收到需求後先選 Scope Mode（Expansion/Selective/Hold/Reduction）")
-    check(stage, "PM 含 Kill Criteria", pm, "Kill Criteria",
-          "每功能定義「什麼情況下放棄」— Review Agent 檢查是否觸發")
-    check(stage, "PM 含 Type 1/2 Door", pm, "Type 1|Type 2|Bezos",
-          "可逆決策快速做、不可逆決策慎重做（Bezos 模型）")
+    discovery = ROLES_DIR / "GROUP_Discovery.md"
+    check(stage, "Discovery Group 含 PM 職責", discovery, "SRS|需求說明書",
+          "PM 負責 SRS 撰寫")
+    check(stage, "Discovery Group 含 AC 定義", discovery, "AC|驗收條件",
+          "PM 負責 AC 精確定義")
+    check(stage, "Discovery Group 含 WBS", discovery, "WBS|工作分解",
+          "PM 負責 WBS 拆至 Task 級別")
 
-    ux = SEEDS_DIR / "SEED_UX.md"
-    check(stage, "UX 含 6 Interaction States", ux, "Interaction State|Empty.*Loading.*Error",
-          "每畫面必須定義 6 態（Empty/Loading/Error/Overflow/First-time/Permission）")
+    check(stage, "UX 含 Design Token", discovery, "Design Token|token",
+          "UX 負責 Design Token 定義")
+    check(stage, "UX 含 Prototype", discovery, "Prototype",
+          "UX 負責 Prototype 產出")
 
-    gates = SKILLS_DIR / "quality-gates" / "SKILL.md"
-    check(stage, "Gate 1 含 RS 品質檢查", gates, "RS 功能規格品質",
-          "Gate 1 審查 PM 產出的 RS 是否符合 7 區塊標準")
-    check(stage, "Gate 1 含模糊用語偵測", gates, "模糊用語|適當.*合理",
-          "搜尋「適當」「合理」「良好」— 全部退回改為具體描述")
+    gates = SKILLS_DIR / "gate-check" / "SKILL.md"
+    check(stage, "Gate 1 (Discover) 存在", gates, "Gate 1|Gate.*需求",
+          "Gate 驗證需求完整性")
 
     return stage
 
@@ -231,88 +228,69 @@ def test_p01():
 # Stage 3: P02 Slice Backlog
 # ═══════════════════════════════════════
 def test_p02():
-    stage = {"name": "P02 技術設計 + Slice", "icon": "🏛️", "tests": []}
+    stage = {"name": "Plan 技術設計", "icon": "🏛️", "tests": []}
     print(f"\n {'='*55}")
-    print(f" 🏛️ Stage 3: P02 技術設計 + Slice Backlog")
+    print(f" 🏛️ Stage 3: Plan 技術設計")
     print(f" {'='*55}\n")
 
-    arch = SEEDS_DIR / "SEED_Architect.md"
-    check(stage, "Architect 含 Complexity Smell", arch, "Complexity Smell",
-          "修改 >8 檔案 = 🔴 必須拆分（防過度設計）")
-    check(stage, "Architect 含 Existing Code Leverage", arch, "Existing Code",
-          "設計前搜尋 context-skills/10_Standards/npm 有無可重用方案")
-    check(stage, "Architect 含 Failure Scenario", arch, "Failure Scenario|失敗場景|生產環境失敗",
-          "每個新 API/模組附一個生產環境失敗場景")
+    discovery = ROLES_DIR / "GROUP_Discovery.md"
+    check(stage, "Architect 含 ADR", discovery, "ADR|架構決策",
+          "Architect 負責 ADR 撰寫")
+    check(stage, "Architect 含 SD Checklist", discovery, "SD.*Checklist|Checklist.*7",
+          "Architect 完成 SD Checklist 7 項")
+    check(stage, "Architect 含 Slice Backlog", discovery, "Slice Backlog|Slice",
+          "Architect 建立 Slice Backlog")
 
-    gates = SKILLS_DIR / "quality-gates" / "SKILL.md"
-    check(stage, "Gate 2 含 Slice Backlog 審查", gates, "Slice Backlog",
-          "Gate 2 驗證 Slice Backlog 存在 + Entry/Exit Criteria + 依賴無循環")
+    gates = SKILLS_DIR / "gate-check" / "SKILL.md"
+    check(stage, "Gate 2 (Plan) 存在", gates, "Gate 2|Gate.*架構",
+          "Gate 驗證架構設計完整性")
 
-    orch = SKILLS_DIR / "pipeline-orchestrator" / "SKILL.md"
-    check(stage, "Orchestrator 含 Slice Cycle", orch, "Slice Cycle",
-          "Gate 2 通過後自動進入 Slice Cycle 模式")
-    check(stage, "Orchestrator 含 Entry/Exit", orch, "Entry.*Criteria|Entry",
-          "每個 slice 有進入和退出條件")
+    config = TEMPLATE_DIR / "project-config.yaml"
+    check(stage, "Config 含 Architect skills", config, "Architect",
+          "project-config.yaml 定義 Architect 的 skill 配置")
 
     return stage
 
 # ═══════════════════════════════════════
 # Stage 4: Slice Cycle
 # ═══════════════════════════════════════
-def test_slice_cycle():
-    stage = {"name": "P03+P04 Slice Cycle", "icon": "🔄", "tests": []}
+def test_build():
+    stage = {"name": "Build 實作開發", "icon": "🔄", "tests": []}
     print(f"\n {'='*55}")
-    print(f" 🔄 Stage 4: P03+P04 Slice Cycle")
+    print(f" 🔄 Stage 4: Build 實作開發")
     print(f" {'='*55}\n")
 
-    sc = SKILLS_DIR / "slice-cycle" / "SKILL.md"
-    check_file_exists(stage, "slice-cycle SKILL.md", sc, "垂直切片循環的完整定義")
+    build = ROLES_DIR / "GROUP_Build.md"
+    check_file_exists(stage, "GROUP_Build.md", build, "Build 群組角色定義")
 
-    if sc.exists():
-        steps = [
-            ("Feature Pack", "Feature Pack", "Step 1：確認本 slice 範圍（做什麼/不做什麼）"),
-            ("Design", "Step 2.*Design|Design.*不寫 code", "Step 2：設計 API+DB+Sequence，⛔不寫 code"),
-            ("G4-ENG-D", "G4-ENG-D", "Step 3：設計審查 Gate，未通過不得寫 code"),
-            ("Code", "Step 4.*Code|Code.*只做本", "Step 4：只實作本 slice，⛔不碰其他 slice"),
-            ("G4-ENG-R", "G4-ENG-R", "Step 5：實作後審查 Gate，範圍比對+假設清單"),
-            ("Stabilization", "Stabilization|P0 穩定", "Step 6：確保能跑（編譯通過+主流程可驗證）"),
-            ("Hardening", "Hardening|基線判定", "Step 7：確保可靠+可作為下一個 slice 的依賴"),
+    if build.exists():
+        checks = [
+            ("Backend 職責", "Backend|API 端點", "Backend specialist 職責定義"),
+            ("Frontend 職責", "Frontend|UI 元件", "Frontend specialist 職責定義"),
+            ("DBA 職責", "DBA|schema", "DBA specialist 職責定義"),
+            ("TDD 強制", "TDD|RED.*GREEN", "Build group 強制 TDD"),
+            ("Worktree 隔離", "worktree|Worktree", "Feature 用 git worktree 隔離"),
+            ("Code Review", "Code Review|review", "production code 需 Review"),
         ]
-        for step_name, pattern, logic in steps:
-            check(stage, f"Slice 7 步：{step_name}", sc, pattern, logic)
+        for name, pattern, logic in checks:
+            check(stage, name, build, pattern, logic)
 
-        print(f"    {'─'*50}")
-        print(f"    回退規則驗證：")
-        print()
-        rollbacks = [
-            ("範圍漂移", "範圍漂移", "偷補需求 → 回 G4-ENG-R 刪除超出範圍實作"),
-            ("設計不一致", "設計與實作不一致", "code 和 design 對不上 → 回 Design 修正"),
-            ("啟動/安全", "啟動.*安全|安全.*主流程", "P0 問題 → 回 Stabilization 先修到能跑"),
-            ("邏輯/測試", "邏輯語意|邊界測試", "邊界沒覆蓋 → 回 Hardening 補測試"),
-            ("架構錯誤", "架構邊界", "slice 切法有誤 → 升級回 P02 重新設計"),
-        ]
-        for rb_name, pattern, logic in rollbacks:
-            check(stage, f"回退：{rb_name}", sc, pattern, logic)
+    # v4.1 Build skills
+    tdd = SKILLS_DIR / "test-driven-development" / "SKILL.md"
+    check_file_exists(stage, "test-driven-development SKILL.md", tdd, "TDD skill 定義")
 
-        print(f"    {'─'*50}")
-        print(f"    跨切片+協議驗證：")
-        print()
-        check(stage, "Cross-Slice Integration Check", sc, "Cross-Slice",
-              "第 3 骨幹 slice 後+每 2 slice+修改共用模組 → 強制整合檢查")
-        check(stage, "Open Issue Protocol", sc, "Open Issue|OI-",
-              "未定義事項不假設，結構化記錄 OI-NNN")
-        check(stage, "Entry Criteria 範本", sc, "Entry Criteria",
-              "每 slice 進入前必須滿足的條件（前序基線、API 穩定、Schema 可用）")
-        check(stage, "Exit Criteria 範本", sc, "Exit Criteria",
-              "每 slice 退出=基線判定（AC 完成、測試全過、API 穩定、無 P0）")
+    sh = SKILLS_DIR / "self-healing-build" / "SKILL.md"
+    check_file_exists(stage, "self-healing-build SKILL.md", sh, "v4.1 自動修復 skill")
 
-    gates = SKILLS_DIR / "quality-gates" / "SKILL.md"
-    check(stage, "G4-ENG-D checklist", gates, "G4-ENG-D",
-          "設計審查 8 項 checklist（D-01~D-08）")
-    check(stage, "G4-ENG-R checklist", gates, "G4-ENG-R",
-          "實作後審查 10 項 checklist（R-01~R-10）")
-    check(stage, "Cross-Slice IC checklist", gates, "IC-01|Cross-Slice Integration",
-          "整合檢查 8 項 checklist（IC-01~IC-08）")
+    pl = SKILLS_DIR / "pattern-library" / "SKILL.md"
+    check_file_exists(stage, "pattern-library SKILL.md", pl, "v4.1 模式庫 skill")
+
+    vc = SKILLS_DIR / "validate-contract" / "SKILL.md"
+    check_file_exists(stage, "validate-contract SKILL.md", vc, "v4.1 Contract 雙向驗證 skill")
+
+    gates = SKILLS_DIR / "gate-check" / "SKILL.md"
+    check(stage, "Gate 3 (Build/Ship) 存在", gates, "Gate 3|G4-ENG",
+          "Gate 驗證實作完成度")
 
     return stage
 
@@ -326,118 +304,93 @@ def test_automation():
     print(f" {'='*55}\n")
 
     scripts = [
-        ("destructive-guard-hook.sh", "PreToolUse Hook：攔截 rm -rf/DROP/force-push 等危險指令"),
-        ("freeze-hook.sh", "PreToolUse Hook：P04 時鎖定只能改 Feature 對應目錄"),
-        ("auto-state-update.sh", "PostToolUse Hook：偵測 Pipeline 產出物自動更新 STATE.md"),
-        ("validate-skills.sh", "CI 腳本：驗證 SKILL.md 格式+SEED 完整+交叉引用"),
+        ("destructive-guard-hook.sh", "PreToolUse Hook：攔截危險指令"),
+        ("freeze-hook.sh", "PreToolUse Hook：Build 時鎖定 Feature 目錄"),
+        ("auto-state-update.sh", "PostToolUse Hook：自動更新 STATE.md"),
+        ("validate-skills.sh", "CI 腳本：驗證 SKILL.md 格式+交叉引用"),
         ("skill-eval.sh", "評估腳本：Tier 2 結構+Tier 3 LLM-as-Judge"),
-        ("worktree-setup.sh", "Worktree 建立後自動安裝依賴+複製 .env+基準測試"),
-        ("worktree-archive.sh", "Worktree 完成後自動歸檔+清理+記錄日誌"),
+        ("gate-checkpoint.sh", "Gate 驗證 checkpoint 腳本"),
+        ("parallel-feature.sh", "v4.1 BE∥FE 並行執行腳本"),
+        ("test-on-change.sh", "v4.1 程式碼變更自動測試"),
+        ("test-before-continue.sh", "v4.1 繼續前強制測試"),
     ]
     for script, desc in scripts:
         check_executable(stage, script, TEMPLATE_DIR / "scripts" / script, desc)
 
     claude_md = TEMPLATE_DIR / "CLAUDE.md"
-    check(stage, "Hook 配置：UserPromptSubmit", claude_md, "UserPromptSubmit",
-          "/clear 後每次送訊息自動提醒讀取 planning files")
-    check(stage, "Hook 配置：PreToolUse", claude_md, "PreToolUse",
-          "Bash 指令前自動攔截危險操作 + Edit/Write 前檢查 scope")
-    check(stage, "Autopilot 模式定義", claude_md, "Autopilot.*Copilot.*Manual|三種執行模式",
-          "三模式切換：Autopilot（自動）/Copilot（確認）/Manual（手動）")
+    config = TEMPLATE_DIR / "project-config.yaml"
 
-    check_file_exists(stage, "ETHOS.md", TEMPLATE_DIR / "ETHOS.md",
-          "4 原則：Boil the Lake/Search Before Building/Fix-First/Evidence")
-    check_file_exists(stage, "conductor.json", TEMPLATE_DIR / "conductor.json",
-          "並行工作區配置（Worktree lifecycle hooks）")
+    check(stage, "CLAUDE.md 含 Pipeline 定義", claude_md, "Discover.*Plan.*Build.*Verify.*Ship",
+          "v4.0 五階段 Pipeline 定義")
+    check(stage, "CLAUDE.md 含 Skill 觸發索引", claude_md, "Tier 1.*強制",
+          "Tier 1 強制載入 Skill 索引")
+    check(stage, "CLAUDE.md 含 Quality Gates", claude_md, "Quality Gates|Discover Gate|Plan Gate",
+          "Gate 定義完整")
+    check(stage, "執行模式定義", config, "autopilot|copilot|manual",
+          "三模式切換定義（在 project-config.yaml）")
+    check_file_exists(stage, "project-config.yaml", config, "專案級設定 SSOT")
+    if config.exists():
+        check(stage, "Config 含 self_healing", config, "self_healing",
+              "v4.1 Self-Healing Build 設定")
+        check(stage, "Config 含 gate_policy", config, "gate_policy",
+              "v4.1 Gate 三級分類設定")
+        check(stage, "Config 含 concurrency", config, "concurrency",
+              "v4.1 並行設定")
 
     return stage
 
 # ═══════════════════════════════════════
-# Stage 6: Agent 思維模式
+# Stage 6: Group Role 覆蓋
 # ═══════════════════════════════════════
 def test_cognitive():
-    stage = {"name": "Agent 思維模式覆蓋", "icon": "🧠", "tests": []}
+    stage = {"name": "Group Role 覆蓋", "icon": "🧠", "tests": []}
     print(f"\n {'='*55}")
-    print(f" 🧠 Stage 6: Agent 思維模式覆蓋")
+    print(f" 🧠 Stage 6: Group Role 覆蓋")
     print(f" {'='*55}\n")
 
-    agents = {
-        "SEED_Interviewer": [
-            ("ETHOS 引用", "ETHOS.md", "Agent 知道框架的 4 原則"),
-            ("Push-Until-Specific", "Push-Until-Specific", "每個問題有「推到什麼程度才算回答」的標準"),
-            ("Escape Hatch", "Escape Hatch", "用戶不耐煩時自動減少問題，不問第三次"),
-            ("Anti-Sycophancy", "Anti-Sycophancy", "禁止說「很有趣」— 訪談師不評價只追問"),
-            ("Struggle Moments", "Struggle Moments", "從「掙扎時刻」定義需求而非功能列表"),
+    roles = {
+        "GROUP_Discovery.md": [
+            ("Interviewer/PM 區段", "Interviewer|PM", "Discovery 含 Interviewer/PM 職責"),
+            ("UX 區段", "UX", "Discovery 含 UX 職責"),
+            ("Architect 區段", "Architect", "Discovery 含 Architect 職責"),
+            ("交接格式", "Handoff|handoff", "Discovery 定義交接格式"),
+            ("Scope drift", "drift|DRIFT", "Discovery 定義 scope drift 處理"),
+            ("必載 Skill", "brainstorming|planning-with-tasks", "Discovery specialists 有必載 skill"),
+            ("禁止事項", "禁止|不做|不寫", "Discovery specialists 有禁止事項"),
+            ("完成標準", "完成標準", "Discovery specialists 有完成標準"),
         ],
-        "SEED_PM": [
-            ("ETHOS 引用", "ETHOS.md", "Agent 知道框架的 4 原則"),
-            ("4 Scope Modes", "Scope Mode|Expansion", "需求建立前先選模式"),
-            ("Implementation Alternatives", "Implementation Alternatives", "每功能至少 2 條路徑比較"),
-            ("Type 1/2 Door", "Type 1|Type 2", "可逆決策快速做、不可逆慎重做"),
-            ("Kill Criteria", "Kill Criteria", "開始前定義放棄條件"),
-            ("Appetite", "Appetite", "「願意花多少時間」取代「估計多少時間」"),
+        "GROUP_Build.md": [
+            ("Backend 區段", "Backend", "Build 含 Backend 職責"),
+            ("Frontend 區段", "Frontend", "Build 含 Frontend 職責"),
+            ("DBA 區段", "DBA", "Build 含 DBA 職責"),
+            ("TDD 強制", "TDD|RED.*GREEN", "Build group 強制 TDD"),
+            ("Worktree 隔離", "worktree|Worktree", "Build group 用 worktree 隔離"),
+            ("Code Review 要求", "Code Review|review", "Build group 要求 Code Review"),
+            ("禁止事項", "禁止|不碰|不改", "Build specialists 有禁止事項"),
+            ("完成標準", "完成標準|覆蓋率", "Build specialists 有完成標準"),
         ],
-        "SEED_UX": [
-            ("ETHOS 引用", "ETHOS.md", "Agent 知道框架的 4 原則"),
-            ("12 Cognitive Patterns", "Cognitive Pattern|看系統不看畫面", "12 個設計師內化直覺"),
-            ("6 Interaction States", "Interaction State|Empty", "每畫面 6 態強制覆蓋"),
+        "GROUP_Verify.md": [
+            ("QA 區段", "QA", "Verify 含 QA 職責"),
+            ("Security 區段", "Security", "Verify 含 Security 職責"),
+            ("DevOps 區段", "DevOps", "Verify 含 DevOps 職責"),
+            ("Evidence-first", "Evidence|evidence|T1", "Verify group 要求 Evidence"),
+            ("唯讀模式", "唯讀|不修改.*source", "Verify group 唯讀不修改 code"),
+            ("Rollback", "Rollback|rollback", "DevOps 含 Rollback 驗證"),
+            ("Smoke test", "Smoke|smoke", "DevOps 含 Smoke test"),
         ],
-        "SEED_Architect": [
-            ("ETHOS 引用", "ETHOS.md", "Agent 知道框架的 4 原則"),
-            ("15 Engineering Patterns", "Engineering.*Pattern|Boring by Default", "15 個工程師思維直覺"),
-            ("Complexity Smell", "Complexity Smell", ">8 檔案 = 🔴 必須拆分"),
-            ("Context Engineering", "Context Engineering", "AI 功能品質=context 設計品質"),
-        ],
-        "SEED_DBA": [
-            ("ETHOS 引用", "ETHOS.md", "Agent 知道框架的 4 原則"),
-            ("Shadow Path Tracing", "Shadow Path", "每資料流追蹤 4 路徑（happy/null/empty/error）"),
-            ("Temporal Depth", "Temporal Depth", "Schema 能承受 5x 資料量？"),
-        ],
-        "SEED_Backend": [
-            ("ETHOS 引用", "ETHOS.md", "Agent 知道框架的 4 原則"),
-            ("三層 Never Rules", "Never Rules|三層", "Controller/Service/Repository 各層禁止行為"),
-            ("18 Anti-Patterns", "Anti-Pattern", "Don't/Do 對照表"),
-            ("Test Coverage Diagram", "Test Coverage Diagram", "每 API 附 ASCII 覆蓋圖"),
-        ],
-        "SEED_Frontend": [
-            ("ETHOS 引用", "ETHOS.md", "Agent 知道框架的 4 原則"),
-            ("Per-Page QA", "Per-Page QA", "前端自己先跑 7 步 QA"),
-            ("Design Review Lite", "Design Review Lite", "改 UI 就自動對照 checklist"),
-        ],
-        "SEED_QA": [
-            ("ETHOS 引用", "ETHOS.md", "Agent 知道框架的 4 原則"),
-            ("Diff-Aware Testing", "Diff-Aware", "只測改動的（不是全跑）"),
-            ("Regression Mode", "Regression Mode", "和上次比較，追蹤品質趨勢"),
-            ("Evals as PRD", "Evals as PRD", "AI 功能用 binary eval+統計 pass rate"),
-        ],
-        "SEED_Security": [
-            ("ETHOS 引用", "ETHOS.md", "Agent 知道框架的 4 原則"),
-            ("Attack Surface Census", "Attack Surface", "量化攻擊面：N 個公開 endpoint/認證/上傳/整合"),
-            ("False Positive Rules", "False Positive", "每個檢查類別有誤報排除規則"),
-            ("14 Phase Audit", "14.*階段|Phase.*0", "14 階段安全審計架構"),
-        ],
-        "SEED_DevOps": [
-            ("ETHOS 引用", "ETHOS.md", "Agent 知道框架的 4 原則"),
-            ("Land-and-Deploy", "Land-and-Deploy", "verify→merge→deploy→canary→confirm 一條龍"),
-            ("Rollback-First", "Rollback-First|Rollback.*原則", "部署前必須確認 rollback 方案"),
-        ],
-        "SEED_Review": [
-            ("ETHOS 引用", "ETHOS.md", "Agent 知道框架的 4 原則"),
-            ("Scope Drift Detection", "Scope Drift", "比對 plan vs diff：做的是不是當初說的"),
-            ("Two-Pass Review", "Two-Pass", "Pass 1 Critical（阻塞）→ Pass 2 Informational（不阻塞）"),
-            ("Fix-First", "Fix-First", "格式/lint/console.log 自動修，業務邏輯才問人"),
-            ("Kill Criteria Check", "Kill Criteria", "檢查 RS 的放棄條件是否已觸發"),
+        "ROLE_Review.md": [
+            ("Review 角色存在", "Review|Gate", "Review 角色文件存在"),
         ],
     }
 
-    for seed_name, patterns in agents.items():
-        seed_file = SEEDS_DIR / f"{seed_name}.md"
-        if not seed_file.exists():
-            check_file_exists(stage, f"{seed_name}", seed_file, f"{seed_name} 必須存在")
+    for role_file, patterns in roles.items():
+        filepath = ROLES_DIR / role_file
+        if not filepath.exists():
+            check_file_exists(stage, role_file, filepath, f"{role_file} 必須存在")
             continue
-        print(f"    ── {seed_name} ──")
+        print(f"    ── {role_file} ──")
         for check_name, pattern, logic in patterns:
-            check(stage, f"{seed_name}: {check_name}", seed_file, pattern, logic)
+            check(stage, f"{role_file}: {check_name}", filepath, pattern, logic)
 
     return stage
 
@@ -453,11 +406,11 @@ def main():
     BRIEF = args.brief
 
     print("╔" + "═"*58 + "╗")
-    print("║  AI-First Framework v2.9 — Tier 2 工作流模擬測試        ║")
+    print("║  AI-First Framework v4.1 — Tier 2 工作流模擬測試        ║")
     print("║  透明模式：每項測試顯示驗證邏輯+實際內容+位置           ║")
     print("╚" + "═"*58 + "╝")
 
-    stages = [test_p00(), test_p01(), test_p02(), test_slice_cycle(), test_automation(), test_cognitive()]
+    stages = [test_p00(), test_p01(), test_p02(), test_build(), test_automation(), test_cognitive()]
     results["stages"] = stages
 
     total = results["summary"]["pass"] + results["summary"]["fail"]

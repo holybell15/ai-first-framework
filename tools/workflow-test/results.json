@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-03-30T14:34:29.246025",
+  "timestamp": "2026-04-06T14:09:47.413639",
   "summary": {
-    "pass": 166,
+    "pass": 143,
     "fail": 0,
-    "warn": 0,
-    "total": 166,
-    "score": 100.0
+    "warn": 18,
+    "total": 161,
+    "score": 88.8
   },
   "categories": [
     {
@@ -86,51 +86,51 @@
       "tests": [
         {
           "name": "aicc-interviewer description",
-          "status": "pass",
-          "detail": "skill 和 next-agent 均有提及",
-          "hint": ""
+          "status": "warn",
+          "detail": "description 未提及 skills: planning-with-tasks",
+          "hint": "更新 description 加入 skill 和 next-agent 資訊"
         },
         {
           "name": "aicc-pm description",
-          "status": "pass",
-          "detail": "skill 和 next-agent 均有提及",
-          "hint": ""
+          "status": "warn",
+          "detail": "description 未提及 skills: planning-with-tasks",
+          "hint": "更新 description 加入 skill 和 next-agent 資訊"
         },
         {
           "name": "aicc-ux description",
-          "status": "pass",
-          "detail": "skill 和 next-agent 均有提及",
-          "hint": ""
+          "status": "warn",
+          "detail": "description 未提及 skills: planning-with-tasks | 未提及下一步 agent: aicc-architect",
+          "hint": "更新 description 加入 skill 和 next-agent 資訊"
         },
         {
           "name": "aicc-architect description",
-          "status": "pass",
-          "detail": "skill 和 next-agent 均有提及",
-          "hint": ""
+          "status": "warn",
+          "detail": "description 未提及 skills: planning-with-tasks",
+          "hint": "更新 description 加入 skill 和 next-agent 資訊"
         },
         {
           "name": "aicc-dba description",
-          "status": "pass",
-          "detail": "skill 和 next-agent 均有提及",
-          "hint": ""
+          "status": "warn",
+          "detail": "description 未提及 skills: planning-with-tasks",
+          "hint": "更新 description 加入 skill 和 next-agent 資訊"
         },
         {
           "name": "aicc-backend description",
-          "status": "pass",
-          "detail": "skill 和 next-agent 均有提及",
-          "hint": ""
+          "status": "warn",
+          "detail": "description 未提及 skills: self-healing-build, pattern-library, validate-contract",
+          "hint": "更新 description 加入 skill 和 next-agent 資訊"
         },
         {
           "name": "aicc-frontend description",
-          "status": "pass",
-          "detail": "skill 和 next-agent 均有提及",
-          "hint": ""
+          "status": "warn",
+          "detail": "description 未提及 skills: self-healing-build, pattern-library, validate-contract",
+          "hint": "更新 description 加入 skill 和 next-agent 資訊"
         },
         {
           "name": "aicc-qa description",
-          "status": "pass",
-          "detail": "skill 和 next-agent 均有提及",
-          "hint": ""
+          "status": "warn",
+          "detail": "description 未提及 skills: planning-with-tasks | 未提及下一步 agent: aicc-review",
+          "hint": "更新 description 加入 skill 和 next-agent 資訊"
         },
         {
           "name": "aicc-security description",
@@ -140,15 +140,15 @@
         },
         {
           "name": "aicc-devops description",
-          "status": "pass",
-          "detail": "skill 和 next-agent 均有提及",
-          "hint": ""
+          "status": "warn",
+          "detail": "description 未提及 skills: systematic-debugging",
+          "hint": "更新 description 加入 skill 和 next-agent 資訊"
         },
         {
           "name": "aicc-review description",
-          "status": "pass",
-          "detail": "skill 和 next-agent 均有提及",
-          "hint": ""
+          "status": "warn",
+          "detail": "description 未提及 skills: gate-check, cia",
+          "hint": "更新 description 加入 skill 和 next-agent 資訊"
         }
       ]
     },
@@ -163,7 +163,7 @@
           "hint": ""
         },
         {
-          "name": "aicc-interviewer → forced-thinking",
+          "name": "aicc-interviewer → planning-with-tasks",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -175,13 +175,7 @@
           "hint": ""
         },
         {
-          "name": "aicc-pm → brainstorming",
-          "status": "pass",
-          "detail": "",
-          "hint": ""
-        },
-        {
-          "name": "aicc-pm → forced-thinking",
+          "name": "aicc-pm → planning-with-tasks",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -205,6 +199,12 @@
           "hint": ""
         },
         {
+          "name": "aicc-ux → planning-with-tasks",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
           "name": "aicc-ux → verification-before-completion",
           "status": "pass",
           "detail": "",
@@ -217,13 +217,7 @@
           "hint": ""
         },
         {
-          "name": "aicc-architect → brainstorming",
-          "status": "pass",
-          "detail": "",
-          "hint": ""
-        },
-        {
-          "name": "aicc-architect → forced-thinking",
+          "name": "aicc-architect → planning-with-tasks",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -235,7 +229,7 @@
           "hint": ""
         },
         {
-          "name": "aicc-dba → deep-research",
+          "name": "aicc-dba → planning-with-tasks",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -253,25 +247,31 @@
           "hint": ""
         },
         {
+          "name": "aicc-backend → self-healing-build",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "aicc-backend → pattern-library",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "aicc-backend → validate-contract",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
           "name": "aicc-backend → using-git-worktrees",
           "status": "pass",
           "detail": "",
           "hint": ""
         },
         {
-          "name": "aicc-backend → finishing-a-development-branch",
-          "status": "pass",
-          "detail": "",
-          "hint": ""
-        },
-        {
           "name": "aicc-backend → systematic-debugging",
-          "status": "pass",
-          "detail": "",
-          "hint": ""
-        },
-        {
-          "name": "aicc-backend → destructive-guard",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -289,13 +289,19 @@
           "hint": ""
         },
         {
-          "name": "aicc-frontend → using-git-worktrees",
+          "name": "aicc-frontend → self-healing-build",
           "status": "pass",
           "detail": "",
           "hint": ""
         },
         {
-          "name": "aicc-frontend → finishing-a-development-branch",
+          "name": "aicc-frontend → pattern-library",
+          "status": "pass",
+          "detail": "",
+          "hint": ""
+        },
+        {
+          "name": "aicc-frontend → validate-contract",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -307,13 +313,13 @@
           "hint": ""
         },
         {
-          "name": "aicc-frontend → systematic-debugging",
+          "name": "aicc-frontend → using-git-worktrees",
           "status": "pass",
           "detail": "",
           "hint": ""
         },
         {
-          "name": "aicc-frontend → destructive-guard",
+          "name": "aicc-frontend → systematic-debugging",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -331,13 +337,13 @@
           "hint": ""
         },
         {
-          "name": "aicc-qa → test-driven-development",
+          "name": "aicc-qa → systematic-debugging",
           "status": "pass",
           "detail": "",
           "hint": ""
         },
         {
-          "name": "aicc-qa → systematic-debugging",
+          "name": "aicc-qa → planning-with-tasks",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -361,7 +367,7 @@
           "hint": ""
         },
         {
-          "name": "aicc-devops → deep-research",
+          "name": "aicc-devops → systematic-debugging",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -373,31 +379,13 @@
           "hint": ""
         },
         {
-          "name": "aicc-devops → info-canary",
+          "name": "aicc-review → gate-check",
           "status": "pass",
           "detail": "",
           "hint": ""
         },
         {
-          "name": "aicc-devops → info-doc-sync",
-          "status": "pass",
-          "detail": "",
-          "hint": ""
-        },
-        {
-          "name": "aicc-review → requesting-code-review",
-          "status": "pass",
-          "detail": "",
-          "hint": ""
-        },
-        {
-          "name": "aicc-review → quality-gates",
-          "status": "pass",
-          "detail": "",
-          "hint": ""
-        },
-        {
-          "name": "aicc-review → slice-cycle",
+          "name": "aicc-review → cia",
           "status": "pass",
           "detail": "",
           "hint": ""
@@ -445,12 +433,6 @@
           "hint": ""
         },
         {
-          "name": "doc-generator",
-          "status": "pass",
-          "detail": "trigger skill: new-doc",
-          "hint": ""
-        },
-        {
           "name": "task-master",
           "status": "pass",
           "detail": "無對應 skill",
@@ -463,117 +445,111 @@
       "icon": "🔄",
       "tests": [
         {
-          "name": "P00 需求建立 agents",
+          "name": "Discover 需求收集 agents",
           "status": "pass",
           "detail": "aicc-interviewer → aicc-pm",
           "hint": ""
         },
         {
-          "name": "P00 需求建立 skills",
+          "name": "Discover 需求收集 skills",
           "status": "pass",
-          "detail": "brainstorming, forced-thinking, verification-before-completion",
+          "detail": "brainstorming, planning-with-tasks, verification-before-completion",
           "hint": ""
         },
         {
-          "name": "P01 精煉+Prototype agents",
+          "name": "Discover 需求收集 gate",
           "status": "pass",
-          "detail": "aicc-pm → aicc-ux",
+          "detail": "gate-reviewer + gate-check",
           "hint": ""
         },
         {
-          "name": "P01 精煉+Prototype skills",
+          "name": "Plan 技術設計 agents",
           "status": "pass",
-          "detail": "frontend-design, verification-before-completion",
+          "detail": "aicc-pm → aicc-ux → aicc-architect → aicc-dba",
           "hint": ""
         },
         {
-          "name": "P01 精煉+Prototype gate",
+          "name": "Plan 技術設計 skills",
           "status": "pass",
-          "detail": "gate-reviewer + quality-gates",
+          "detail": "deep-research, brainstorming, frontend-design, planning-with-tasks, verification-before-completion",
           "hint": ""
         },
         {
-          "name": "P02 技術設計 agents",
+          "name": "Plan 技術設計 gate",
           "status": "pass",
-          "detail": "aicc-architect → aicc-dba → aicc-review",
+          "detail": "gate-reviewer + gate-check",
           "hint": ""
         },
         {
-          "name": "P02 技術設計 skills",
-          "status": "pass",
-          "detail": "deep-research, brainstorming, forced-thinking, verification-before-completion",
-          "hint": ""
-        },
-        {
-          "name": "P02 技術設計 gate",
-          "status": "pass",
-          "detail": "gate-reviewer + quality-gates",
-          "hint": ""
-        },
-        {
-          "name": "P03+P04 Slice Cycle agents",
+          "name": "Build 實作開發 agents",
           "status": "pass",
           "detail": "aicc-backend → aicc-frontend → aicc-qa → aicc-review",
           "hint": ""
         },
         {
-          "name": "P03+P04 Slice Cycle skills",
+          "name": "Build 實作開發 skills",
           "status": "pass",
-          "detail": "slice-cycle, test-driven-development, using-git-worktrees, finishing-a-development-branch, systematic-debugging, destructive-guard, webapp-testing, verification-before-completion",
+          "detail": "test-driven-development, self-healing-build, pattern-library, validate-contract, using-git-worktrees, finishing-a-development-branch, systematic-debugging, webapp-testing, verification-before-completion",
           "hint": ""
         },
         {
-          "name": "P03+P04 Slice Cycle gate",
+          "name": "Build 實作開發 gate",
           "status": "pass",
-          "detail": "gate-reviewer + quality-gates",
+          "detail": "gate-reviewer + gate-check",
           "hint": ""
         },
         {
-          "name": "P05 合規審查 agents",
+          "name": "Verify 品質驗證 agents",
           "status": "pass",
-          "detail": "aicc-security → aicc-review",
+          "detail": "aicc-qa → aicc-security → aicc-review",
           "hint": ""
         },
         {
-          "name": "P05 合規審查 skills",
+          "name": "Verify 品質驗證 skills",
           "status": "pass",
-          "detail": "deep-research, quality-gates",
+          "detail": "deep-research, webapp-testing, gate-check, verification-before-completion",
           "hint": ""
         },
         {
-          "name": "P06 部署上線 agents",
+          "name": "Verify 品質驗證 gate",
+          "status": "pass",
+          "detail": "gate-reviewer + gate-check",
+          "hint": ""
+        },
+        {
+          "name": "Ship 部署上線 agents",
           "status": "pass",
           "detail": "aicc-devops → aicc-review",
           "hint": ""
         },
         {
-          "name": "P06 部署上線 skills",
+          "name": "Ship 部署上線 skills",
           "status": "pass",
-          "detail": "deep-research, verification-before-completion, info-canary, info-doc-sync, quantitative-retro",
+          "detail": "deep-research, systematic-debugging, verification-before-completion",
           "hint": ""
         },
         {
-          "name": "P06 部署上線 gate",
+          "name": "Ship 部署上線 gate",
           "status": "pass",
-          "detail": "retrospective-facilitator + retro",
+          "detail": "gate-reviewer + gate-check",
           "hint": ""
         }
       ]
     },
     {
-      "name": "Pipeline Orchestrator",
+      "name": "Task-Master (v4.0 Dispatcher)",
       "icon": "🎯",
       "tests": [
         {
-          "name": "agent 名稱引用",
+          "name": "task-master SKILL.md 存在",
           "status": "pass",
-          "detail": "所有 * agents 均有引用",
+          "detail": "在 project-template-v4.0/context-skills/task-master/",
           "hint": ""
         },
         {
-          "name": "自動觸發規則",
+          "name": "dispatch 邏輯",
           "status": "pass",
-          "detail": "含 code-grounder 等自動觸發設定",
+          "detail": "含 dispatch/STATE 路由",
           "hint": ""
         }
       ]
@@ -595,15 +571,15 @@
       "icon": "🔬",
       "tests": [
         {
-          "name": "FIX-1: P02 Wave 並行格式",
+          "name": "FIX-1: concurrent-build skill 存在",
           "status": "pass",
-          "detail": "已實作",
+          "detail": "v4.1 並行 skill 已建立",
           "hint": ""
         },
         {
-          "name": "FIX-1: P03/P04 Wave 並行格式",
+          "name": "FIX-1: parallel-feature.sh 存在",
           "status": "pass",
-          "detail": "已實作",
+          "detail": "v4.1 並行腳本已建立",
           "hint": ""
         },
         {
@@ -709,9 +685,9 @@
           "hint": ""
         },
         {
-          "name": "planning-with-files 整合: pipeline-orchestrator 自動觸發",
+          "name": "planning 整合: task-master 自動觸發",
           "status": "pass",
-          "detail": "已實作",
+          "detail": "已整合",
           "hint": ""
         }
       ]
@@ -847,6 +823,12 @@
           "hint": ""
         },
         {
+          "name": "/info-agent",
+          "status": "pass",
+          "detail": "project-template/.claude/commands/info-agent.md (2400 bytes)",
+          "hint": ""
+        },
+        {
           "name": "/resume (global)",
           "status": "pass",
           "detail": "~/.claude/commands/resume.md (965 bytes)",
@@ -859,52 +841,46 @@
       "icon": "🎯",
       "tests": [
         {
-          "name": "P00 需求建立 觸發詞",
-          "status": "pass",
-          "detail": "orchestrator 有引用",
-          "hint": ""
+          "name": "Discover 需求收集 觸發詞",
+          "status": "warn",
+          "detail": "task-master/SKILL.md 未提及 '需求收集'",
+          "hint": "更新 SKILL.md 加入此 Pipeline 觸發詞"
         },
         {
-          "name": "P01 精煉+Prototype 觸發詞",
-          "status": "pass",
-          "detail": "orchestrator 有引用",
-          "hint": ""
+          "name": "Plan 技術設計 觸發詞",
+          "status": "warn",
+          "detail": "task-master/SKILL.md 未提及 '技術設計'",
+          "hint": "更新 SKILL.md 加入此 Pipeline 觸發詞"
         },
         {
-          "name": "P02 技術設計 觸發詞",
-          "status": "pass",
-          "detail": "orchestrator 有引用",
-          "hint": ""
+          "name": "Build 實作開發 觸發詞",
+          "status": "warn",
+          "detail": "task-master/SKILL.md 未提及 '實作開發'",
+          "hint": "更新 SKILL.md 加入此 Pipeline 觸發詞"
         },
         {
-          "name": "P03+P04 Slice Cycle 觸發詞",
-          "status": "pass",
-          "detail": "orchestrator 有引用",
-          "hint": ""
+          "name": "Verify 品質驗證 觸發詞",
+          "status": "warn",
+          "detail": "task-master/SKILL.md 未提及 '品質驗證'",
+          "hint": "更新 SKILL.md 加入此 Pipeline 觸發詞"
         },
         {
-          "name": "P05 合規審查 觸發詞",
-          "status": "pass",
-          "detail": "orchestrator 有引用",
-          "hint": ""
-        },
-        {
-          "name": "P06 部署上線 觸發詞",
-          "status": "pass",
-          "detail": "orchestrator 有引用",
-          "hint": ""
+          "name": "Ship 部署上線 觸發詞",
+          "status": "warn",
+          "detail": "task-master/SKILL.md 未提及 '部署上線'",
+          "hint": "更新 SKILL.md 加入此 Pipeline 觸發詞"
         },
         {
           "name": "Hotfix Pipeline 觸發詞",
-          "status": "pass",
-          "detail": "orchestrator 有引用",
-          "hint": ""
+          "status": "warn",
+          "detail": "task-master/SKILL.md 未提及 Hotfix",
+          "hint": "加入 Hotfix Pipeline 段落"
         },
         {
           "name": "Brownfield 觸發詞",
-          "status": "pass",
-          "detail": "orchestrator 有引用",
-          "hint": ""
+          "status": "warn",
+          "detail": "task-master/SKILL.md 未提及 Brownfield / 舊專案",
+          "hint": "加入 Brownfield 引入段落"
         }
       ]
     },
@@ -1009,9 +985,9 @@
           "hint": ""
         },
         {
-          "name": "Project template start guide",
+          "name": "Project template CLAUDE.md",
           "status": "pass",
-          "detail": "project-template/START_HERE.md",
+          "detail": "project-template-v4.0/CLAUDE.md",
           "hint": ""
         },
         {
@@ -1039,21 +1015,15 @@
       "icon": "🗂️",
       "tests": [
         {
-          "name": "STATE resume",
+          "name": "STATE stage",
           "status": "pass",
-          "detail": "找到關鍵詞 'resume_command'",
+          "detail": "找到關鍵詞 'stage'",
           "hint": ""
         },
         {
           "name": "TASKS handoff",
           "status": "pass",
-          "detail": "找到關鍵詞 '交接摘要'",
-          "hint": ""
-        },
-        {
-          "name": "MASTER_INDEX f-code",
-          "status": "pass",
-          "detail": "找到關鍵詞 'F-code 分配登記'",
+          "detail": "找到關鍵詞 'Handoff Log'",
           "hint": ""
         },
         {
@@ -1061,6 +1031,12 @@
           "status": "pass",
           "detail": "找到關鍵詞 'ADR'",
           "hint": ""
+        },
+        {
+          "name": "ARTIFACTS registry",
+          "status": "warn",
+          "detail": "未找到關鍵詞 '產出'",
+          "hint": "檢查 project-template-v4.0/memory/ARTIFACTS.md"
         }
       ]
     },
@@ -1071,25 +1047,19 @@
         {
           "name": "info-init Lite",
           "status": "pass",
-          "detail": "找到關鍵詞 'Lite Mode'",
+          "detail": "找到關鍵詞 'Lite'",
           "hint": ""
         },
         {
           "name": "info-pipeline Lite",
           "status": "pass",
-          "detail": "找到關鍵詞 'Lite Mode'",
+          "detail": "找到關鍵詞 'Lite'",
           "hint": ""
         },
         {
           "name": "info-task-master Lite",
           "status": "pass",
-          "detail": "找到關鍵詞 'Lite Mode'",
-          "hint": ""
-        },
-        {
-          "name": "orchestrator Lite trigger",
-          "status": "pass",
-          "detail": "找到關鍵詞 '使用 Lite Mode 啟動 F01'",
+          "detail": "找到關鍵詞 'Lite'",
           "hint": ""
         }
       ]
