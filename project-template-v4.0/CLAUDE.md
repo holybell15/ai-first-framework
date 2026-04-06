@@ -347,7 +347,7 @@ Tech Spec 新增：
 7. **Bug Fix = Regression Test**: 任何 bug fix 必須附帶自動化 regression test
 8. **XL Task 拆分**: 估算 > 4hr 的 Task 強制拆成多個 M 或 S
 9. **Context > 60%**: 自動將狀態寫入 STATE.md，確保下一個 session 可接續
-10. **架構遷移原子化**: 改變通訊層、事件來源、元件職責分界等架構級變更，必須在同一個 Feature/Task 內完成。禁止「先改一半，之後再補」——半成品架構比舊架構更危險。未完成的遷移必須 revert 到上一個一致狀態
+10. **架構變更必須人工批准**（v4.1 強化）: 以下行為視為架構變更，由 `arch-guard-hook.sh` **硬攔截**，必須人工建立 `.arch-approved` 才能執行：(a) 替換通訊層（REST→SDK、WebSocket→SDK、SSE→polling 等）(b) 新增外部 SDK/vendor 檔案 (c) 刪除/清空核心服務檔案（service/store/composable/api client）(d) 大量替換 import 來源（≥3 個）(e) 新增 package.json/build.gradle 依賴。**禁止以「對齊參考」「跟 demo 一致」為由繞過此規則**。架構遷移必須在同一個 Feature/Task 內原子化完成
 11. **事後架構驗證**: 架構變更完成後，必須驗證 claimed state = actual state。具體做法：(1) code 註解描述的行為必須與 code 實際行為一致 (2) 測試的 mock 假設必須與 production code path 一致 (3) 不一致 = Build Gate 失敗
 12. **Integration Test = Production Path**: 整合測試必須走 production code path。如果測試中 mock 了 `X.register()`，production 也必須呼叫 `X.register()`。測試綠但 production 不呼叫 = 測試無效，視同未測試
 13. **Build Grounding**: Feature 進入 Build 前，必須實際讀取 RS + Prototype + Tech Spec（用 Read 工具，不是靠記憶），產出 Build Checklist 並用戶確認。**禁止靠記憶描述 UI** — 必須讀 Prototype HTML 檔案後描述看到的佈局和元件。由 `gate-checkpoint.sh` + `.gates/<feature>/build-grounded.confirmed` 強制執行
@@ -364,6 +364,7 @@ Tech Spec 新增：
 
 | Hook | 類型 | 用途 |
 |------|------|------|
+| `arch-guard-hook.sh` | PreToolUse | **硬攔截**：偵測架構級變更（SDK 替換/通訊層替換/核心服務刪除/依賴新增）→ 必須建立 `.arch-approved` |
 | `plan-backup.sh` | PreToolUse | 覆寫 TASKS.md / task_plan.md / findings.md / progress.md 前自動備份到 `.plan-history/` |
 | `gate-checkpoint.sh` | PreToolUse | **硬攔截**：Gate checkpoint 不存在時阻擋（Build Grounding / Integration / **Debug Grounding**） |
 | `test-before-continue.sh` | PreToolUse | **硬攔截**：測試未跑 → 不能繼續改 code / 標記完成 |

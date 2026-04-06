@@ -7,6 +7,16 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash scripts/arch-guard-hook.sh \"$TOOL_INPUT\"",
+            "description": "偵測架構級變更（SDK替換/通訊層替換/核心服務刪除）並強制攔截"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
             "command": "bash scripts/plan-backup.sh \"$TOOL_INPUT\"",
             "description": "備份 TASKS.md / task_plan.md / findings.md / progress.md 歷史版本"
           }
