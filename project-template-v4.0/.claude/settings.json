@@ -75,6 +75,16 @@
     ],
     "PostToolUse": [
       {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/debug-gate-auto.sh \"$TOOL_INPUT\"",
+            "description": "偵測到測試/build/啟動失敗時自動啟用 Debug Gate，強制 AI 先分析再改 code"
+          }
+        ]
+      },
+      {
         "matcher": "Write|Edit|Bash",
         "hooks": [
           {

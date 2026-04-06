@@ -54,6 +54,20 @@ Specialist 發現問題 → 發 DRIFT_SIGNAL → Task-Master 路由：
 - **test_escalation** → 判斷是 code bug（留 Build）還是上游問題（退回）
 - **blocked** → 判斷轉交或等待
 - **handoff** → 執行交接協議（`context-skills/handoff-protocol/`）
+- **error_detected** → 自動啟用 Debug Gate（`debug-gate-auto.sh`）→ 強制載入 `systematic-debugging` skill → 走 Phase 1-4 完整流程 → 測試通過後自動清除 Gate
+
+### Debug 自動觸發（v4.1 — 不需手動啟用）
+
+以下情境 `debug-gate-auto.sh` 會**自動建立 `.gates/DEBUG/`**，AI 必須先分析才能改 code：
+- 測試指令失敗（`./mvnw test`、`npm test`、`vitest`、`playwright` 等 exit code ≠ 0）
+- Build 指令失敗（`mvnw compile`、`npm run build`、`tsc` 等）
+- 服務啟動失敗（`npm run dev`、`spring-boot:run` 等）
+
+AI 被攔截後必須：
+1. 讀 error 分析問題（載入 `systematic-debugging` Phase 1）
+2. 讀相關 source code + 文件（Phase 2）
+3. 產出分析報告：`echo "confirmed $(date)" > .gates/DEBUG/debug-evidence.confirmed`
+4. 之後才能改 code → 改完自己跑測試 → **測試通過 Gate 自動清除**
 
 ### 回退規則
 
@@ -371,6 +385,7 @@ Tech Spec 新增：
 | `test-before-continue.sh` | PreToolUse | **硬攔截**：測試未跑 → 不能繼續改 code / 標記完成 |
 | `freeze-hook.sh` | PreToolUse | Freeze Mode 目錄鎖定 |
 | `destructive-guard-hook.sh` | PreToolUse | 攔截破壞性指令（rm -rf / DROP / force push） |
+| `debug-gate-auto.sh` | PostToolUse | **自動啟用 Debug Gate**：測試/build/啟動失敗 → 建立 `.gates/DEBUG/` → AI 必須先分析才能改 code；測試通過 → 自動清除 |
 | `test-on-change.sh` | PostToolUse | production code 變更 → 標記 dirty；測試失敗 → 標記 `.healing-required`；測試通過 → 清除 |
 | `auto-state-update.sh` | PostToolUse | Pipeline 產出物寫入後更新 STATE.md 時間戳 |
 | `findings-reminder.sh` | PostToolUse | 每 10 次有意義操作提醒更新 findings.md |
