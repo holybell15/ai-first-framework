@@ -355,6 +355,7 @@ Tech Spec 新增：
 15. **Contract 雙向驗證**（v4.1）: 前端定義的 API endpoint 後端必須有 Controller；後端新增的 endpoint 前端必須有呼叫。Build Gate 前強制執行 `validate-contract`
 16. **Merge 後 Smoke Test**（v4.1）: Feature merge 後必須部署到目標環境，Backend health check + 每個新 endpoint 打一次真實 request + 前端 console 無 error。未通過不能標記 Feature Done
 17. **Config 必須有保護**（v4.1）: 外部系統 Config（DataSource / Redis / MQ）必須用 `@ConditionalOnProperty` 保護。無條件載入的外部 Config = Build Gate BLOCK
+18. **改完必須自己測**（v4.1）: 修改 production code 後，**必須自己跑測試並確認通過**，才能回報給用戶。禁止說「改好了你測看看」「請你驗證」。流程：改 code → 跑測試 → 測試通過 → 回報結果（附測試證據）。測試失敗 → 繼續修 → 再跑測試。由 `test-on-change.sh` 強制提醒
 
 ## ⚠️ Hook 強制執行機制
 
@@ -391,6 +392,43 @@ Tech Spec 新增：
 ```
 
 **手動清除**（僅在 hook 誤判時使用）：`rm .tests-dirty .playwright-required .healing-required`
+
+### Debug 必跑流程（v4.1 — 不可跳步）
+
+遇到 bug / 問題 / 測試失敗時，強制按以下順序執行。**禁止跳到 Step 3 直接改 code。**
+
+```
+Step 1: 分析問題（必做）
+  ├─ 讀錯誤訊息 / log / stack trace
+  ├─ 精確描述：SYMPTOM / EXPECTED / ACTUAL
+  └─ 收集證據（不是猜測）
+
+Step 2: 讀相關文件（按需）
+  ├─ 讀 source code（用 Read 工具，不靠記憶）
+  ├─ 讀 RS / Tech Spec / Prototype（如果問題涉及規格）
+  └─ 讀 API Contract / DB Schema（如果問題涉及介面）
+
+Step 3: 修復（最小修改）
+  ├─ 只改必要的部分，不順手重構
+  └─ 搜尋同類問題（grep siblings）
+
+Step 4: 自己測試（必做，不等用戶叫你測）
+  ├─ 跑單元測試：./mvnw test 或 npm run test
+  ├─ 前端改動 → 跑 Playwright
+  ├─ 部署環境問題 → 部署到目標環境 + curl 驗證
+  └─ 測試失敗 → 回 Step 1，不要盲改
+
+Step 5: 回報（附證據）
+  ├─ 說明根因（不是症狀）
+  ├─ 附測試通過的輸出
+  └─ ❌ 禁止說「改好了你測看看」「請驗證」
+```
+
+**違反行為自動攔截**：
+- 沒跑測試就想改更多 code → `test-before-continue.sh` 攔截
+- 沒跑測試就想標記完成 → `test-before-continue.sh` 攔截
+- Debug 模式沒部署驗證 → `.deploy-verify-required` 攔截
+- `test-on-change.sh` 在每次 code 變更後強制提醒
 
 ### Pattern Check Gate + Contract Gate（v4.1 硬攔截）
 

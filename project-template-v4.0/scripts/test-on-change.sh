@@ -66,13 +66,32 @@ if [ "$TOOL_NAME" = "Write" ] || [ "$TOOL_NAME" = "Edit" ]; then
   if [ "$IS_PROD" = true ]; then
     # 標記 dirty
     echo "$FILE_PATH $(date +%Y-%m-%dT%H:%M:%S)" >> "$DIRTY_FILE"
-    echo "🔴 test-on-change: production code 已修改（$(basename "$FILE_PATH")）。必須跑測試才能繼續。"
+    cat >&2 <<REMIND
+
+╔══════════════════════════════════════════════════════════════╗
+║  ⚠️  CODE CHANGED — 你必須自己跑測試，不要等用戶叫你測       ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║  修改完所有檔案後，立即執行：                                 ║
+║    後端: ./mvnw test  或  gradle test                        ║
+║    前端: npm run test  或  vitest                            ║
+║                                                              ║
+║  ❌ 禁止說「改好了你測看看」「請驗證」                        ║
+║  ✅ 必須自己測完、附上測試結果、再回報                        ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+REMIND
 
     # ── v4.1: Debug 模式 → 額外標記 deploy-verify-required ──
     # 有 .debug gate 存在 = 正在做 hotfix → 改完必須自己部署驗證
     if ls .gates/*/.debug 1>/dev/null 2>&1; then
       echo "$FILE_PATH $(date +%Y-%m-%dT%H:%M:%S)" >> "$DEPLOY_VERIFY_FILE"
-      echo "🚀 test-on-change: Debug 模式 — 改完後你必須自己部署到目標環境並驗證。不要等人幫你測。"
+      cat >&2 <<DEPLOY_REMIND
+╔══════════════════════════════════════════════════════════════╗
+║  🚀 DEBUG MODE — 改完後必須自己部署到目標環境驗證             ║
+║     deploy → SSH 看 log → curl 打 API → 確認修好再回報       ║
+╚══════════════════════════════════════════════════════════════╝
+DEPLOY_REMIND
     fi
 
     # 前端 code 額外標記 playwright-required
